@@ -373,7 +373,7 @@ public class MainMenu {
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("MainMenu");
+        JFrame frame = new JFrame("FutureRestore GUI");
         frame.setContentPane(new MainMenu().mainMenuView);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
