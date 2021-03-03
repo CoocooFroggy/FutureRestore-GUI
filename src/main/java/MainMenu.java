@@ -507,7 +507,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 5;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 5;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -557,7 +557,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 3;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 5;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(selectFutureRestoreBinaryExecutableButton, gbc);
@@ -568,7 +568,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 5;
+        gbc.gridwidth = 6;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         mainMenuView.add(label5, gbc);
@@ -577,7 +577,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 5;
+        gbc.gridwidth = 6;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         mainMenuView.add(label6, gbc);
@@ -585,7 +585,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 5;
+        gbc.gridwidth = 6;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(0, 0, 0, 14);
         mainMenuView.add(separator1, gbc);
@@ -593,7 +593,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 13;
-        gbc.gridwidth = 5;
+        gbc.gridwidth = 6;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(scrollPane1, gbc);
         logTextArea = new JTextArea();
@@ -615,7 +615,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 4;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 5;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -638,7 +638,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 9;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(basebandTextField, gbc);
@@ -659,7 +659,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 10;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(sepTextField, gbc);
@@ -667,21 +667,21 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 11;
-        gbc.gridwidth = 5;
+        gbc.gridwidth = 4;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(separator2, gbc);
         final JSeparator separator3 = new JSeparator();
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 8;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 5;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(separator3, gbc);
         final JSeparator separator4 = new JSeparator();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 6;
-        gbc.gridwidth = 5;
+        gbc.gridwidth = 6;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(separator4, gbc);
         waitWCheckBox = new JCheckBox();
@@ -697,7 +697,7 @@ public class MainMenu {
         debugDCheckBox.setSelected(true);
         debugDCheckBox.setText("Debug (-d)");
         gbc = new GridBagConstraints();
-        gbc.gridx = 4;
+        gbc.gridx = 5;
         gbc.gridy = 7;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
@@ -715,7 +715,7 @@ public class MainMenu {
         selectBuildManifestButton.setEnabled(false);
         selectBuildManifestButton.setText("Select BuildManifest...");
         gbc = new GridBagConstraints();
-        gbc.gridx = 4;
+        gbc.gridx = 5;
         gbc.gridy = 12;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(selectBuildManifestButton, gbc);
@@ -735,6 +735,13 @@ public class MainMenu {
         gbc.gridy = 7;
         gbc.anchor = GridBagConstraints.WEST;
         mainMenuView.add(label7, gbc);
+        final JSeparator separator5 = new JSeparator();
+        separator5.setOrientation(1);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 4;
+        gbc.gridy = 12;
+        gbc.fill = GridBagConstraints.BOTH;
+        mainMenuView.add(separator5, gbc);
     }
 
     /**
