@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="MainMenu">
+  <grid id="27dc6" binding="mainMenuView" layout-manager="GridBagLayout">
+    <constraints>
+      <xy x="20" y="20" width="534" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="97cd0" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="5" bottom="0" right="0" weightx="0.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <text value="Blob"/>
+        </properties>
+      </component>
+      <component id="87ade" class="javax.swing.JButton" binding="selectBlobFileButton" default-binding="true">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <text value="Select Blob File..."/>
+        </properties>
+      </component>
+      <component id="bfc3f" class="javax.swing.JButton" binding="selectTargetIPSWFileButton" default-binding="true">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <text value="Select Target IPSW File..."/>
+        </properties>
+      </component>
+      <component id="801d1" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="5" bottom="0" right="0" weightx="0.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <text value="Target IPSW"/>
+        </properties>
+      </component>
+      <component id="e0a05" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="3" column="0" row-span="3" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="5" bottom="0" right="0" weightx="0.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <text value="Options"/>
+        </properties>
+      </component>
+      <component id="b77e0" class="javax.swing.JCheckBox" binding="updateUCheckBox" default-binding="true">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <text value="Update (-u)"/>
+        </properties>
+      </component>
+      <component id="7091a" class="javax.swing.JCheckBox" binding="waitWCheckBox" default-binding="true">
+        <constraints>
+          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <text value="Wait (-w)"/>
+        </properties>
+      </component>
+      <component id="427a4" class="javax.swing.JCheckBox" binding="debugDCheckBox" default-binding="true">
+        <constraints>
+          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text value="Debug (-d)"/>
+        </properties>
+      </component>
+      <component id="21cf4" class="javax.swing.JRadioButton" binding="latestSEPRadioButton" default-binding="true">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text value="Latest SEP"/>
+        </properties>
+      </component>
+      <component id="ff259" class="javax.swing.JRadioButton" binding="manualSEPRadioButton" default-binding="true">
+        <constraints>
+          <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <text value="Manual SEP"/>
+        </properties>
+      </component>
+      <component id="9528f" class="javax.swing.JRadioButton" binding="latestBasebandRadioButton" default-binding="true">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text value="Latest Baseband"/>
+        </properties>
+      </component>
+      <component id="c471d" class="javax.swing.JRadioButton" binding="manualBasebandRadioButton" default-binding="true">
+        <constraints>
+          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <text value="Manual Baseband"/>
+        </properties>
+      </component>
+      <component id="ffd2d" class="javax.swing.JRadioButton" binding="noBasebandRadioButton" default-binding="true">
+        <constraints>
+          <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <text value="No Baseband"/>
+        </properties>
+      </component>
+      <component id="abc0b" class="javax.swing.JButton" binding="getCommandButton" default-binding="true">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Get Command"/>
+        </properties>
+      </component>
+      <component id="c312e" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="5" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="FutureRestore"/>
+        </properties>
+      </component>
+      <component id="5b0e5" class="javax.swing.JButton" binding="selectFutureRestoreBinaryExecutableButton" default-binding="true">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Select FutureRestore Binary/Executable..."/>
+        </properties>
+      </component>
+      <component id="74301" class="javax.swing.JButton" binding="selectBuildManifestButton" default-binding="true">
+        <constraints>
+          <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <enabled value="false"/>
+          <text value="Select BuildManifest..."/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+  <buttonGroups>
+    <group name="sepRadioGroup">
+      <member id="21cf4"/>
+      <member id="ff259"/>
+    </group>
+    <group name="basebandRadioGroup">
+      <member id="9528f"/>
+      <member id="c471d"/>
+      <member id="ffd2d"/>
+    </group>
+  </buttonGroups>
+</form>
