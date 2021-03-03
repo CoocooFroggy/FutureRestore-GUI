@@ -66,7 +66,7 @@ public class MainMenu {
                     appendToLog("Set " + file.getAbsolutePath() + " to FutureRestore executable.");
                     futureRestoreFilePath = file.getAbsolutePath();
                     //Set name of button to blob file name
-                    selectFutureRestoreBinaryExecutableButton.setText(file.getName());
+                    selectFutureRestoreBinaryExecutableButton.setText("✓ " + file.getName());
                 } else {
                     System.out.println("Cancelled");
                 }
@@ -90,9 +90,9 @@ public class MainMenu {
                     blobName = file.getName();
                     //Set name of button to blob file name, truncate though because otherwise it messes up UI
                     if (blobName.length() > 50) {
-                        selectBlobFileButton.setText(file.getName().substring(0, 50) + "...");
+                        selectBlobFileButton.setText("✓ " + file.getName().substring(0, 50) + "...");
                     } else {
-                        selectBlobFileButton.setText(file.getName());
+                        selectBlobFileButton.setText("✓ " + file.getName());
                     }
                 } else {
                     System.out.println("Cancelled");
@@ -117,7 +117,7 @@ public class MainMenu {
                     targetIpswPath = file.getAbsolutePath();
                     targetIpswName = file.getName();
                     //Set name of button to ipsw file name
-                    selectTargetIPSWFileButton.setText(file.getName());
+                    selectTargetIPSWFileButton.setText("✓ " + file.getName());
                 } else {
                     System.out.println("Cancelled");
                 }
@@ -127,7 +127,6 @@ public class MainMenu {
         selectBuildManifestButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: Build manifest
                 //Create a file chooser
                 final JFileChooser buildManifestFileChooser = new JFileChooser();
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("BuildManifest (plist)", "plist");
@@ -138,10 +137,10 @@ public class MainMenu {
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = buildManifestFileChooser.getSelectedFile();
                     //This is where a real application would open the file.
-                    System.out.println("Chose " + file.getAbsolutePath());
+                    appendToLog("Set " + file.getAbsolutePath() + " to BuildManinfest.");
                     buildManifestPath = file.getAbsolutePath();
                     //Set name of button to ipsw file name
-                    selectBuildManifestButton.setText(file.getName());
+                    selectBuildManifestButton.setText("✓ " + file.getName());
                 } else {
                     System.out.println("Cancelled");
                 }
@@ -303,7 +302,6 @@ public class MainMenu {
 
                 //Run command
                 runCommand(finalCommand);
-                mainMenuView.setEnabled(true);
             }
         });
         exitRecoveryButton.addActionListener(new ActionListener() {
@@ -324,7 +322,7 @@ public class MainMenu {
                 switch (basebandComboBox.getSelectedItem().toString()) {
                     case "Latest Baseband":
                         bbState = "latest";
-                        basebandTextField.setText("(No file)");
+                        basebandTextField.setText("✓ (No file)");
                         if (sepState.equals("latest"))
                             selectBuildManifestButton.setEnabled(false);
                         break;
@@ -341,7 +339,7 @@ public class MainMenu {
                         break;
                     case "No Baseband":
                         bbState = "none";
-                        basebandTextField.setText("(No file)");
+                        basebandTextField.setText("✓ (No file)");
                         if (sepState.equals("latest"))
                             selectBuildManifestButton.setEnabled(false);
                         break;
@@ -354,7 +352,7 @@ public class MainMenu {
                 switch (sepComboBox.getSelectedItem().toString()) {
                     case "Latest SEP":
                         sepState = "latest";
-                        sepTextField.setText("(No file)");
+                        sepTextField.setText("✓ (No file)");
                         if (bbState.equals("latest") || bbState.equals("none"))
                             selectBuildManifestButton.setEnabled(false);
                         break;
@@ -397,7 +395,7 @@ public class MainMenu {
             File file = basebandFileChooser.getSelectedFile();
             //This is where a real application would open the file.
             appendToLog("Set " + file.getAbsolutePath() + " to baseband firmware.");
-            basebandTextField.setText(file.getName());
+            basebandTextField.setText("✓ " + file.getName());
             basebandFilePath = file.getAbsolutePath();
             return true;
         } else {
@@ -418,7 +416,7 @@ public class MainMenu {
             File file = sepFileChooser.getSelectedFile();
             //This is where a real application would open the file.
             appendToLog("Set " + file.getAbsolutePath() + " to SEP IM4P.");
-            sepTextField.setText(file.getName());
+            sepTextField.setText("✓ " + file.getName());
             sepFilePath = file.getAbsolutePath();
             return true;
         } else {
@@ -440,9 +438,14 @@ public class MainMenu {
                 logTextArea.append("[" + lineNumber + "] " + s + "\n");
                 lineNumber++;
             }
+            process.waitFor();
+            mainMenuView.setEnabled(true);
         } catch (IOException ioException) {
-            System.out.println("Unable to check FutureRestore version.");
+            System.out.println("Unable to run command.");
             ioException.printStackTrace();
+        } catch (InterruptedException e) {
+            System.out.println("Unable to wait until process finished.");
+            e.printStackTrace();
         }
     }
 
@@ -488,6 +491,8 @@ public class MainMenu {
         mainMenuView = new JPanel();
         mainMenuView.setLayout(new GridBagLayout());
         final JLabel label1 = new JLabel();
+        Font label1Font = this.$$$getFont$$$(null, Font.BOLD, -1, label1.getFont());
+        if (label1Font != null) label1.setFont(label1Font);
         label1.setText("Blob");
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
@@ -502,12 +507,14 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 5;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 4;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(selectTargetIPSWFileButton, gbc);
         final JLabel label2 = new JLabel();
+        Font label2Font = this.$$$getFont$$$(null, Font.BOLD, -1, label2.getFont());
+        if (label2Font != null) label2.setFont(label2Font);
         label2.setText("Target IPSW");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -517,11 +524,12 @@ public class MainMenu {
         gbc.insets = new Insets(0, 10, 0, 0);
         mainMenuView.add(label2, gbc);
         final JLabel label3 = new JLabel();
+        Font label3Font = this.$$$getFont$$$(null, Font.BOLD, -1, label3.getFont());
+        if (label3Font != null) label3.setFont(label3Font);
         label3.setText("Options");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 7;
-        gbc.gridheight = 4;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
@@ -534,6 +542,8 @@ public class MainMenu {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(startFutureRestoreButton, gbc);
         final JLabel label4 = new JLabel();
+        Font label4Font = this.$$$getFont$$$(null, Font.BOLD, -1, label4.getFont());
+        if (label4Font != null) label4.setFont(label4Font);
         label4.setText("FutureRestore");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -547,7 +557,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 3;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 4;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(selectFutureRestoreBinaryExecutableButton, gbc);
@@ -558,7 +568,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 5;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         mainMenuView.add(label5, gbc);
@@ -567,7 +577,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 5;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         mainMenuView.add(label6, gbc);
@@ -575,7 +585,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 5;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(0, 0, 0, 14);
         mainMenuView.add(separator1, gbc);
@@ -583,7 +593,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 13;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 5;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(scrollPane1, gbc);
         logTextArea = new JTextArea();
@@ -605,7 +615,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 4;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 4;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -624,11 +634,11 @@ public class MainMenu {
         mainMenuView.add(basebandComboBox, gbc);
         basebandTextField = new JTextField();
         basebandTextField.setEditable(false);
-        basebandTextField.setText("(No file)");
+        basebandTextField.setText("✓ (No file)");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 9;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(basebandTextField, gbc);
@@ -645,11 +655,11 @@ public class MainMenu {
         mainMenuView.add(sepComboBox, gbc);
         sepTextField = new JTextField();
         sepTextField.setEditable(false);
-        sepTextField.setText("(No file)");
+        sepTextField.setText("✓ (No file)");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 10;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(sepTextField, gbc);
@@ -657,21 +667,21 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 11;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 5;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(separator2, gbc);
         final JSeparator separator3 = new JSeparator();
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 8;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 4;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(separator3, gbc);
         final JSeparator separator4 = new JSeparator();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 6;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 5;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(separator4, gbc);
         waitWCheckBox = new JCheckBox();
@@ -687,7 +697,7 @@ public class MainMenu {
         debugDCheckBox.setSelected(true);
         debugDCheckBox.setText("Debug (-d)");
         gbc = new GridBagConstraints();
-        gbc.gridx = 3;
+        gbc.gridx = 4;
         gbc.gridy = 7;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
@@ -698,25 +708,33 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 12;
+        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(exitRecoveryButton, gbc);
         selectBuildManifestButton = new JButton();
         selectBuildManifestButton.setEnabled(false);
         selectBuildManifestButton.setText("Select BuildManifest...");
         gbc = new GridBagConstraints();
-        gbc.gridx = 3;
+        gbc.gridx = 4;
         gbc.gridy = 12;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(selectBuildManifestButton, gbc);
         updateUCheckBox = new JCheckBox();
         updateUCheckBox.setText("Update (-u)");
         gbc = new GridBagConstraints();
-        gbc.gridx = 1;
+        gbc.gridx = 3;
         gbc.gridy = 7;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         mainMenuView.add(updateUCheckBox, gbc);
+        final JLabel label7 = new JLabel();
+        label7.setText("Arguments");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 7;
+        gbc.anchor = GridBagConstraints.WEST;
+        mainMenuView.add(label7, gbc);
     }
 
     /**
