@@ -3,6 +3,14 @@ plugins {
     id "com.github.johnrengelman.shadow" version "6.1.0"
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'Main'
+        )
+    }
+}
+
 group 'com.coocoofroggy'
 version '1.0'
 
