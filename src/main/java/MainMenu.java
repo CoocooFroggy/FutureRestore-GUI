@@ -7,7 +7,6 @@ import com.sun.jna.platform.win32.WinReg;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.text.DefaultCaret;
 import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -43,6 +42,7 @@ public class MainMenu {
     private JComboBox sepComboBox;
     private JTextField sepTextField;
     private JScrollPane logScrollPane;
+    private JProgressBar logProgressBar;
 
     private String futureRestoreFilePath;
     private String blobName;
@@ -542,7 +542,7 @@ public class MainMenu {
     void runCommand(String command) {
 
         System.out.println("Going to run now");
-        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath + " " + command, logTextArea).execute();
+        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath + " " + command, logTextArea, logProgressBar).execute();
 
 //        Runtime runtime = Runtime.getRuntime();
 //        try {
@@ -854,6 +854,13 @@ public class MainMenu {
         gbc.gridy = 12;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(exitRecoveryButton, gbc);
+        logProgressBar = new JProgressBar();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 14;
+        gbc.gridwidth = 6;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainMenuView.add(logProgressBar, gbc);
     }
 
     /**

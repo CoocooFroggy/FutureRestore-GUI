@@ -2,15 +2,19 @@ import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FutureRestoreWorker {
     public static class ProcessWorker extends SwingWorker<Void, String> {
-        private JTextArea ta;
         private String command;
+        private JTextArea ta;
+        private JProgressBar pb;
 
-        public ProcessWorker(String command, JTextArea ta) {
+        public ProcessWorker(String command, JTextArea ta, JProgressBar pb) {
             this.command = command;
             this.ta = ta;
+            this.pb = pb;
         }
 
         @Override
@@ -21,9 +25,22 @@ public class FutureRestoreWorker {
                     p.getInputStream()));
             String line;
             while ((line = is.readLine()) != null) {
-                ta.append(line + "\n");
+                if (line.contains("[A")) {
+                    System.out.println("Weird line");
+                    Pattern pattern = Pattern.compile("\u001B\\[A\u001B\\[J([0-9]{3})");
+                    Matcher matcher = pattern.matcher(line);
+                    if (matcher.find()) {
+                        pb.setValue(Integer.parseInt(matcher.group(1)));
+                    }
+
+//                    ta.append(line + "\n");
+                }
+                else
+                    ta.append(line + "\n");
             }
             is.close();
+            p.destroy();
+            System.out.println("Killing futurerestore");
             return null;
         }
 
