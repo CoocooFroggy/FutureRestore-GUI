@@ -1,4 +1,8 @@
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.google.gson.Gson;
+import com.jthemedetecor.OsThemeDetector;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -89,12 +93,8 @@ public class MainMenu {
                     appendToLog("Set " + file.getAbsolutePath() + " to SHSH2 blob.");
                     blobFilePath = file.getAbsolutePath();
                     blobName = file.getName();
-                    //Set name of button to blob file name, truncate though because otherwise it messes up UI
-                    if (blobName.length() > 50) {
-                        selectBlobFileButton.setText("✓ " + file.getName().substring(0, 50) + "...");
-                    } else {
-                        selectBlobFileButton.setText("✓ " + file.getName());
-                    }
+                    selectBlobFileButton.setText("✓ " + file.getName());
+
                 } else {
                     System.out.println("Cancelled");
                 }
@@ -371,24 +371,38 @@ public class MainMenu {
                 }
             }
         });
+
+        final OsThemeDetector detector = OsThemeDetector.getDetector();
+        detector.registerListener(isDark -> {
+            if (isDark) {
+                FlatDarculaLaf.install();
+                System.out.println("Darkened");
+                mainMenuView.revalidate();
+            } else {
+                FlatIntelliJLaf.install();
+                System.out.println("Lightened");
+                mainMenuView.revalidate();
+            }
+        });
     }
 
     public static void main(String[] args) {
-        boolean inDarkMode = false;
+        String systemTheme = "light";
         try {
-            inDarkMode = inDarkMode();
+            systemTheme = getSystemTheme();
         } catch (IOException e) {
             System.out.println("Unable to determine if computer is in dark or light mode.");
             e.printStackTrace();
         }
 
         //Must set L&F before we create instance of MainMenu
-        if (inDarkMode) {
-            try {
-                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-                e.printStackTrace();
-            }
+        switch (systemTheme) {
+            case "dark":
+                FlatDarculaLaf.install();
+                break;
+            case "light":
+                FlatIntelliJLaf.install();
+                break;
         }
 
         JFrame frame = new JFrame("FutureRestore GUI");
@@ -398,38 +412,46 @@ public class MainMenu {
         frame.setContentPane(mainMenuInstance.mainMenuView);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setLocationRelativeTo(null);
 
         //Prepare for dark mode
-        if (inDarkMode)
+        if (systemTheme.equals("dark"))
             turnDark(mainMenuInstance);
 
         //Centers it on screen
-        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
     }
 
-    static boolean inDarkMode() throws IOException {
-        //Return if not on Mac
-        if (!System.getProperty("os.name").equals("Mac OS X"))
-            return false;
+    static String getSystemTheme() throws IOException {
+        //Get light or dark mode
+        final OsThemeDetector detector = OsThemeDetector.getDetector();
+        final boolean isDarkThemeUsed = detector.isDark();
 
-        //Get current theme
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Runtime.getRuntime().exec("defaults read -g AppleInterfaceStyle").getInputStream()));
-        // var theme is either null or "Dark"
-        String theme = reader.readLine();
-        //Return if not in dark mode
-        return theme != null && theme.equals("Dark");
+        //If not on Mac, dark or light with FlatLaf
+        if (!System.getProperty("os.name").equals("Mac OS X")) {
+            if (isDarkThemeUsed) {
+                return "dark";
+            } else {
+                return "light";
+            }
+        } else {
+            if (isDarkThemeUsed)
+                return "dark";
+            else
+                return "mac";
+        }
     }
 
     static void turnDark(MainMenu mainMenu) {
         JPanel mainMenuView = mainMenu.mainMenuView;
         JTextArea logTextArea = mainMenu.logTextArea;
         JScrollPane logScrollPane = mainMenu.logScrollPane;
+        JButton startFutureRestoreButton = mainMenu.startFutureRestoreButton;
 
 
-        mainMenuView.setBackground(new Color(20, 20, 20));
-        logTextArea.setBackground(new Color(40, 40, 40));
+        mainMenuView.setBackground(new Color(40, 40, 40));
+        logTextArea.setBackground(new Color(20, 20, 20));
         logTextArea.setForeground(new Color(200, 200, 200));
         logScrollPane.setBorder(null);
 
@@ -441,13 +463,15 @@ public class MainMenu {
             }
 
             if (c instanceof JButton) {
-                c.setBackground(new Color(40, 40, 40));
+                c.setBackground(new Color(60, 60, 60));
                 c.setForeground(new Color(200, 200, 200));
+                if (c == startFutureRestoreButton)
+                    c.setBackground(new Color(38, 85, 163));
                 continue;
             }
 
             if (c instanceof JTextField) {
-                c.setBackground(new Color(40, 40, 40));
+                c.setBackground(new Color(60, 60, 60));
                 c.setForeground(new Color(200, 200, 200));
             }
 
@@ -457,7 +481,7 @@ public class MainMenu {
             }
 
             if (c instanceof JComboBox) {
-                c.setBackground(new Color(40, 40, 40));
+                c.setBackground(new Color(60, 60, 60));
                 c.setForeground(new Color(200, 200, 200));
             }
         }
@@ -518,14 +542,10 @@ public class MainMenu {
                 logTextArea.append("[" + lineNumber + "] " + s + "\n");
                 lineNumber++;
             }
-            process.waitFor();
             mainMenuView.setEnabled(true);
         } catch (IOException ioException) {
             System.out.println("Unable to run command.");
             ioException.printStackTrace();
-        } catch (InterruptedException e) {
-            System.out.println("Unable to wait until process finished.");
-            e.printStackTrace();
         }
     }
 
@@ -578,7 +598,6 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 4;
-        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 10);
         mainMenuView.add(label1, gbc);
@@ -589,7 +608,6 @@ public class MainMenu {
         gbc.gridy = 5;
         gbc.gridwidth = 5;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(selectTargetIPSWFileButton, gbc);
         final JLabel label2 = new JLabel();
@@ -599,7 +617,6 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 5;
-        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 10);
         mainMenuView.add(label2, gbc);
@@ -610,7 +627,6 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 7;
-        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 10);
         mainMenuView.add(label3, gbc);
@@ -621,7 +637,6 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 3;
-        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 10);
         mainMenuView.add(label4, gbc);
@@ -631,7 +646,6 @@ public class MainMenu {
         gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.gridwidth = 5;
-        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(selectFutureRestoreBinaryExecutableButton, gbc);
         final JLabel label5 = new JLabel();
@@ -660,6 +674,7 @@ public class MainMenu {
         gbc.gridy = 2;
         gbc.gridwidth = 6;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipady = 1;
         gbc.insets = new Insets(0, 0, 0, 14);
         mainMenuView.add(separator1, gbc);
         logScrollPane = new JScrollPane();
@@ -667,6 +682,7 @@ public class MainMenu {
         gbc.gridx = 0;
         gbc.gridy = 13;
         gbc.gridwidth = 6;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(logScrollPane, gbc);
         logTextArea = new JTextArea();
@@ -690,7 +706,6 @@ public class MainMenu {
         gbc.gridy = 4;
         gbc.gridwidth = 5;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(selectBlobFileButton, gbc);
         basebandComboBox = new JComboBox();
@@ -742,6 +757,7 @@ public class MainMenu {
         gbc.gridy = 11;
         gbc.gridwidth = 4;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipady = 1;
         mainMenuView.add(separator2, gbc);
         final JSeparator separator3 = new JSeparator();
         gbc = new GridBagConstraints();
@@ -749,6 +765,7 @@ public class MainMenu {
         gbc.gridy = 8;
         gbc.gridwidth = 5;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipady = 1;
         mainMenuView.add(separator3, gbc);
         final JSeparator separator4 = new JSeparator();
         gbc = new GridBagConstraints();
@@ -756,6 +773,7 @@ public class MainMenu {
         gbc.gridy = 6;
         gbc.gridwidth = 6;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipady = 1;
         mainMenuView.add(separator4, gbc);
         waitWCheckBox = new JCheckBox();
         waitWCheckBox.setText("Wait (-w)");
@@ -763,7 +781,6 @@ public class MainMenu {
         gbc.gridx = 2;
         gbc.gridy = 7;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         mainMenuView.add(waitWCheckBox, gbc);
         debugDCheckBox = new JCheckBox();
@@ -773,7 +790,6 @@ public class MainMenu {
         gbc.gridx = 5;
         gbc.gridy = 7;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         mainMenuView.add(debugDCheckBox, gbc);
         selectBuildManifestButton = new JButton();
@@ -790,7 +806,6 @@ public class MainMenu {
         gbc.gridx = 3;
         gbc.gridy = 7;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         mainMenuView.add(updateUCheckBox, gbc);
         final JLabel label7 = new JLabel();
@@ -806,6 +821,7 @@ public class MainMenu {
         gbc.gridx = 4;
         gbc.gridy = 12;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipadx = 1;
         mainMenuView.add(separator5, gbc);
         startFutureRestoreButton = new JButton();
         Font startFutureRestoreButtonFont = this.$$$getFont$$$(null, Font.BOLD, 16, startFutureRestoreButton.getFont());
