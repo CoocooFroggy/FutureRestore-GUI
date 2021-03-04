@@ -16,12 +16,15 @@ version '1.0'
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.formdev:flatlaf:1.0'
+    implementation 'com.github.Dansoftowner:jSystemThemeDetector:2.1'
 }
 
 test {

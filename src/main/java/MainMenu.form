@@ -10,7 +10,7 @@
       <component id="97cd0" class="javax.swing.JLabel">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="1.0"/>
+          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <font style="1"/>
@@ -20,7 +20,7 @@
       <component id="bfc3f" class="javax.swing.JButton" binding="selectTargetIPSWFileButton" default-binding="true">
         <constraints>
           <grid row="5" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="1.0"/>
+          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="Select Target IPSW File..."/>
@@ -29,7 +29,7 @@
       <component id="801d1" class="javax.swing.JLabel">
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="1.0"/>
+          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <font style="1"/>
@@ -39,7 +39,7 @@
       <component id="e0a05" class="javax.swing.JLabel">
         <constraints>
           <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="1.0"/>
+          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <font style="1"/>
@@ -49,7 +49,7 @@
       <component id="c312e" class="javax.swing.JLabel">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="1.0"/>
+          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <font style="1"/>
@@ -59,7 +59,7 @@
       <component id="5b0e5" class="javax.swing.JButton" binding="selectFutureRestoreBinaryExecutableButton" default-binding="true">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="1.0"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="Select FutureRestore Binary/Executable..."/>
@@ -87,14 +87,14 @@
       <component id="35159" class="javax.swing.JSeparator">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="6" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="14" weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="0" bottom="0" right="14" weightx="0.0" weighty="0.0" ipady="1"/>
         </constraints>
         <properties/>
       </component>
       <scrollpane id="2e35b" binding="logScrollPane">
         <constraints>
           <grid row="13" column="0" row-span="1" col-span="6" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag weightx="0.0" weighty="1.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -116,7 +116,7 @@
       <component id="87ade" class="javax.swing.JButton" binding="selectBlobFileButton" default-binding="true">
         <constraints>
           <grid row="4" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="1.0"/>
+          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <hideActionText value="false"/>
@@ -178,28 +178,28 @@
       <component id="c11df" class="javax.swing.JSeparator">
         <constraints>
           <grid row="11" column="0" row-span="1" col-span="4" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag weightx="0.0" weighty="0.0" ipady="1"/>
         </constraints>
         <properties/>
       </component>
       <component id="f54ee" class="javax.swing.JSeparator">
         <constraints>
           <grid row="8" column="1" row-span="1" col-span="5" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag weightx="0.0" weighty="0.0" ipady="1"/>
         </constraints>
         <properties/>
       </component>
       <component id="9c129" class="javax.swing.JSeparator">
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="6" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag weightx="0.0" weighty="0.0" ipady="1"/>
         </constraints>
         <properties/>
       </component>
       <component id="7091a" class="javax.swing.JCheckBox" binding="waitWCheckBox" default-binding="true">
         <constraints>
           <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="1.0"/>
+          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="Wait (-w)"/>
@@ -208,7 +208,7 @@
       <component id="427a4" class="javax.swing.JCheckBox" binding="debugDCheckBox" default-binding="true">
         <constraints>
           <grid row="7" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="1.0"/>
+          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <selected value="true"/>
@@ -228,7 +228,7 @@
       <component id="b77e0" class="javax.swing.JCheckBox" binding="updateUCheckBox" default-binding="true">
         <constraints>
           <grid row="7" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="1.0"/>
+          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="Update (-u)"/>
@@ -246,7 +246,7 @@
       <component id="9cb72" class="javax.swing.JSeparator">
         <constraints>
           <grid row="12" column="4" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag weightx="0.0" weighty="0.0" ipadx="1"/>
         </constraints>
         <properties>
           <orientation value="1"/>
