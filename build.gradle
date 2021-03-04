@@ -24,7 +24,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.formdev:flatlaf:1.0'
-    implementation 'com.github.Dansoftowner:jSystemThemeDetector:2.1'
+    compile group: 'net.java.dev.jna', name: 'platform', version: '3.5.2' //Thanks for using https://jar-download.com
 }
 
 test {

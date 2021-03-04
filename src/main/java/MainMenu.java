@@ -1,8 +1,8 @@
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import com.google.gson.Gson;
-import com.jthemedetecor.OsThemeDetector;
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.WinReg;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -14,8 +14,10 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -373,39 +375,6 @@ public class MainMenu {
                 }
             }
         });
-
-        final OsThemeDetector detector = OsThemeDetector.getDetector();
-        detector.registerListener(isDark -> {
-            if (isDark) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        FlatDarculaLaf.install();
-                        System.out.println("Darkened");
-                        FlatDarculaLaf.updateUI();
-                    }
-                });
-            } else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (System.getProperty("os.name").equals("Mac OS X")) {
-                            //Return to Mac light mode
-                            try {
-                                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-                                e.printStackTrace();
-                            }
-                            SwingUtilities.updateComponentTreeUI(mainMenuView);
-                        } else {
-                            FlatIntelliJLaf.install();
-                            System.out.println("Lightened");
-                            FlatIntelliJLaf.updateUI();
-                        }
-                    }
-                });
-            }
-        });
     }
 
     public static void main(String[] args) {
@@ -458,22 +427,29 @@ public class MainMenu {
 
     static String getSystemTheme() throws IOException {
         //Get light or dark mode
-        final OsThemeDetector detector = OsThemeDetector.getDetector();
-        final boolean isDarkThemeUsed = detector.isDark();
-
-        //If not on Mac, dark or light with FlatLaf
-        if (!System.getProperty("os.name").equals("Mac OS X")) {
-            if (isDarkThemeUsed) {
+        //If on mac
+        String mode;
+        if (System.getProperty("os.name").equals("Mac OS X")) {
+            Process process = Runtime.getRuntime().exec("defaults read -g AppleInterfaceStyle");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String macTheme = reader.readLine();
+            if (macTheme != null) {
+                //dark mode
                 return "dark";
             } else {
-                return "light";
+                return "mac";
             }
         } else {
-            if (isDarkThemeUsed)
+            final String REGISTRY_PATH = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
+            final String REGISTRY_VALUE = "AppsUseLightTheme";
+            if
+            (Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, REGISTRY_PATH, REGISTRY_VALUE) &&
+                    Advapi32Util.registryGetIntValue(WinReg.HKEY_CURRENT_USER, REGISTRY_PATH, REGISTRY_VALUE) == 0)
                 return "dark";
             else
-                return "mac";
+                return "light";
         }
+
     }
 
     static void turnDark(MainMenu mainMenu) {
