@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,26 +31,40 @@ public class FutureRestoreWorker {
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
 
-            // Read Process Stream Output
-            BufferedReader is = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line = null;
-            System.out.println("About to read lines");
-            while ((line = is.readLine()) != null) {
-                if (line.contains("[A")) {
-                    System.out.println("Not adding " + line);
-                    Pattern pattern = Pattern.compile("\u001B\\[A\u001B\\[J([0-9]{3})");
-                    Matcher matcher = pattern.matcher(line);
-                    if (matcher.find()) {
-                        //Set progress bar to parsed value
-                        pb.setValue(Integer.parseInt(matcher.group(1)));
+            final Thread ioThread = new Thread() {
+                @Override
+                public void run() {
+                    // Read Process Stream Output
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String line = null;
+                    while (true) {
+                        try {
+                            if ((line = reader.readLine()) == null) break;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (line.contains("[A")) {
+                            System.out.println("Not adding " + line);
+                            Pattern pattern = Pattern.compile("\u001B\\[A\u001B\\[J([0-9]{3})");
+                            Matcher matcher = pattern.matcher(line);
+                            if (matcher.find()) {
+                                //Set progress bar to parsed value
+                                pb.setValue(Integer.parseInt(matcher.group(1)));
+                            }
+                        } else {
+                            System.out.println("Appending " + line);
+                            ta.append(line + "\n");
+                        }
                     }
-                } else {
-                    System.out.println("Appending " + line);
-                    ta.append(line + "\n");
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-            is.close();
-            process.destroy();
+            };
+            ioThread.start();
+            process.waitFor();
             System.out.println("Killing futurerestore");
             return null;
         }
