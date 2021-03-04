@@ -405,8 +405,7 @@ public class MainMenu {
                 MainMenu mainMenuInstance = new MainMenu();
 
                 //Auto scroll log
-                DefaultCaret caret = (DefaultCaret) mainMenuInstance.logTextArea.getCaret();
-                caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+                new SmartScroller(mainMenuInstance.logScrollPane, SmartScroller.VERTICAL, SmartScroller.END);
 
                 frame.setContentPane(mainMenuInstance.mainMenuView);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
