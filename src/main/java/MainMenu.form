@@ -10,7 +10,7 @@
       <component id="97cd0" class="javax.swing.JLabel">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="1.0"/>
+          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="1.0"/>
         </constraints>
         <properties>
           <font style="1"/>
@@ -29,7 +29,7 @@
       <component id="801d1" class="javax.swing.JLabel">
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="1.0"/>
+          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="1.0"/>
         </constraints>
         <properties>
           <font style="1"/>
@@ -39,26 +39,17 @@
       <component id="e0a05" class="javax.swing.JLabel">
         <constraints>
           <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="1.0"/>
+          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="1.0"/>
         </constraints>
         <properties>
           <font style="1"/>
           <text value="Options"/>
         </properties>
       </component>
-      <component id="abc0b" class="javax.swing.JButton" binding="startFutureRestoreButton" default-binding="true">
-        <constraints>
-          <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <text value="Start FutureRestore"/>
-        </properties>
-      </component>
       <component id="c312e" class="javax.swing.JLabel">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="1.0"/>
+          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="1.0"/>
         </constraints>
         <properties>
           <font style="1"/>
@@ -77,7 +68,7 @@
       <component id="37e3d" class="javax.swing.JLabel">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+          <gridbag top="10" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <font size="28" style="1"/>
@@ -87,7 +78,7 @@
       <component id="6f78f" class="javax.swing.JLabel">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="10" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="(Working title.) by CoocooFroggy"/>
@@ -100,7 +91,7 @@
         </constraints>
         <properties/>
       </component>
-      <scrollpane id="2e35b">
+      <scrollpane id="2e35b" binding="logScrollPane">
         <constraints>
           <grid row="13" column="0" row-span="1" col-span="6" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
@@ -224,18 +215,9 @@
           <text value="Debug (-d)"/>
         </properties>
       </component>
-      <component id="958c5" class="javax.swing.JButton" binding="exitRecoveryButton" default-binding="true">
-        <constraints>
-          <grid row="12" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <text value="Exit Recovery"/>
-        </properties>
-      </component>
       <component id="74301" class="javax.swing.JButton" binding="selectBuildManifestButton" default-binding="true">
         <constraints>
-          <grid row="12" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -268,6 +250,27 @@
         </constraints>
         <properties>
           <orientation value="1"/>
+        </properties>
+      </component>
+      <component id="abc0b" class="javax.swing.JButton" binding="startFutureRestoreButton" default-binding="true">
+        <constraints>
+          <grid row="12" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font size="16" style="1"/>
+          <text value="Start FutureRestore"/>
+        </properties>
+      </component>
+      <component id="958c5" class="javax.swing.JButton" binding="exitRecoveryButton" default-binding="true">
+        <constraints>
+          <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Exit Recovery"/>
+          <verticalAlignment value="0"/>
+          <verticalTextPosition value="0"/>
         </properties>
       </component>
     </children>
