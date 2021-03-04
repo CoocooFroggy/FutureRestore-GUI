@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
+import javax.swing.text.Utilities;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -20,6 +21,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -261,52 +263,50 @@ public class MainMenu {
                     }
                 }
 
-                //TODO: BuildManifest
                 //Build their final command
-                StringBuilder stringBuilder = new StringBuilder();
+                ArrayList<String> allArgs = new ArrayList<>();
 
-                stringBuilder.append(" -t " + blobFilePath);
+                allArgs.add("-t");
+                allArgs.add(blobFilePath);
 
                 if (optionUpdateState)
-                    stringBuilder.append(" -u");
+                    allArgs.add("-u");
                 if (optionWaitState)
-                    stringBuilder.append(" -w");
+                    allArgs.add("-w");
                 if (optionDebugState)
-                    stringBuilder.append(" -d");
+                    allArgs.add("-d");
 
                 switch (sepState) {
                     case "latest":
-                        stringBuilder.append(" --latest-sep");
+                        allArgs.add("--latest-sep");
                         break;
                     case "manual":
-                        stringBuilder.append(" -s " + sepFilePath);
-                        stringBuilder.append(" -m " + buildManifestPath);
+                        allArgs.add("-s");
+                        allArgs.add(sepFilePath);
+                        allArgs.add("-m");
+                        allArgs.add(buildManifestPath);
                         break;
                 }
 
                 switch (bbState) {
                     case "latest":
-                        stringBuilder.append(" --latest-baseband");
+                        allArgs.add("--latest-baseband");
                         break;
                     case "manual":
-                        stringBuilder.append(" -b " + basebandFilePath);
-                        stringBuilder.append(" -p " + buildManifestPath);
+                        allArgs.add("-b");
+                        allArgs.add(basebandFilePath);
+                        allArgs.add("-p");
+                        allArgs.add(buildManifestPath);
                         break;
                     case "none":
-                        stringBuilder.append(" --no-baseband");
+                        allArgs.add("--no-baseband");
                         break;
                 }
 
-                stringBuilder.append(" " + targetIpswPath);
-
-                String finalCommand = stringBuilder.toString();
-
-                StringSelection stringSelection = new StringSelection(finalCommand);
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(stringSelection, null);
+                allArgs.add(targetIpswPath);
 
                 //Run command
-                runCommand(finalCommand);
+                runCommand(allArgs);
             }
         });
         exitRecoveryButton.addActionListener(new ActionListener() {
@@ -318,7 +318,7 @@ public class MainMenu {
                     return;
                 }
 
-                runCommand("--exit recovery");
+                runCommand(new ArrayList<>(Arrays.asList("--exit-recovery")));
             }
         });
         basebandComboBox.addActionListener(new ActionListener() {
@@ -539,31 +539,22 @@ public class MainMenu {
 
     int lineNumber = 1;
 
-    void runCommand(String command) {
+    void runCommand(ArrayList<String> allArgs) {
 
         System.out.println("Going to run now");
-        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath + " " + command, logTextArea, logProgressBar).execute();
 
-//        Runtime runtime = Runtime.getRuntime();
-//        try {
-//            Process process = runtime.exec(futureRestoreFilePath + " " + command);
-//            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//            String s;
-//            while ((s = bufferedReader.readLine()) != null) {
-//                System.out.println(s);
-//                logTextArea.append("[" + lineNumber + "] " + s + "\n");
-//                lineNumber++;
-//            }
-//            mainMenuView.setEnabled(true);
-//        } catch (IOException ioException) {
-//            System.out.println("Unable to run command.");
-//            ioException.printStackTrace();
-//        }
+        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath, allArgs, logTextArea, logProgressBar).execute();
+
     }
 
     void appendToLog(String string) {
-        logTextArea.append("[" + lineNumber + "] " + string + "\n");
-        lineNumber++;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                logTextArea.append("[" + lineNumber + "] " + string + "\n");
+                lineNumber++;
+            }
+        });
     }
 
     String getLatestFutureRestore() throws IOException {
