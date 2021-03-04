@@ -7,6 +7,7 @@ import com.jthemedetecor.OsThemeDetector;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FontUIResource;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -14,6 +15,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -405,21 +407,32 @@ public class MainMenu {
                 break;
         }
 
-        JFrame frame = new JFrame("FutureRestore GUI");
+        String finalSystemTheme = systemTheme;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JFrame frame = new JFrame("FutureRestore GUI");
 
-        MainMenu mainMenuInstance = new MainMenu();
+                MainMenu mainMenuInstance = new MainMenu();
 
-        frame.setContentPane(mainMenuInstance.mainMenuView);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
+                //Auto scroll log
+                DefaultCaret caret = (DefaultCaret) mainMenuInstance.logTextArea.getCaret();
+                caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
-        //Prepare for dark mode
-        if (systemTheme.equals("dark"))
-            turnDark(mainMenuInstance);
+                frame.setContentPane(mainMenuInstance.mainMenuView);
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.pack();
+                frame.setLocationRelativeTo(null);
 
-        //Centers it on screen
-        frame.setVisible(true);
+                //Prepare for dark mode
+                if (finalSystemTheme.equals("dark"))
+                    turnDark(mainMenuInstance);
+
+                //Centers it on screen
+                frame.setVisible(true);
+
+            }
+        });
 
     }
 
@@ -532,21 +545,25 @@ public class MainMenu {
     int lineNumber = 1;
 
     void runCommand(String command) {
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process process = runtime.exec(futureRestoreFilePath + " " + command);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String s;
-            while ((s = bufferedReader.readLine()) != null) {
-                System.out.println(s);
-                logTextArea.append("[" + lineNumber + "] " + s + "\n");
-                lineNumber++;
-            }
-            mainMenuView.setEnabled(true);
-        } catch (IOException ioException) {
-            System.out.println("Unable to run command.");
-            ioException.printStackTrace();
-        }
+
+        System.out.println("Going to run now");
+        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath + " " + command, logTextArea).execute();
+
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process process = runtime.exec(futureRestoreFilePath + " " + command);
+//            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//            String s;
+//            while ((s = bufferedReader.readLine()) != null) {
+//                System.out.println(s);
+//                logTextArea.append("[" + lineNumber + "] " + s + "\n");
+//                lineNumber++;
+//            }
+//            mainMenuView.setEnabled(true);
+//        } catch (IOException ioException) {
+//            System.out.println("Unable to run command.");
+//            ioException.printStackTrace();
+//        }
     }
 
     void appendToLog(String string) {
