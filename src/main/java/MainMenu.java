@@ -377,13 +377,33 @@ public class MainMenu {
         final OsThemeDetector detector = OsThemeDetector.getDetector();
         detector.registerListener(isDark -> {
             if (isDark) {
-                FlatDarculaLaf.install();
-                System.out.println("Darkened");
-                mainMenuView.revalidate();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        FlatDarculaLaf.install();
+                        System.out.println("Darkened");
+                        FlatDarculaLaf.updateUI();
+                    }
+                });
             } else {
-                FlatIntelliJLaf.install();
-                System.out.println("Lightened");
-                mainMenuView.revalidate();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (System.getProperty("os.name").equals("Mac OS X")) {
+                            //Return to Mac light mode
+                            try {
+                                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+                                e.printStackTrace();
+                            }
+                            SwingUtilities.updateComponentTreeUI(mainMenuView);
+                        } else {
+                            FlatIntelliJLaf.install();
+                            System.out.println("Lightened");
+                            FlatIntelliJLaf.updateUI();
+                        }
+                    }
+                });
             }
         });
     }
