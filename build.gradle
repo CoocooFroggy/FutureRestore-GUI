@@ -24,7 +24,10 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.formdev:flatlaf:1.0'
-    compile group: 'net.java.dev.jna', name: 'platform', version: '3.5.2' //Thanks for using https://jar-download.com
+    compile group: 'net.java.dev.jna', name: 'platform', version: '3.5.2'
+    implementation 'net.lingala.zip4j:zip4j:2.7.0'
+    implementation group: 'org.tukaani', name: 'xz', version: '1.8'
+    implementation group: 'org.rauschig', name: 'jarchivelib', version: '0.7.1'
 }
 
 test {
