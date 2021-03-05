@@ -8,10 +8,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
-import javax.swing.text.Utilities;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -45,6 +42,8 @@ public class MainMenu {
     private JTextField sepTextField;
     private JScrollPane logScrollPane;
     private JProgressBar logProgressBar;
+    private JTextField currentTaskTextField;
+    private JButton stopFutureRestoreUnsafeButton;
 
     private String futureRestoreFilePath;
     private String blobName;
@@ -375,6 +374,15 @@ public class MainMenu {
                 }
             }
         });
+        stopFutureRestoreUnsafeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Process futureRestoreProcess = FutureRestoreWorker.ProcessWorker.futureRestoreProcess;
+
+                if (futureRestoreProcess != null)
+                    futureRestoreProcess.destroy();
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -543,7 +551,7 @@ public class MainMenu {
 
         System.out.println("Going to run now");
 
-        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath, allArgs, logTextArea, logProgressBar).execute();
+        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath, allArgs, logTextArea, logProgressBar, currentTaskTextField).execute();
 
     }
 
@@ -683,7 +691,7 @@ public class MainMenu {
         logScrollPane = new JScrollPane();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 13;
+        gbc.gridy = 16;
         gbc.gridwidth = 6;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
@@ -694,7 +702,7 @@ public class MainMenu {
         Font logTextAreaFont = this.$$$getFont$$$("Andale Mono", -1, -1, logTextArea.getFont());
         if (logTextAreaFont != null) logTextArea.setFont(logTextAreaFont);
         logTextArea.setLineWrap(true);
-        logTextArea.setRows(30);
+        logTextArea.setRows(20);
         logTextArea.setText("");
         logTextArea.setWrapStyleWord(true);
         logScrollPane.setViewportView(logTextArea);
@@ -759,6 +767,7 @@ public class MainMenu {
         gbc.gridx = 0;
         gbc.gridy = 11;
         gbc.gridwidth = 4;
+        gbc.weighty = 0.01;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipady = 1;
         mainMenuView.add(separator2, gbc);
@@ -767,6 +776,7 @@ public class MainMenu {
         gbc.gridx = 1;
         gbc.gridy = 8;
         gbc.gridwidth = 5;
+        gbc.weighty = 0.01;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipady = 1;
         mainMenuView.add(separator3, gbc);
@@ -775,6 +785,7 @@ public class MainMenu {
         gbc.gridx = 0;
         gbc.gridy = 6;
         gbc.gridwidth = 6;
+        gbc.weighty = 0.01;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipady = 1;
         mainMenuView.add(separator4, gbc);
@@ -823,6 +834,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 4;
         gbc.gridy = 12;
+        gbc.weightx = 0.01;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipadx = 1;
         mainMenuView.add(separator5, gbc);
@@ -845,10 +857,45 @@ public class MainMenu {
         gbc.gridy = 12;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(exitRecoveryButton, gbc);
-        logProgressBar = new JProgressBar();
+        final JSeparator separator6 = new JSeparator();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 13;
+        gbc.gridwidth = 6;
+        gbc.weighty = 0.01;
+        gbc.fill = GridBagConstraints.BOTH;
+        mainMenuView.add(separator6, gbc);
+        final JLabel label8 = new JLabel();
+        Font label8Font = this.$$$getFont$$$(null, Font.BOLD, -1, label8.getFont());
+        if (label8Font != null) label8.setFont(label8Font);
+        label8.setText("Current Task");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 14;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 10, 0, 10);
+        mainMenuView.add(label8, gbc);
+        currentTaskTextField = new JTextField();
+        currentTaskTextField.setEditable(false);
+        currentTaskTextField.setHorizontalAlignment(0);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 14;
+        gbc.gridwidth = 4;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainMenuView.add(currentTaskTextField, gbc);
+        stopFutureRestoreUnsafeButton = new JButton();
+        stopFutureRestoreUnsafeButton.setText("Stop FutureRestore (Unsafe)");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 5;
+        gbc.gridy = 14;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainMenuView.add(stopFutureRestoreUnsafeButton, gbc);
+        logProgressBar = new JProgressBar();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 15;
         gbc.gridwidth = 6;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(logProgressBar, gbc);
