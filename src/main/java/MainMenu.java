@@ -9,6 +9,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -44,6 +46,7 @@ public class MainMenu {
     private JProgressBar logProgressBar;
     private JTextField currentTaskTextField;
     private JButton stopFutureRestoreUnsafeButton;
+    private JButton downloadFutureRestoreButton;
 
     private String futureRestoreFilePath;
     private String blobName;
@@ -397,6 +400,14 @@ public class MainMenu {
                 }
 
                 startFutureRestoreButton.setEnabled(true);
+                currentTaskTextField.setText("");
+            }
+        });
+
+        downloadFutureRestoreButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: Download FutureRestore
             }
         });
     }
@@ -567,7 +578,7 @@ public class MainMenu {
 
         System.out.println("Going to run now");
 
-        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField).execute();
+        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton).execute();
 
     }
 

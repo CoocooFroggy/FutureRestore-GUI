@@ -1,7 +1,12 @@
 import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -15,14 +20,16 @@ public class FutureRestoreWorker {
         private JTextArea logTextArea;
         private JProgressBar logProgressBar;
         private JTextField currentTaskTextField;
+        private JButton startFutureRestoreButton;
 
-        public ProcessWorker(String futureRestoreFilePath, ArrayList<String> allArgs, JPanel mainMenuView, JTextArea logTextArea, JProgressBar logProgressBar, JTextField currentTaskTextField) {
+        public ProcessWorker(String futureRestoreFilePath, ArrayList<String> allArgs, JPanel mainMenuView, JTextArea logTextArea, JProgressBar logProgressBar, JTextField currentTaskTextField, JButton startFutureRestoreButton) {
             this.futureRestoreFilePath = futureRestoreFilePath;
             this.allArgs = allArgs;
             this.mainMenuView = mainMenuView;
             this.logTextArea = logTextArea;
             this.logProgressBar = logProgressBar;
             this.currentTaskTextField = currentTaskTextField;
+            this.startFutureRestoreButton = startFutureRestoreButton;
         }
 
         public static Process futureRestoreProcess;
@@ -39,13 +46,17 @@ public class FutureRestoreWorker {
             processBuilder.redirectErrorStream(true);
             futureRestoreProcess = processBuilder.start();
 
-            final Thread ioThread = new Thread() {
+            futureRestoreProcess.getOutputStream().close();
+            futureRestoreProcess.getErrorStream().close();
+
+            final Thread thread = new Thread() {
                 @Override
                 public void run() {
                     // Read Process Stream Output
                     BufferedReader reader = new BufferedReader(new InputStreamReader(futureRestoreProcess.getInputStream()));
+
                     String line = null;
-                    while (true) {
+                    while (futureRestoreProcess.isAlive()) {
                         try {
                             if ((line = reader.readLine()) == null) break;
                         } catch (IOException e) {
@@ -79,14 +90,28 @@ public class FutureRestoreWorker {
                                                 case "9043985": {
                                                     if (!hasRecoveryRestarted) {
                                                         hasRecoveryRestarted = true;
-                                                        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField).execute();
+                                                        //Ensure current process is killed
+                                                        if (futureRestoreProcess.isAlive())
+                                                            futureRestoreProcess.destroy();
+                                                        //Restart
+                                                        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton).execute();
                                                         return;
                                                     }
                                                     break;
                                                 }
-                                                //iBec Error
+                                                //iBEC Error
                                                 case "64684049": {
-                                                    //TODO: popup and link to ibec
+                                                    Object[] choices = {"Open link", "Ok"};
+                                                    Object defaultChoice = choices[0];
+
+                                                    int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an iBEC error. This is a common error and easily fixable.\n" +
+                                                            "A solution for this error is available here:\n" +
+                                                            "https://github.com/marijuanARM/futurerestore#restoring-on-windows-10", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+                                                    if (response == JOptionPane.YES_OPTION) {
+                                                        openWebpage("https://github.com/marijuanARM/futurerestore#restoring-on-windows-10");
+                                                    }
+
+                                                    break;
                                                 }
                                             }
                                             break;
@@ -119,8 +144,8 @@ public class FutureRestoreWorker {
                             logTextArea.append(line + "\n");
                         }
 
+                        //If it is a progress bar
                         if (line.contains("[A")) {
-                            //If it is a progress bar
                             Pattern pattern = Pattern.compile("\u001B\\[A\u001B\\[J([0-9]{3})");
                             Matcher progressBarMatcher = pattern.matcher(line);
                             if (progressBarMatcher.find()) {
@@ -128,9 +153,13 @@ public class FutureRestoreWorker {
                                 logProgressBar.setValue(Integer.parseInt(progressBarMatcher.group(1)));
                             }
                         } else {
+                            logProgressBar.setValue(0);
                             logTextArea.append(line + "\n");
                         }
+
+
                     }
+                    System.out.println("Done reading, closing reader");
                     try {
                         reader.close();
                     } catch (IOException e) {
@@ -138,11 +167,37 @@ public class FutureRestoreWorker {
                     }
                 }
             };
-            ioThread.start();
+            thread.start();
             futureRestoreProcess.waitFor();
             System.out.println("Killing futurerestore");
+            startFutureRestoreButton.setEnabled(true);
+
             return null;
         }
 
+    }
+
+    /*
+    * Utilities *
+     */
+
+    public static boolean openWebpage(String uriString) {
+        URI uri = null;
+        try {
+            uri = new URI(uriString);
+        } catch (URISyntaxException e) {
+            System.out.println("Unable to create link for " + uriString);
+            e.printStackTrace();
+        }
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                desktop.browse(uri);
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 }
