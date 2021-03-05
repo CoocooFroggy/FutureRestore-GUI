@@ -4,23 +4,22 @@
 ![Github issues](https://img.shields.io/github/issues/JohnnnnyKlayy/FutureRestore-GUI.svg)
 ![Github repo size](https://img.shields.io/github/repo-size/JohnnnnyKlayy/FutureRestore-GUI.svg)
 
-
-A GUI implementation for futurerestore written in Java
+A GUI implementation for FutureRestore written in Java
 
 ## Installation
 
-Download from releases tab [here](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/releases) (Requires Java 8 for universal build) and futurerestore from [here](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/releases)
+Download from [releases](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/releases). Java 8 required for both Mac and Universal apps.
 
 
 ## Usage
 
-Cloning the repository:
+Download [FutureRestore](https://github.com/marijuanARM/futurerestore/releases). Download target iPSW from [iPSW.me](https://ipsw.me) or [iPSW.dev](https://ipsw.dev).
 
-```java
+## Contributing
+
+Cloning the repository:
+```
 git clone https://github.com/JohnnnnyKlayy/FutureRestore-GUI.git
 ```
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
+Pull requests are welcome. For major feature requests, please open an issue to discuss what improvements you would like to see.
