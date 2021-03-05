@@ -3,6 +3,10 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.google.gson.Gson;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
+import com.sun.tools.jdeps.Archive;
+import net.lingala.zip4j.ZipFile;
+import org.rauschig.jarchivelib.Archiver;
+import org.rauschig.jarchivelib.ArchiverFactory;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -11,10 +15,7 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class MainMenu {
     private JProgressBar logProgressBar;
     private JTextField currentTaskTextField;
     private JButton stopFutureRestoreUnsafeButton;
+    private JButton downloadFutureRestoreButton;
 
     private String futureRestoreFilePath;
     private String blobName;
@@ -384,12 +386,63 @@ public class MainMenu {
         stopFutureRestoreUnsafeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Process futureRestoreProcess = FutureRestoreWorker.ProcessWorker.futureRestoreProcess;
+                Process futureRestoreProcess = FutureRestoreWorker.futureRestoreProcess;
 
-                if (futureRestoreProcess != null)
-                    futureRestoreProcess.destroy();
+                if (futureRestoreProcess != null) {
+                    if (futureRestoreProcess.isAlive()) {
+                        int response = JOptionPane.showConfirmDialog(mainMenuView, "Are you sure you want to stop FutureRestore? This is considered unsafe if the device is currently restoring.", "Stop FutureRestore?", JOptionPane.YES_NO_OPTION);
+                        if (response == JOptionPane.YES_OPTION) {
+                            futureRestoreProcess.destroy();
+                            appendToLog("FutureRestore process killed.");
+                        }
+                    }
+                }
 
                 startFutureRestoreButton.setEnabled(true);
+                currentTaskTextField.setText("");
+            }
+        });
+
+        downloadFutureRestoreButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        currentTaskTextField.setText("Downloading FutureRestore...");
+                        appendToLog("Downloading FutureRestore...");
+                    }
+                });
+                String osName = System.getProperty("os.name");
+                String urlString = null;
+                String downloadName = null;
+                boolean shouldDownload = false;
+                switch (osName) {
+                    case "Mac OS X":
+                        urlString = "https://github.com/marijuanARM/futurerestore/releases/latest/download/futurerestore-v194-macOS.tar.xz";
+                        downloadName = "futurerestore-v194-macOS.tar.xz";
+                        shouldDownload = true;
+                        break;
+                    case "Windows 10":
+                        urlString = "https://github.com/marijuanARM/futurerestore/releases/latest/download/futurerestore-v194-windows.zip";
+                        downloadName = "futurerestore-v194-windows.zip";
+                        shouldDownload = true;
+                        break;
+                }
+
+                if (shouldDownload)
+                    downloadFutureRestore(urlString, downloadName);
+                else {
+                    Object[] choices = {"Open link", "Ok"};
+                    Object defaultChoice = choices[0];
+
+                    int response = JOptionPane.showOptionDialog(mainMenuView, "Unable to determine your operating system. Please download FutureRestore manually for your operating system.\n" +
+                            "https://github.com/marijuanARM/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+                    if (response == JOptionPane.YES_OPTION) {
+                        FutureRestoreWorker.openWebpage("https://github.com/marijuanARM/futurerestore/releases/latest/");
+                    }
+                }
+
             }
         });
     }
@@ -440,6 +493,10 @@ public class MainMenu {
         });
 
     }
+
+    /*
+     * UTILITIES
+     */
 
     static String getSystemTheme() throws IOException {
         //Get light or dark mode
@@ -560,7 +617,14 @@ public class MainMenu {
 
         System.out.println("Going to run now");
 
-        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField).execute();
+        new Thread(() -> {
+            try {
+                FutureRestoreWorker.runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton);
+            } catch (IOException | InterruptedException e) {
+                System.out.println("Unable to start FutureRestore.");
+                e.printStackTrace();
+            }
+        }).start();
 
     }
 
@@ -598,6 +662,110 @@ public class MainMenu {
         System.out.println("Newest version: " + newestTag);
 
         return newestTag;
+    }
+
+    void downloadFutureRestore(String urlString, String downloadName) {
+        //Download asynchronously
+        new Thread(() -> {
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection httpConnection = (HttpURLConnection) (url.openConnection());
+                long completeFileSize = httpConnection.getContentLength();
+
+                BufferedInputStream in = new BufferedInputStream(httpConnection.getInputStream());
+                FileOutputStream fos = new FileOutputStream(downloadName);
+                BufferedOutputStream bout = new BufferedOutputStream(
+                        fos, 1024);
+                byte[] data = new byte[1024];
+                long downloadedFileSize = 0;
+                int x = 0;
+                while ((x = in.read(data, 0, 1024)) >= 0) {
+                    downloadedFileSize += x;
+
+                    // calculate progress
+                    final int currentProgress = (int) ((((double) downloadedFileSize) / ((double) completeFileSize)) * 100000d);
+
+                    // update progress bar
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            logProgressBar.setValue(currentProgress);
+                        }
+                    });
+
+                    bout.write(data, 0, x);
+                }
+                bout.close();
+                in.close();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        currentTaskTextField.setText("");
+                        logProgressBar.setValue(0);
+                        appendToLog("FutureRestore finished downloading.");
+                    }
+                });
+            } catch (IOException e) {
+                System.out.println("Unable to download FutureRestore.");
+                appendToLog("Unable to download FutureRestore.");
+                e.printStackTrace();
+                return;
+            }
+            //Now unzip the file
+            unzipFutureRestore(downloadName);
+        }).start();
+
+    }
+
+    void unzipFutureRestore(String fileName) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                currentTaskTextField.setText("Decompressing FutureRestore...");
+                appendToLog("Decompressing FutureRestore...");
+            }
+        });
+
+        File archive = new File(fileName);
+        File destination = new File("futurerestore");
+        if (fileName.endsWith(".zip")) {
+            Archiver archiver = ArchiverFactory.createArchiver("zip");
+            try {
+                archiver.extract(archive, destination);
+            } catch (IOException e) {
+                System.out.println("Unable to decompress " + fileName);
+                appendToLog("Unable to decompress " + fileName);
+                e.printStackTrace();
+            }
+        } else if (fileName.endsWith(".tar.xz")) {
+            Archiver archiver = ArchiverFactory.createArchiver("tar", "xz");
+            try {
+                archiver.extract(archive, destination);
+            } catch (IOException e) {
+                System.out.println("Unable to decompress " + fileName);
+                appendToLog("Unable to decompress " + fileName);
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Cannot decompress, unknown file format :(");
+            appendToLog("Cannot decompress, unknown file format :(");
+            return;
+        }
+
+        File futureRestoreExecutable = destination.listFiles()[0];
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                currentTaskTextField.setText("");
+                appendToLog("Decompressed FutureRestore");
+                futureRestoreFilePath = futureRestoreExecutable.getAbsolutePath();
+                appendToLog("Set " + futureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
+                //Set name of button to blob file name
+                selectFutureRestoreBinaryExecutableButton.setText("✓ " + futureRestoreExecutable.getName());
+            }
+        });
+
     }
 
     /**
@@ -665,7 +833,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 3;
-        gbc.gridwidth = 5;
+        gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(selectFutureRestoreBinaryExecutableButton, gbc);
         final JLabel label5 = new JLabel();
@@ -910,6 +1078,13 @@ public class MainMenu {
         gbc.gridwidth = 6;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(logProgressBar, gbc);
+        downloadFutureRestoreButton = new JButton();
+        downloadFutureRestoreButton.setText("Download FutureRestore");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 5;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainMenuView.add(downloadFutureRestoreButton, gbc);
     }
 
     /**
