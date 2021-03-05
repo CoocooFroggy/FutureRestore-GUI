@@ -3,8 +3,6 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.google.gson.Gson;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
-import com.sun.tools.jdeps.Archive;
-import net.lingala.zip4j.ZipFile;
 import org.rauschig.jarchivelib.Archiver;
 import org.rauschig.jarchivelib.ArchiverFactory;
 
