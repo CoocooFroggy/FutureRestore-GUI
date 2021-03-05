@@ -386,8 +386,15 @@ public class MainMenu {
             public void actionPerformed(ActionEvent e) {
                 Process futureRestoreProcess = FutureRestoreWorker.ProcessWorker.futureRestoreProcess;
 
-                if (futureRestoreProcess != null)
-                    futureRestoreProcess.destroy();
+                if (futureRestoreProcess != null) {
+                    if (futureRestoreProcess.isAlive()) {
+                        int response = JOptionPane.showConfirmDialog(mainMenuView, "Are you sure you want to stop FutureRestore? This is considered unsafe if the device is currently restoring.", "Stop FutureRestore?", JOptionPane.YES_NO_OPTION);
+                        if (response == JOptionPane.YES_OPTION) {
+                            futureRestoreProcess.destroy();
+                            appendToLog("FutureRestore process killed.");
+                        }
+                    }
+                }
 
                 startFutureRestoreButton.setEnabled(true);
             }
