@@ -169,7 +169,7 @@ public class MainMenu {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //Disable interaction
-                mainMenuView.setEnabled(false);
+                startFutureRestoreButton.setEnabled(false);
 
                 //Ensure they have FutureRestore selected
                 if (futureRestoreFilePath == null) {
@@ -239,7 +239,10 @@ public class MainMenu {
 
                 } catch (IOException ioException) {
                     System.out.println("Unable to check FutureRestore version.");
+                    JOptionPane.showMessageDialog(mainMenuView, "Unable to run FutureRestore. Ensure you selected the correct FutureRestore executable.", "Error", JOptionPane.ERROR_MESSAGE);
                     ioException.printStackTrace();
+                    startFutureRestoreButton.setEnabled(true);
+                    return;
                 }
 
                 if (version == null) {
@@ -303,6 +306,10 @@ public class MainMenu {
                 }
 
                 allArgs.add(targetIpswPath);
+
+                //Set current task to starting...
+                currentTaskTextField.setText("Starting FutureRestore...");
+                appendToLog("Make sure to hit \"trust\" on your device if prompted!");
 
                 //Run command
                 runCommand(allArgs);
@@ -381,6 +388,8 @@ public class MainMenu {
 
                 if (futureRestoreProcess != null)
                     futureRestoreProcess.destroy();
+
+                startFutureRestoreButton.setEnabled(true);
             }
         });
     }
@@ -551,7 +560,7 @@ public class MainMenu {
 
         System.out.println("Going to run now");
 
-        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath, allArgs, logTextArea, logProgressBar, currentTaskTextField).execute();
+        new FutureRestoreWorker.ProcessWorker(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField).execute();
 
     }
 
@@ -873,17 +882,19 @@ public class MainMenu {
         gbc.gridx = 0;
         gbc.gridy = 14;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(0, 10, 0, 10);
+        gbc.insets = new Insets(15, 10, 15, 10);
         mainMenuView.add(label8, gbc);
         currentTaskTextField = new JTextField();
         currentTaskTextField.setEditable(false);
+        Font currentTaskTextFieldFont = this.$$$getFont$$$(null, -1, 18, currentTaskTextField.getFont());
+        if (currentTaskTextFieldFont != null) currentTaskTextField.setFont(currentTaskTextFieldFont);
         currentTaskTextField.setHorizontalAlignment(0);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 14;
         gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(currentTaskTextField, gbc);
         stopFutureRestoreUnsafeButton = new JButton();
         stopFutureRestoreUnsafeButton.setText("Stop FutureRestore (Unsafe)");
