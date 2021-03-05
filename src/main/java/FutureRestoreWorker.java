@@ -75,6 +75,7 @@ public class FutureRestoreWorker {
                                         case 12: {
                                             //Parse error codes
                                             switch (matcher.group(12)) {
+                                                //Unable to enter recovery mode
                                                 case "9043985": {
                                                     if (!hasRecoveryRestarted) {
                                                         hasRecoveryRestarted = true;
@@ -82,6 +83,10 @@ public class FutureRestoreWorker {
                                                         return;
                                                     }
                                                     break;
+                                                }
+                                                //iBec Error
+                                                case "64684049": {
+                                                    //TODO: popup and link to ibec
                                                 }
                                             }
                                             break;
