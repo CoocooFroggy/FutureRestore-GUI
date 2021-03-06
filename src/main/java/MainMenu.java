@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -499,8 +500,8 @@ public class MainMenu {
     static String getSystemTheme() throws IOException {
         //Get light or dark mode
         //If on mac
-        String mode;
-        if (System.getProperty("os.name").equals("Mac OS X")) {
+        String operatingSystem = System.getProperty("os.name").toLowerCase();
+        if (operatingSystem.contains("mac")) {
             Process process = Runtime.getRuntime().exec("defaults read -g AppleInterfaceStyle");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String macTheme = reader.readLine();
@@ -510,7 +511,7 @@ public class MainMenu {
             } else {
                 return "mac";
             }
-        } else {
+        } else if (operatingSystem.contains("win")) {
             final String REGISTRY_PATH = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
             final String REGISTRY_VALUE = "AppsUseLightTheme";
             if
@@ -519,6 +520,8 @@ public class MainMenu {
                 return "dark";
             else
                 return "light";
+        } else {
+            return "light";
         }
 
     }
@@ -618,7 +621,7 @@ public class MainMenu {
         new Thread(() -> {
             try {
                 FutureRestoreWorker.runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton);
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException | InterruptedException | TimeoutException e) {
                 System.out.println("Unable to start FutureRestore.");
                 e.printStackTrace();
             }

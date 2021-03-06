@@ -28,6 +28,7 @@ dependencies {
     implementation 'net.lingala.zip4j:zip4j:2.7.0'
     implementation group: 'org.tukaani', name: 'xz', version: '1.8'
     implementation group: 'org.rauschig', name: 'jarchivelib', version: '0.7.1'
+    implementation 'org.zeroturnaround:zt-exec:1.12'
 }
 
 test {
