@@ -405,13 +405,6 @@ public class MainMenu {
         downloadFutureRestoreButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        currentTaskTextField.setText("Downloading FutureRestore...");
-                        appendToLog("Downloading FutureRestore...");
-                    }
-                });
                 String osName = System.getProperty("os.name");
                 String urlString = null;
                 String downloadName = null;
@@ -429,8 +422,16 @@ public class MainMenu {
                         break;
                 }
 
-                if (shouldDownload)
+                if (shouldDownload) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            currentTaskTextField.setText("Downloading FutureRestore...");
+                            appendToLog("Downloading FutureRestore...");
+                        }
+                    });
                     downloadFutureRestore(urlString, downloadName);
+                }
                 else {
                     Object[] choices = {"Open link", "Ok"};
                     Object defaultChoice = choices[0];
