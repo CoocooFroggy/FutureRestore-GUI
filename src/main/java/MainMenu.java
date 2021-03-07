@@ -617,7 +617,7 @@ public class MainMenu {
 
     void runCommand(ArrayList<String> allArgs) {
 
-        System.out.println("Going to run now");
+        System.out.println("Starting FutureRestore...");
 
         new Thread(() -> {
             try {
