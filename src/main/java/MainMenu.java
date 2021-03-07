@@ -3,6 +3,7 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.google.gson.Gson;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
+import net.lingala.zip4j.util.FileUtils;
 import org.rauschig.jarchivelib.Archiver;
 import org.rauschig.jarchivelib.ArchiverFactory;
 
@@ -735,9 +736,21 @@ public class MainMenu {
         new Thread(() -> {
             String homeDirectory = System.getProperty("user.home");
             File frGuiDir = new File(homeDirectory + "/FutureRestoreGUI/");
+
+            //Wipe the directory
+            try {
+                Process process = Runtime.getRuntime().exec("rm -r " + frGuiDir);
+                process.waitFor();
+            } catch (IOException | InterruptedException e) {
+                System.out.println("Unable to wipe FutureRestoreGUI directory.");
+                e.printStackTrace();
+            }
+
+            //Make directory to store files
             if (!frGuiDir.exists()) {
                 frGuiDir.mkdir();
             }
+
             String finalFrPath = homeDirectory + "/FutureRestoreGUI/";
             String zipPath = finalFrPath + downloadName;
             try {
@@ -800,7 +813,7 @@ public class MainMenu {
         });
 
         File archive = new File(filePath);
-        File destination = new File(finalFrPath);
+        File destination = new File(finalFrPath + "extracted/");
         if (archive.getName().endsWith(".zip")) {
             Archiver archiver = ArchiverFactory.createArchiver("zip");
             try {
@@ -827,15 +840,34 @@ public class MainMenu {
 
         File futureRestoreExecutable = destination.listFiles()[0];
 
+        if (futureRestoreExecutable == null) {
+            System.out.println("Unable to decompress " + filePath);
+            appendToLog("Unable to decompress " + filePath);
+            return;
+        }
+
+        //Make FutureRestore executable
+        Process process = null;
+        try {
+            process = Runtime.getRuntime().exec("chmod +x " + futureRestoreExecutable);
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Unable to make FutureRestore executable.");
+            appendToLog("Unable to make FutureRestore executable.");
+            e.printStackTrace();
+        }
+
+
+        File finalFutureRestoreExecutable = futureRestoreExecutable;
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 currentTaskTextField.setText("");
                 appendToLog("Decompressed FutureRestore");
-                futureRestoreFilePath = futureRestoreExecutable.getAbsolutePath();
-                appendToLog("Set " + futureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
+                futureRestoreFilePath = finalFutureRestoreExecutable.getAbsolutePath();
+                appendToLog("Set " + finalFutureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
                 //Set name of button to blob file name
-                selectFutureRestoreBinaryExecutableButton.setText("✓ " + futureRestoreExecutable.getName());
+                selectFutureRestoreBinaryExecutableButton.setText("✓ " + finalFutureRestoreExecutable.getName());
             }
         });
 
