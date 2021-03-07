@@ -24,6 +24,8 @@ jobs:
       run: ./gradlew build
     - name: Build artifact
       run: ./gradlew shadowjar
+    - name: Make executable
+      run: chmod +x build/libs/FutureRestore\ GUI-1.0-all.jar
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
