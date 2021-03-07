@@ -431,8 +431,7 @@ public class MainMenu {
                         }
                     });
                     downloadFutureRestore(urlString, downloadName);
-                }
-                else {
+                } else {
                     Object[] choices = {"Open link", "Ok"};
                     Object defaultChoice = choices[0];
 
@@ -669,13 +668,20 @@ public class MainMenu {
     void downloadFutureRestore(String urlString, String downloadName) {
         //Download asynchronously
         new Thread(() -> {
+            String homeDirectory = System.getProperty("user.home");
+            File frGuiDir = new File(homeDirectory + "/FutureRestoreGUI/");
+            if (!frGuiDir.exists()) {
+                frGuiDir.mkdir();
+            }
+            String finalFrPath = homeDirectory + "/FutureRestoreGUI/";
+            String zipPath = finalFrPath + downloadName;
             try {
                 URL url = new URL(urlString);
                 HttpURLConnection httpConnection = (HttpURLConnection) (url.openConnection());
                 long completeFileSize = httpConnection.getContentLength();
 
                 BufferedInputStream in = new BufferedInputStream(httpConnection.getInputStream());
-                FileOutputStream fos = new FileOutputStream(downloadName);
+                FileOutputStream fos = new FileOutputStream(zipPath);
                 BufferedOutputStream bout = new BufferedOutputStream(
                         fos, 1024);
                 byte[] data = new byte[1024];
@@ -714,12 +720,12 @@ public class MainMenu {
                 return;
             }
             //Now unzip the file
-            unzipFutureRestore(downloadName);
+            unzipFutureRestore(zipPath, finalFrPath);
         }).start();
 
     }
 
-    void unzipFutureRestore(String fileName) {
+    void unzipFutureRestore(String filePath, String finalFrPath) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -728,24 +734,24 @@ public class MainMenu {
             }
         });
 
-        File archive = new File(fileName);
-        File destination = new File("futurerestore");
-        if (fileName.endsWith(".zip")) {
+        File archive = new File(filePath);
+        File destination = new File(finalFrPath);
+        if (archive.getName().endsWith(".zip")) {
             Archiver archiver = ArchiverFactory.createArchiver("zip");
             try {
                 archiver.extract(archive, destination);
             } catch (IOException e) {
-                System.out.println("Unable to decompress " + fileName);
-                appendToLog("Unable to decompress " + fileName);
+                System.out.println("Unable to decompress " + filePath);
+                appendToLog("Unable to decompress " + filePath);
                 e.printStackTrace();
             }
-        } else if (fileName.endsWith(".tar.xz")) {
+        } else if (archive.getName().endsWith(".tar.xz")) {
             Archiver archiver = ArchiverFactory.createArchiver("tar", "xz");
             try {
                 archiver.extract(archive, destination);
             } catch (IOException e) {
-                System.out.println("Unable to decompress " + fileName);
-                appendToLog("Unable to decompress " + fileName);
+                System.out.println("Unable to decompress " + filePath);
+                appendToLog("Unable to decompress " + filePath);
                 e.printStackTrace();
             }
         } else {
