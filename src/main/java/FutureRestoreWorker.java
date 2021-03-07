@@ -22,21 +22,12 @@ public class FutureRestoreWorker {
         argsAndFR.add(0, futureRestoreFilePath);
         String[] allArgsArray = Arrays.copyOf(argsAndFR.toArray(), argsAndFR.toArray().length, String[].class);
 
-//        new ProcessExecutor().command(allArgsArray)
-//                .redirectOutput(new LogOutputStream() {
-//                    @Override
-//                    protected void processLine(String line) {
-//                        System.out.println(line);
-//                    }
-//                })
-//                .execute();
-
         processBuilder.command(allArgsArray);
         processBuilder.redirectErrorStream(true);
         futureRestoreProcess = processBuilder.start();
 
-        futureRestoreProcess.getOutputStream().close();
-        futureRestoreProcess.getErrorStream().close();
+//        futureRestoreProcess.getOutputStream().close();
+//        futureRestoreProcess.getErrorStream().close();
 
         // Read Process Stream Output
         BufferedReader reader = new BufferedReader(new InputStreamReader(futureRestoreProcess.getInputStream()));

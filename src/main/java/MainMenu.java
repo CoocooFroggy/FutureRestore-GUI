@@ -16,10 +16,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -405,43 +402,65 @@ public class MainMenu {
         downloadFutureRestoreButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                String osName = System.getProperty("os.name");
+                String osName = System.getProperty("os.name").toLowerCase();
                 String urlString = null;
                 String downloadName = null;
-                boolean shouldDownload = false;
-                switch (osName) {
-                    case "Mac OS X":
-                        urlString = "https://github.com/marijuanARM/futurerestore/releases/latest/download/futurerestore-v194-macOS.tar.xz";
-                        downloadName = "futurerestore-v194-macOS.tar.xz";
-                        shouldDownload = true;
-                        break;
-                    case "Windows 10":
-                        urlString = "https://github.com/marijuanARM/futurerestore/releases/latest/download/futurerestore-v194-windows.zip";
-                        downloadName = "futurerestore-v194-windows.zip";
-                        shouldDownload = true;
-                        break;
-                }
 
-                if (shouldDownload) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            currentTaskTextField.setText("Downloading FutureRestore...");
-                            appendToLog("Downloading FutureRestore...");
-                        }
-                    });
-                    downloadFutureRestore(urlString, downloadName);
-                }
-                else {
+                if (osName.contains("mac")) {
+                    try {
+                        Map<String, String> result = getLatestFrDownload("mac");
+                        urlString = result.get("link");
+                        downloadName = result.get("name");
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                        return;
+                    }
+                } else if (osName.contains("win")) {
+                    try {
+                        Map<String, String> result = getLatestFrDownload("win");
+                        urlString = result.get("link");
+                        downloadName = result.get("name");
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                        return;
+                    }
+                } else if (osName.contains("linux")) {
+                    try {
+                        JOptionPane.showMessageDialog(mainMenuView, "Linux OS detected. Ubuntu is the only OS with a working compiled FutureRestore build. Ensure you are running Ubuntu.", "Ubuntu Only", JOptionPane.INFORMATION_MESSAGE);
+                        Map<String, String> result = getLatestFrDownload("ubuntu");
+                        urlString = result.get("link");
+                        downloadName = result.get("name");
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                        return;
+                    }
+                } else {
                     Object[] choices = {"Open link", "Ok"};
                     Object defaultChoice = choices[0];
 
-                    int response = JOptionPane.showOptionDialog(mainMenuView, "Unable to determine your operating system. Please download FutureRestore manually for your operating system.\n" +
+                    int response = JOptionPane.showOptionDialog(mainMenuView, "Unknown operating system detected. Please download FutureRestore manually for your operating system.\n" +
                             "https://github.com/marijuanARM/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
                     if (response == JOptionPane.YES_OPTION) {
                         FutureRestoreWorker.openWebpage("https://github.com/marijuanARM/futurerestore/releases/latest/");
                     }
                 }
+
+                // Pop-up for this error already shown in getLatestFrDownload()
+                if (urlString == null)
+                    return;
+
+
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        currentTaskTextField.setText("Downloading FutureRestore...");
+                        appendToLog("Downloading FutureRestore...");
+                    }
+                });
+                downloadFutureRestore(urlString, downloadName);
 
             }
         });
@@ -617,7 +636,7 @@ public class MainMenu {
 
     void runCommand(ArrayList<String> allArgs) {
 
-        System.out.println("Going to run now");
+        System.out.println("Starting FutureRestore...");
 
         new Thread(() -> {
             try {
@@ -666,16 +685,68 @@ public class MainMenu {
         return newestTag;
     }
 
+    Map<String, String> getLatestFrDownload(String operatingSystem) throws IOException {
+        // operatingSystem = "mac", "windows", "ubuntu"
+
+        Map<String, String> linkNameMap = new HashMap<>();
+
+        URL url = new URL("https://api.github.com/repos/marijuanARM/futurerestore/releases");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        Gson gson = new Gson();
+
+        con.setRequestMethod("GET");
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder content = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+        in.close();
+        con.disconnect();
+        ArrayList<Map<String, Object>> result = gson.fromJson(content.toString(), ArrayList.class);
+
+        Map<String, Object> newestRelease = result.get(0);
+        ArrayList<Map<String, Object>> assets = (ArrayList<Map<String, Object>>) newestRelease.get("assets");
+        //Get asset for our operating system
+        for (Map<String, Object> asset : assets) {
+            String assetName = ((String) asset.get("name"));
+            if (assetName.toLowerCase().contains(operatingSystem)) {
+                linkNameMap.put("link", (String) asset.get("browser_download_url"));
+                linkNameMap.put("name", assetName);
+                return linkNameMap;
+            }
+        }
+        //Pop-up saying "no binaries for your OS available"
+        Object[] choices = {"Open link", "Ok"};
+        Object defaultChoice = choices[0];
+
+        int response = JOptionPane.showOptionDialog(mainMenuView, "No FutureRestore asset found for your operating system. Check releases to see if there's one available.\n" +
+                "https://github.com/marijuanARM/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+        if (response == JOptionPane.YES_OPTION) {
+            FutureRestoreWorker.openWebpage("https://github.com/marijuanARM/futurerestore/releases/latest/");
+        }
+        return linkNameMap;
+    }
+
     void downloadFutureRestore(String urlString, String downloadName) {
         //Download asynchronously
         new Thread(() -> {
+            String homeDirectory = System.getProperty("user.home");
+            File frGuiDir = new File(homeDirectory + "/FutureRestoreGUI/");
+            if (!frGuiDir.exists()) {
+                frGuiDir.mkdir();
+            }
+            String finalFrPath = homeDirectory + "/FutureRestoreGUI/";
+            String zipPath = finalFrPath + downloadName;
             try {
                 URL url = new URL(urlString);
                 HttpURLConnection httpConnection = (HttpURLConnection) (url.openConnection());
                 long completeFileSize = httpConnection.getContentLength();
 
                 BufferedInputStream in = new BufferedInputStream(httpConnection.getInputStream());
-                FileOutputStream fos = new FileOutputStream(downloadName);
+                FileOutputStream fos = new FileOutputStream(zipPath);
                 BufferedOutputStream bout = new BufferedOutputStream(
                         fos, 1024);
                 byte[] data = new byte[1024];
@@ -714,12 +785,12 @@ public class MainMenu {
                 return;
             }
             //Now unzip the file
-            unzipFutureRestore(downloadName);
+            unzipFutureRestore(zipPath, finalFrPath);
         }).start();
 
     }
 
-    void unzipFutureRestore(String fileName) {
+    void unzipFutureRestore(String filePath, String finalFrPath) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -728,24 +799,24 @@ public class MainMenu {
             }
         });
 
-        File archive = new File(fileName);
-        File destination = new File("futurerestore");
-        if (fileName.endsWith(".zip")) {
+        File archive = new File(filePath);
+        File destination = new File(finalFrPath);
+        if (archive.getName().endsWith(".zip")) {
             Archiver archiver = ArchiverFactory.createArchiver("zip");
             try {
                 archiver.extract(archive, destination);
             } catch (IOException e) {
-                System.out.println("Unable to decompress " + fileName);
-                appendToLog("Unable to decompress " + fileName);
+                System.out.println("Unable to decompress " + filePath);
+                appendToLog("Unable to decompress " + filePath);
                 e.printStackTrace();
             }
-        } else if (fileName.endsWith(".tar.xz")) {
+        } else if (archive.getName().endsWith(".tar.xz")) {
             Archiver archiver = ArchiverFactory.createArchiver("tar", "xz");
             try {
                 archiver.extract(archive, destination);
             } catch (IOException e) {
-                System.out.println("Unable to decompress " + fileName);
-                appendToLog("Unable to decompress " + fileName);
+                System.out.println("Unable to decompress " + filePath);
+                appendToLog("Unable to decompress " + filePath);
                 e.printStackTrace();
             }
         } else {
