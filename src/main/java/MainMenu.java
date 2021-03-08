@@ -152,6 +152,7 @@ public class MainMenu {
         startFutureRestoreButton.addActionListener(e -> {
             //Disable interaction
             startFutureRestoreButton.setEnabled(false);
+            stopFutureRestoreUnsafeButton.setText("Stop FutureRestore (Unsafe)");
 
             //Ensure they have FutureRestore selected
             if (futureRestoreFilePath == null) {
@@ -224,6 +225,7 @@ public class MainMenu {
                 JOptionPane.showMessageDialog(mainMenuView, "Unable to run FutureRestore. Ensure you selected the correct FutureRestore executable.", "Error", JOptionPane.ERROR_MESSAGE);
                 ioException.printStackTrace();
                 startFutureRestoreButton.setEnabled(true);
+                stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
                 return;
             }
 
@@ -367,6 +369,7 @@ public class MainMenu {
             }
 
             startFutureRestoreButton.setEnabled(true);
+            stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
             currentTaskTextField.setText("");
         });
 
@@ -422,12 +425,9 @@ public class MainMenu {
                 return;
 
 
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    currentTaskTextField.setText("Downloading FutureRestore...");
-                    appendToLog("Downloading FutureRestore...");
-                }
+            SwingUtilities.invokeLater(() -> {
+                currentTaskTextField.setText("Downloading FutureRestore...");
+                appendToLog("Downloading FutureRestore...");
             });
             downloadFutureRestore(urlString, downloadName, osName);
 
@@ -605,7 +605,7 @@ public class MainMenu {
 
         new Thread(() -> {
             try {
-                FutureRestoreWorker.runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton);
+                FutureRestoreWorker.runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton, stopFutureRestoreUnsafeButton);
             } catch (IOException | InterruptedException | TimeoutException e) {
                 System.out.println("Unable to start FutureRestore.");
                 e.printStackTrace();
@@ -811,16 +811,13 @@ public class MainMenu {
         }
 
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                currentTaskTextField.setText("");
-                appendToLog("Decompressed FutureRestore");
-                futureRestoreFilePath = futureRestoreExecutable.getAbsolutePath();
-                appendToLog("Set " + futureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
-                //Set name of button to blob file name
-                selectFutureRestoreBinaryExecutableButton.setText("✓ " + futureRestoreExecutable.getName());
-            }
+        SwingUtilities.invokeLater(() -> {
+            currentTaskTextField.setText("");
+            appendToLog("Decompressed FutureRestore");
+            futureRestoreFilePath = futureRestoreExecutable.getAbsolutePath();
+            appendToLog("Set " + futureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
+            //Set name of button to blob file name
+            selectFutureRestoreBinaryExecutableButton.setText("✓ " + futureRestoreExecutable.getName());
         });
 
     }

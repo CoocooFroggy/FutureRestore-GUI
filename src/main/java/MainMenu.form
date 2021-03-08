@@ -309,7 +309,7 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Stop FutureRestore (Unsafe)"/>
+          <text value="Stop FutureRestore"/>
         </properties>
       </component>
       <component id="e0dd6" class="javax.swing.JProgressBar" binding="logProgressBar">

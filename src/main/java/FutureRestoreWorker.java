@@ -16,7 +16,7 @@ public class FutureRestoreWorker {
     public static Process futureRestoreProcess;
     static boolean hasRecoveryRestarted = false;
 
-    static void runFutureRestore(String futureRestoreFilePath, ArrayList<String> allArgs, JPanel mainMenuView, JTextArea logTextArea, JProgressBar logProgressBar, JTextField currentTaskTextField, JButton startFutureRestoreButton) throws IOException, InterruptedException, TimeoutException {
+    static void runFutureRestore(String futureRestoreFilePath, ArrayList<String> allArgs, JPanel mainMenuView, JTextArea logTextArea, JProgressBar logProgressBar, JTextField currentTaskTextField, JButton startFutureRestoreButton, JButton stopFutureRestoreButton) throws IOException, InterruptedException, TimeoutException {
         ProcessBuilder processBuilder = new ProcessBuilder();
         ArrayList<String> argsAndFR = (ArrayList<String>) allArgs.clone();
         argsAndFR.add(0, futureRestoreFilePath);
@@ -92,7 +92,7 @@ public class FutureRestoreWorker {
                                             //Restart
                                             new Thread(() -> {
                                                 try {
-                                                    runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton);
+                                                    runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton, stopFutureRestoreButton);
                                                 } catch (IOException | InterruptedException | TimeoutException e) {
                                                     System.out.println("Unable to rerun FutureRestore.");
                                                     e.printStackTrace();
@@ -207,7 +207,11 @@ public class FutureRestoreWorker {
 
         futureRestoreProcess.waitFor();
         System.out.println("FutureRestore process ended.");
-        startFutureRestoreButton.setEnabled(true);
+        SwingUtilities.invokeLater(() -> {
+            startFutureRestoreButton.setEnabled(true);
+            stopFutureRestoreButton.setText("Stop FutureRestore");
+        });
+
     }
 
     /*
