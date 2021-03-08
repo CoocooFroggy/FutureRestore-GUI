@@ -1,4 +1,4 @@
-# Futurerestore GUI (Currently unfinished)
+# Futurerestore GUI
 ![Github CI](https://img.shields.io/github/workflow/status/JohnnnnyKlayy/FutureRestore-GUI/Java%20CI%20with%20Gradle.svg)
 ![Github releases](https://img.shields.io/github/v/release/JohnnnnyKlayy/FutureRestore-GUI?include_prereleases.svg)
 ![Github issues](https://img.shields.io/github/issues/JohnnnnyKlayy/FutureRestore-GUI.svg)
@@ -10,7 +10,11 @@ A GUI implementation for FutureRestore written in Java 8.
 
 ## Installation
 
-Download from [releases](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/releases). Java 8 required for both Mac and Universal builds.
+Download from [releases](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/releases). Java 8 required for Mac, Windows, and Universal builds. Install Java from the [official source](https://www.java.com/download/)
+
+Mac builds work on MacOS.
+Windows builds work on Windows.
+Universal builds work on Mac, Windows, and Linux.
 
 ## Usage
 
