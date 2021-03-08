@@ -107,7 +107,6 @@ public class FutureRestoreWorker {
                                     //iBEC Error
                                     case "64684049": {
                                         Object[] choices = {"Open link", "Ok"};
-                                        Object defaultChoice = choices[0];
 
                                         int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an iBEC error. This is a common error and easily fixable.\n" +
                                                 "A solution for this error is available here:\n" +
@@ -119,9 +118,16 @@ public class FutureRestoreWorker {
                                         break;
                                     }
                                     case "44498961": {
-                                        JOptionPane.showMessageDialog(mainMenuView, "Looks like you got an APTicket—APNonce mismatch error. This is a common error.\n" +
-                                                        "Ensure you've set the correct generator that corresponds with your blob's APNonce on your device and try again.",
-                                                "APTicket does not match APNonce", JOptionPane.WARNING_MESSAGE);
+                                        Object[] choices = {"Open link", "Ok"};
+
+                                        int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an APTicket—APNonce mismatch error. This is a common error.\n" +
+                                                        "Ensure you've set the correct generator that corresponds with your blob's APNonce on your device and try again.\n" +
+                                                        "If you need more help, try the #futurerestore-help channel in the r/jailbreak Discord server.\n" +
+                                                        "https://discord.gg/GaCUYSDGt9",
+                                                "APTicket does not match APNonce", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, choices, choices[0]);
+                                        if (response == JOptionPane.YES_OPTION) {
+                                            openWebpage("https://discord.gg/GaCUYSDGt9");
+                                        }
 
                                         break;
                                     }
