@@ -1,12 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +14,7 @@ public class FutureRestoreWorker {
 
     public static Process futureRestoreProcess;
     static boolean hasRecoveryRestarted = false;
+    private static final Console con = System.console();
 
     static void runFutureRestore(String futureRestoreFilePath, ArrayList<String> allArgs, JPanel mainMenuView, JTextArea logTextArea, JProgressBar logProgressBar, JTextField currentTaskTextField, JButton startFutureRestoreButton, JButton stopFutureRestoreButton) throws IOException, InterruptedException, TimeoutException {
         ProcessBuilder processBuilder = new ProcessBuilder();
@@ -32,21 +32,14 @@ public class FutureRestoreWorker {
         // Read Process Stream Output
         BufferedReader reader = new BufferedReader(new InputStreamReader(futureRestoreProcess.getInputStream()));
 
-        String line = null;
-        while (true) {
-            System.out.println(line);
-            try {
-                if ((line = reader.readLine()) == null) break;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        String line;
+        while ((line = reader.readLine()) != null) {
             //Parse messages
+            Pattern progressBarPattern = Pattern.compile("\u001B\\[A\u001B\\[J([0-9]{3})");
             final Matcher matcher = Pattern.compile("(\\[DOWN\\] downloading file)|(downloading SEP)|(downloading SE firmware)|(downloading Baseband)|(downloading Rose firmware)|(Checking BuildIdentity)|(downloading Savage)|(downloading Veridian DigestMap)|(downloading Veridian FirmwareMap)|(Entering recovery mode)|(code=([0-9]+))|(Extracting BuildManifest from iPSW)|(\\[IMG4TOOL\\] checking hash for)|(Extracting filesystem from iPSW)|(Sending iBEC)|(Sending NORData)|(Unmounting filesystems)|(Sending FDR Trust data now)|(Sending filesystem now)|(Verifying restore)|(Checking filesystems)|(Mounting filesystems)|(Flashing firmware)|(Requesting FUD data)|(Updating baseband)|(Sending SystemImageRootHash now)|(Status: Restore Finished)|(what=(.*))|(Waiting for device to disconnect)|(Connecting to FDR)|(About to send NOR)|(Connecting to ASR)|(waiting for message)").matcher(line);
             if (matcher.find()) {
                 for (int i = 1; i <= matcher.groupCount(); i++) {
                     if (matcher.group(i) != null) {
-                        System.out.println("Matches group " + i);
-
                         switch (i) {
                             case 1:
                                 currentTaskTextField.setText("Downloading firmwares.json...");
@@ -118,7 +111,7 @@ public class FutureRestoreWorker {
                                     }
                                     case "44498961": {
                                         JOptionPane.showMessageDialog(mainMenuView, "Looks like you got an APTicket—APNonce mismatch error. This is a common error.\n" +
-                                                "Ensure you've set the correct generator that corresponds with your blob's APNonce on your device and try again.",
+                                                        "Ensure you've set the correct generator that corresponds with your blob's APNonce on your device and try again.",
                                                 "APTicket does not match APNonce", JOptionPane.WARNING_MESSAGE);
 
                                         break;
@@ -204,8 +197,7 @@ public class FutureRestoreWorker {
 
             //If it is a progress bar
             if (line.contains("[A")) {
-                Pattern pattern = Pattern.compile("\u001B\\[A\u001B\\[J([0-9]{3})");
-                Matcher progressBarMatcher = pattern.matcher(line);
+                Matcher progressBarMatcher = progressBarPattern.matcher(line);
                 if (progressBarMatcher.find()) {
                     //Set progress bar to parsed value
                     logProgressBar.setValue(Integer.parseInt(progressBarMatcher.group(1)));
@@ -214,15 +206,11 @@ public class FutureRestoreWorker {
                 logProgressBar.setValue(0);
                 logTextArea.append(line + "\n");
             }
-
-
         }
+
+
         System.out.println("Done reading, closing reader");
-        try {
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        reader.close();
 
         futureRestoreProcess.waitFor();
         System.out.println("FutureRestore process ended.");

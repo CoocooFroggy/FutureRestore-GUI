@@ -158,6 +158,8 @@ public class MainMenu {
             if (futureRestoreFilePath == null) {
                 JOptionPane.showMessageDialog(mainMenuView, "Please select a FutureRestore executable.", "No FutureRestore Selected", JOptionPane.ERROR_MESSAGE);
                 mainMenuView.setEnabled(true);
+                startFutureRestoreButton.setEnabled(true);
+                stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
                 return;
             }
 
@@ -165,17 +167,23 @@ public class MainMenu {
             if (blobFilePath == null) {
                 JOptionPane.showMessageDialog(mainMenuView, "Select a blob file.", "Error", JOptionPane.ERROR_MESSAGE);
                 mainMenuView.setEnabled(true);
+                startFutureRestoreButton.setEnabled(true);
+                stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
                 return;
             }
             if (targetIpswPath == null) {
                 JOptionPane.showMessageDialog(mainMenuView, "Select an IPSW file.", "Error", JOptionPane.ERROR_MESSAGE);
                 mainMenuView.setEnabled(true);
+                startFutureRestoreButton.setEnabled(true);
+                stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
                 return;
             }
             if (bbState.equals("manual") || sepState.equals("manual")) {
                 if (buildManifestPath == null) {
                     JOptionPane.showMessageDialog(mainMenuView, "Select a BuildManifest file.", "Error", JOptionPane.ERROR_MESSAGE);
                     mainMenuView.setEnabled(true);
+                    startFutureRestoreButton.setEnabled(true);
+                    stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
                     return;
                 }
             }
@@ -844,7 +852,7 @@ public class MainMenu {
         gbc.insets = new Insets(0, 10, 0, 10);
         mainMenuView.add(label1, gbc);
         selectTargetIPSWFileButton = new JButton();
-        selectTargetIPSWFileButton.setText("Select Target IPSW File...");
+        selectTargetIPSWFileButton.setText("Select Target iPSW File...");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 5;
