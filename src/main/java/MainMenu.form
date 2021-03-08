@@ -81,7 +81,7 @@
           <gridbag top="0" left="10" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="by CoocooFroggy — v1.5"/>
+          <text value="by CoocooFroggy — vRC"/>
         </properties>
       </component>
       <component id="35159" class="javax.swing.JSeparator">

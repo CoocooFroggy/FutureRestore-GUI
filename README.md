@@ -6,7 +6,8 @@
 
 A GUI implementation for FutureRestore written in Java 8.
 
-![Screenshot of FutureRestore GUI](.github/FutureRestoreGUI2.png?raw=true "FutureRestore GUI")
+![Screenshot of FutureRestore GUI in Light Theme](.github/FutureRestoreGUILight.png?raw=true "FutureRestore GUI")
+![Screenshot of FutureRestore GUI in Dark Theme](.github/FutureRestoreGUIDark.png?raw=true "FutureRestore GUI")
 
 ## Installation
 
