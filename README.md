@@ -10,7 +10,7 @@ A GUI implementation for FutureRestore written in Java 8.
 
 ## Installation
 
-Download from [releases](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/releases). Java 8 required for Mac, Windows, and Universal builds. Install Java from the [official source](https://www.java.com/download/)
+Download from [releases](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/releases). Java 8 required for Mac, Windows, and Universal builds. Install Java from the [official source](https://www.java.com/download/).
 
 Mac builds work on MacOS.
 Windows builds work on Windows.
