@@ -13,7 +13,13 @@ Download from [releases](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/rele
 
 ## Usage
 
-Download [FutureRestore](https://github.com/marijuanARM/futurerestore/releases). Download target iPSW from [iPSW.me](https://ipsw.me) or [iPSW.dev](https://ipsw.dev).
+See [how to use FutureRestore](https://github.com/marijuanARM/futurerestore#how-to-use).
+
+
+
+## Third-Party Assets
+
+Download FutureRestore using the button included in the GUI, or manually from [here](https://github.com/marijuanARM/futurerestore/releases). Download target iPSW from [iPSW.me](https://ipsw.me) or [iPSW.dev](https://ipsw.dev).
 
 ## Contributing
 

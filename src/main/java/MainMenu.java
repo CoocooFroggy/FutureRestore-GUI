@@ -1119,7 +1119,7 @@ public class MainMenu {
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(currentTaskTextField, gbc);
         stopFutureRestoreUnsafeButton = new JButton();
-        stopFutureRestoreUnsafeButton.setText("Stop FutureRestore (Unsafe)");
+        stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
         gbc = new GridBagConstraints();
         gbc.gridx = 5;
         gbc.gridy = 14;
