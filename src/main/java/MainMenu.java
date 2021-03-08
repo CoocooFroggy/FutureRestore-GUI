@@ -61,409 +61,376 @@ public class MainMenu {
 
     public MainMenu() {
         $$$setupUI$$$();
-        selectFutureRestoreBinaryExecutableButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //Create a file chooser
-                final JFileChooser futureRestoreFileChooser = new JFileChooser();
-                //In response to a button click:
-                int returnVal = futureRestoreFileChooser.showOpenDialog(mainMenuView);
+        selectFutureRestoreBinaryExecutableButton.addActionListener(e -> {
+            //Create a file chooser
+            final JFileChooser futureRestoreFileChooser = new JFileChooser();
+            //In response to a button click:
+            int returnVal = futureRestoreFileChooser.showOpenDialog(mainMenuView);
 
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = futureRestoreFileChooser.getSelectedFile();
-                    //This is where a real application would open the file.
-                    appendToLog("Set " + file.getAbsolutePath() + " to FutureRestore executable.");
-                    futureRestoreFilePath = file.getAbsolutePath();
-                    //Set name of button to blob file name
-                    selectFutureRestoreBinaryExecutableButton.setText("✓ " + file.getName());
-                } else {
-                    System.out.println("Cancelled");
-                }
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = futureRestoreFileChooser.getSelectedFile();
+                //This is where a real application would open the file.
+                appendToLog("Set " + file.getAbsolutePath() + " to FutureRestore executable.");
+                futureRestoreFilePath = file.getAbsolutePath();
+                //Set name of button to blob file name
+                selectFutureRestoreBinaryExecutableButton.setText("✓ " + file.getName());
+            } else {
+                System.out.println("Cancelled");
             }
         });
-        selectBlobFileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //Create a file chooser
-                final JFileChooser blobFileChooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("Blob File (SHSH2)", "shsh2");
-                blobFileChooser.setFileFilter(filter);
-                //In response to a button click:
-                int returnVal = blobFileChooser.showOpenDialog(mainMenuView);
+        selectBlobFileButton.addActionListener(e -> {
+            //Create a file chooser
+            final JFileChooser blobFileChooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Blob File (SHSH2)", "shsh2");
+            blobFileChooser.setFileFilter(filter);
+            //In response to a button click:
+            int returnVal = blobFileChooser.showOpenDialog(mainMenuView);
 
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = blobFileChooser.getSelectedFile();
-                    //This is where a real application would open the file.
-                    appendToLog("Set " + file.getAbsolutePath() + " to SHSH2 blob.");
-                    blobFilePath = file.getAbsolutePath();
-                    blobName = file.getName();
-                    selectBlobFileButton.setText("✓ " + file.getName());
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = blobFileChooser.getSelectedFile();
+                //This is where a real application would open the file.
+                appendToLog("Set " + file.getAbsolutePath() + " to SHSH2 blob.");
+                blobFilePath = file.getAbsolutePath();
+                blobName = file.getName();
+                selectBlobFileButton.setText("✓ " + file.getName());
 
-                } else {
-                    System.out.println("Cancelled");
-                }
-
+            } else {
+                System.out.println("Cancelled");
             }
-        });
-        selectTargetIPSWFileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //Create a file chooser
-                final JFileChooser targetIpswFileChooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("iOS Firmware (IPSW)", "ipsw");
-                targetIpswFileChooser.setFileFilter(filter);
-                //In response to a button click:
-                int returnVal = targetIpswFileChooser.showOpenDialog(mainMenuView);
 
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = targetIpswFileChooser.getSelectedFile();
-                    //This is where a real application would open the file.
-                    appendToLog("Set " + file.getAbsolutePath() + " to target IPSW.");
-                    targetIpswPath = file.getAbsolutePath();
-                    targetIpswName = file.getName();
-                    //Set name of button to ipsw file name
-                    selectTargetIPSWFileButton.setText("✓ " + file.getName());
-                } else {
-                    System.out.println("Cancelled");
-                }
+        });
+        selectTargetIPSWFileButton.addActionListener(e -> {
+            //Create a file chooser
+            final JFileChooser targetIpswFileChooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("iOS Firmware (IPSW)", "ipsw");
+            targetIpswFileChooser.setFileFilter(filter);
+            //In response to a button click:
+            int returnVal = targetIpswFileChooser.showOpenDialog(mainMenuView);
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = targetIpswFileChooser.getSelectedFile();
+                //This is where a real application would open the file.
+                appendToLog("Set " + file.getAbsolutePath() + " to target IPSW.");
+                targetIpswPath = file.getAbsolutePath();
+                targetIpswName = file.getName();
+                //Set name of button to ipsw file name
+                selectTargetIPSWFileButton.setText("✓ " + file.getName());
+            } else {
+                System.out.println("Cancelled");
             }
         });
 
-        selectBuildManifestButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //Create a file chooser
-                final JFileChooser buildManifestFileChooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("BuildManifest (plist)", "plist");
-                buildManifestFileChooser.setFileFilter(filter);
-                //In response to a button click:
-                int returnVal = buildManifestFileChooser.showOpenDialog(mainMenuView);
+        selectBuildManifestButton.addActionListener(e -> {
+            //Create a file chooser
+            final JFileChooser buildManifestFileChooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("BuildManifest (plist)", "plist");
+            buildManifestFileChooser.setFileFilter(filter);
+            //In response to a button click:
+            int returnVal = buildManifestFileChooser.showOpenDialog(mainMenuView);
 
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = buildManifestFileChooser.getSelectedFile();
-                    //This is where a real application would open the file.
-                    appendToLog("Set " + file.getAbsolutePath() + " to BuildManinfest.");
-                    buildManifestPath = file.getAbsolutePath();
-                    //Set name of button to ipsw file name
-                    selectBuildManifestButton.setText("✓ " + file.getName());
-                } else {
-                    System.out.println("Cancelled");
-                }
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = buildManifestFileChooser.getSelectedFile();
+                //This is where a real application would open the file.
+                appendToLog("Set " + file.getAbsolutePath() + " to BuildManinfest.");
+                buildManifestPath = file.getAbsolutePath();
+                //Set name of button to ipsw file name
+                selectBuildManifestButton.setText("✓ " + file.getName());
+            } else {
+                System.out.println("Cancelled");
             }
         });
 
-        ActionListener optionsListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                optionUpdateState = updateUCheckBox.isSelected();
-                optionWaitState = waitWCheckBox.isSelected();
-                optionDebugState = debugDCheckBox.isSelected();
-            }
+        ActionListener optionsListener = e -> {
+            optionUpdateState = updateUCheckBox.isSelected();
+            optionWaitState = waitWCheckBox.isSelected();
+            optionDebugState = debugDCheckBox.isSelected();
         };
         updateUCheckBox.addActionListener(optionsListener);
         waitWCheckBox.addActionListener(optionsListener);
         debugDCheckBox.addActionListener(optionsListener);
 
-        startFutureRestoreButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //Disable interaction
-                startFutureRestoreButton.setEnabled(false);
+        startFutureRestoreButton.addActionListener(e -> {
+            //Disable interaction
+            startFutureRestoreButton.setEnabled(false);
 
-                //Ensure they have FutureRestore selected
-                if (futureRestoreFilePath == null) {
-                    JOptionPane.showMessageDialog(mainMenuView, "Please select a FutureRestore executable.", "No FutureRestore Selected", JOptionPane.ERROR_MESSAGE);
-                    mainMenuView.setEnabled(true);
-                    return;
-                }
-
-                //Ensure they actually selected a blob, IPSW, and buildmanifest if needed
-                if (blobFilePath == null) {
-                    JOptionPane.showMessageDialog(mainMenuView, "Select a blob file.", "Error", JOptionPane.ERROR_MESSAGE);
-                    mainMenuView.setEnabled(true);
-                    return;
-                }
-                if (targetIpswPath == null) {
-                    JOptionPane.showMessageDialog(mainMenuView, "Select an IPSW file.", "Error", JOptionPane.ERROR_MESSAGE);
-                    mainMenuView.setEnabled(true);
-                    return;
-                }
-                if (bbState.equals("manual") || sepState.equals("manual")) {
-                    if (buildManifestPath == null) {
-                        JOptionPane.showMessageDialog(mainMenuView, "Select a BuildManifest file.", "Error", JOptionPane.ERROR_MESSAGE);
-                        mainMenuView.setEnabled(true);
-                        return;
-                    }
-                }
-
-                //If blob name has a build number in it
-                Pattern blobPattern = Pattern.compile("[0-9]{16}_.*?_.*?_.*?-([0-9A-Z]+)_");
-                Matcher blobMatcher = blobPattern.matcher(blobName);
-                String blobBuild = null;
-                if (blobMatcher.find()) {
-                    System.out.println("Blob build is " + blobMatcher.group(1));
-                    blobBuild = blobMatcher.group(1);
-                }
-
-                //If IPSW has a build name in it
-                Pattern ipswPattern = Pattern.compile(".*?_.*?_([0-9A-Z]+)_");
-                Matcher ipswMatcher = ipswPattern.matcher(targetIpswName);
-                String targetIpswBuild = null;
-                if (ipswMatcher.find()) {
-                    System.out.println("IPSW build is " + ipswMatcher.group(1));
-                    targetIpswBuild = ipswMatcher.group(1);
-                }
-
-                //If they're different
-                if (blobBuild != null && targetIpswBuild != null)
-                    if (!blobBuild.equals(targetIpswBuild)) {
-                        JOptionPane.showMessageDialog(mainMenuView, "The build in your blob name, " + blobBuild + ", does not match the one in the IPSW name, " + targetIpswBuild + ". Ensure you have the right blob and IPSW before continuing.", "Warning", JOptionPane.WARNING_MESSAGE);
-                    }
-
-                //Check FutureRestore version
-                Runtime runtime = Runtime.getRuntime();
-                String version = null;
-                try {
-                    Process process = runtime.exec(futureRestoreFilePath);
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    Pattern pattern = Pattern.compile("Version: [0-9a-z]+ - ([0-9]+)");
-                    String s;
-                    //Only check the first 5 lines
-                    for (int i = 0; i < 5; i++) {
-                        s = bufferedReader.readLine();
-                        Matcher matcher = pattern.matcher(s);
-                        if (matcher.find())
-                            version = matcher.group(1);
-                    }
-
-                } catch (IOException ioException) {
-                    System.out.println("Unable to check FutureRestore version.");
-                    JOptionPane.showMessageDialog(mainMenuView, "Unable to run FutureRestore. Ensure you selected the correct FutureRestore executable.", "Error", JOptionPane.ERROR_MESSAGE);
-                    ioException.printStackTrace();
-                    startFutureRestoreButton.setEnabled(true);
-                    return;
-                }
-
-                if (version == null) {
-                    JOptionPane.showMessageDialog(mainMenuView, "Unable to check FutureRestore version from selected executable. Manually ensure you have the latest version.", "Warning", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    int response = JOptionPane.showConfirmDialog(mainMenuView, "Your FutureRestore's version: v" + version + ". Would you like to ensure this is the latest version on marijuanARM's fork?", "FutureRestore Version", JOptionPane.YES_NO_OPTION);
-                    if (response == JOptionPane.YES_OPTION) {
-                        try {
-                            String latestVersion = getLatestFutureRestore();
-                            if (version.equals(latestVersion)) {
-                                JOptionPane.showMessageDialog(mainMenuView, "You're up to date! The latest version is " + latestVersion + ".");
-                            } else {
-                                JOptionPane.showMessageDialog(mainMenuView, "You're not on the latest version. The latest version is " + latestVersion + ", and you're on " + version + ".", "Version Mismatch", JOptionPane.WARNING_MESSAGE);
-                            }
-                        } catch (IOException ioException) {
-                            System.out.println("Unable to check for latest FutureRestore");
-                            JOptionPane.showMessageDialog(mainMenuView, "Unable to fetch FutureRestore's latest version. Manually check that " + version + " is the latest.", "Unable to Fetch Version", JOptionPane.WARNING_MESSAGE);
-                            ioException.printStackTrace();
-                        }
-                    }
-                }
-
-                //Build their final command
-                ArrayList<String> allArgs = new ArrayList<>();
-
-                allArgs.add("-t");
-                allArgs.add(blobFilePath);
-
-                if (optionUpdateState)
-                    allArgs.add("-u");
-                if (optionWaitState)
-                    allArgs.add("-w");
-                if (optionDebugState)
-                    allArgs.add("-d");
-
-                switch (sepState) {
-                    case "latest":
-                        allArgs.add("--latest-sep");
-                        break;
-                    case "manual":
-                        allArgs.add("-s");
-                        allArgs.add(sepFilePath);
-                        allArgs.add("-m");
-                        allArgs.add(buildManifestPath);
-                        break;
-                }
-
-                switch (bbState) {
-                    case "latest":
-                        allArgs.add("--latest-baseband");
-                        break;
-                    case "manual":
-                        allArgs.add("-b");
-                        allArgs.add(basebandFilePath);
-                        allArgs.add("-p");
-                        allArgs.add(buildManifestPath);
-                        break;
-                    case "none":
-                        allArgs.add("--no-baseband");
-                        break;
-                }
-
-                allArgs.add(targetIpswPath);
-
-                //Set current task to starting...
-                currentTaskTextField.setText("Starting FutureRestore...");
-                appendToLog("Make sure to hit \"trust\" on your device if prompted!");
-
-                //Run command
-                runCommand(allArgs);
+            //Ensure they have FutureRestore selected
+            if (futureRestoreFilePath == null) {
+                JOptionPane.showMessageDialog(mainMenuView, "Please select a FutureRestore executable.", "No FutureRestore Selected", JOptionPane.ERROR_MESSAGE);
+                mainMenuView.setEnabled(true);
+                return;
             }
-        });
-        exitRecoveryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //If they haven't selected a futurerestore yet
-                if (futureRestoreFilePath == null) {
-                    JOptionPane.showMessageDialog(mainMenuView, "Please select a FutureRestore executable in order to exit recovery.", "No FutureRestore Selected", JOptionPane.ERROR_MESSAGE);
+
+            //Ensure they actually selected a blob, IPSW, and buildmanifest if needed
+            if (blobFilePath == null) {
+                JOptionPane.showMessageDialog(mainMenuView, "Select a blob file.", "Error", JOptionPane.ERROR_MESSAGE);
+                mainMenuView.setEnabled(true);
+                return;
+            }
+            if (targetIpswPath == null) {
+                JOptionPane.showMessageDialog(mainMenuView, "Select an IPSW file.", "Error", JOptionPane.ERROR_MESSAGE);
+                mainMenuView.setEnabled(true);
+                return;
+            }
+            if (bbState.equals("manual") || sepState.equals("manual")) {
+                if (buildManifestPath == null) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Select a BuildManifest file.", "Error", JOptionPane.ERROR_MESSAGE);
+                    mainMenuView.setEnabled(true);
                     return;
                 }
-
-                runCommand(new ArrayList<>(Arrays.asList("--exit-recovery")));
             }
-        });
-        basebandComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                switch (basebandComboBox.getSelectedItem().toString()) {
-                    case "Latest Baseband":
-                        bbState = "latest";
-                        basebandTextField.setText("✓ (No file)");
-                        if (sepState.equals("latest"))
-                            selectBuildManifestButton.setEnabled(false);
-                        break;
-                    case "Manual Baseband":
-                        if (chooseBbfw()) {
-                            bbState = "manual";
-                            selectBuildManifestButton.setEnabled(true);
+
+            //If blob name has a build number in it
+            Pattern blobPattern = Pattern.compile("[0-9]{16}_.*?_.*?_.*?-([0-9A-Z]+)_");
+            Matcher blobMatcher = blobPattern.matcher(blobName);
+            String blobBuild = null;
+            if (blobMatcher.find()) {
+                System.out.println("Blob build is " + blobMatcher.group(1));
+                blobBuild = blobMatcher.group(1);
+            }
+
+            //If IPSW has a build name in it
+            Pattern ipswPattern = Pattern.compile(".*?_.*?_([0-9A-Z]+)_");
+            Matcher ipswMatcher = ipswPattern.matcher(targetIpswName);
+            String targetIpswBuild = null;
+            if (ipswMatcher.find()) {
+                System.out.println("IPSW build is " + ipswMatcher.group(1));
+                targetIpswBuild = ipswMatcher.group(1);
+            }
+
+            //If they're different
+            if (blobBuild != null && targetIpswBuild != null)
+                if (!blobBuild.equals(targetIpswBuild)) {
+                    JOptionPane.showMessageDialog(mainMenuView, "The build in your blob name, " + blobBuild + ", does not match the one in the IPSW name, " + targetIpswBuild + ". Ensure you have the right blob and IPSW before continuing.", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+
+            //Check FutureRestore version
+            Runtime runtime = Runtime.getRuntime();
+            String version = null;
+            try {
+                Process process = runtime.exec(futureRestoreFilePath);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                Pattern pattern = Pattern.compile("Version: [0-9a-z]+ - ([0-9]+)");
+                String s;
+                //Only check the first 5 lines
+                for (int i = 0; i < 5; i++) {
+                    s = bufferedReader.readLine();
+                    Matcher matcher = pattern.matcher(s);
+                    if (matcher.find())
+                        version = matcher.group(1);
+                }
+
+            } catch (IOException ioException) {
+                System.out.println("Unable to check FutureRestore version.");
+                JOptionPane.showMessageDialog(mainMenuView, "Unable to run FutureRestore. Ensure you selected the correct FutureRestore executable.", "Error", JOptionPane.ERROR_MESSAGE);
+                ioException.printStackTrace();
+                startFutureRestoreButton.setEnabled(true);
+                return;
+            }
+
+            if (version == null) {
+                JOptionPane.showMessageDialog(mainMenuView, "Unable to check FutureRestore version from selected executable. Manually ensure you have the latest version.", "Warning", JOptionPane.ERROR_MESSAGE);
+            } else {
+                int response = JOptionPane.showConfirmDialog(mainMenuView, "Your FutureRestore's version: v" + version + ". Would you like to ensure this is the latest version on marijuanARM's fork?", "FutureRestore Version", JOptionPane.YES_NO_OPTION);
+                if (response == JOptionPane.YES_OPTION) {
+                    try {
+                        String latestVersion = getLatestFutureRestore();
+                        if (version.equals(latestVersion)) {
+                            JOptionPane.showMessageDialog(mainMenuView, "You're up to date! The latest version is " + latestVersion + ".");
                         } else {
-                            bbState = "latest";
-                            basebandComboBox.setSelectedItem("Latest Baseband");
-                            if (sepState.equals("latest"))
-                                selectBuildManifestButton.setEnabled(false);
+                            JOptionPane.showMessageDialog(mainMenuView, "You're not on the latest version. The latest version is " + latestVersion + ", and you're on " + version + ".", "Version Mismatch", JOptionPane.WARNING_MESSAGE);
                         }
-                        break;
-                    case "No Baseband":
-                        bbState = "none";
-                        basebandTextField.setText("✓ (No file)");
-                        if (sepState.equals("latest"))
-                            selectBuildManifestButton.setEnabled(false);
-                        break;
+                    } catch (IOException ioException) {
+                        System.out.println("Unable to check for latest FutureRestore");
+                        JOptionPane.showMessageDialog(mainMenuView, "Unable to fetch FutureRestore's latest version. Manually check that " + version + " is the latest.", "Unable to Fetch Version", JOptionPane.WARNING_MESSAGE);
+                        ioException.printStackTrace();
+                    }
                 }
             }
+
+            //Build their final command
+            ArrayList<String> allArgs = new ArrayList<>();
+
+            allArgs.add("-t");
+            allArgs.add(blobFilePath);
+
+            if (optionUpdateState)
+                allArgs.add("-u");
+            if (optionWaitState)
+                allArgs.add("-w");
+            if (optionDebugState)
+                allArgs.add("-d");
+
+            switch (sepState) {
+                case "latest":
+                    allArgs.add("--latest-sep");
+                    break;
+                case "manual":
+                    allArgs.add("-s");
+                    allArgs.add(sepFilePath);
+                    allArgs.add("-m");
+                    allArgs.add(buildManifestPath);
+                    break;
+            }
+
+            switch (bbState) {
+                case "latest":
+                    allArgs.add("--latest-baseband");
+                    break;
+                case "manual":
+                    allArgs.add("-b");
+                    allArgs.add(basebandFilePath);
+                    allArgs.add("-p");
+                    allArgs.add(buildManifestPath);
+                    break;
+                case "none":
+                    allArgs.add("--no-baseband");
+                    break;
+            }
+
+            allArgs.add(targetIpswPath);
+
+            //Set current task to starting...
+            currentTaskTextField.setText("Starting FutureRestore...");
+            appendToLog("Make sure to hit \"trust\" on your device if prompted!");
+
+            //Run command
+            runCommand(allArgs);
         });
-        sepComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                switch (sepComboBox.getSelectedItem().toString()) {
-                    case "Latest SEP":
+        exitRecoveryButton.addActionListener(e -> {
+            //If they haven't selected a futurerestore yet
+            if (futureRestoreFilePath == null) {
+                JOptionPane.showMessageDialog(mainMenuView, "Please select a FutureRestore executable in order to exit recovery.", "No FutureRestore Selected", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            runCommand(new ArrayList<>(Arrays.asList("--exit-recovery")));
+        });
+        basebandComboBox.addActionListener(e -> {
+            switch (basebandComboBox.getSelectedItem().toString()) {
+                case "Latest Baseband":
+                    bbState = "latest";
+                    basebandTextField.setText("✓ (No file)");
+                    if (sepState.equals("latest"))
+                        selectBuildManifestButton.setEnabled(false);
+                    break;
+                case "Manual Baseband":
+                    if (chooseBbfw()) {
+                        bbState = "manual";
+                        selectBuildManifestButton.setEnabled(true);
+                    } else {
+                        bbState = "latest";
+                        basebandComboBox.setSelectedItem("Latest Baseband");
+                        if (sepState.equals("latest"))
+                            selectBuildManifestButton.setEnabled(false);
+                    }
+                    break;
+                case "No Baseband":
+                    bbState = "none";
+                    basebandTextField.setText("✓ (No file)");
+                    if (sepState.equals("latest"))
+                        selectBuildManifestButton.setEnabled(false);
+                    break;
+            }
+        });
+        sepComboBox.addActionListener(e -> {
+            switch (sepComboBox.getSelectedItem().toString()) {
+                case "Latest SEP":
+                    sepState = "latest";
+                    sepTextField.setText("✓ (No file)");
+                    if (bbState.equals("latest") || bbState.equals("none"))
+                        selectBuildManifestButton.setEnabled(false);
+                    break;
+                case "Manual SEP":
+                    if (chooseSep()) {
+                        sepState = "manual";
+                        selectBuildManifestButton.setEnabled(true);
+                    } else {
                         sepState = "latest";
-                        sepTextField.setText("✓ (No file)");
+                        sepComboBox.setSelectedItem("Latest SEP");
                         if (bbState.equals("latest") || bbState.equals("none"))
                             selectBuildManifestButton.setEnabled(false);
-                        break;
-                    case "Manual SEP":
-                        if (chooseSep()) {
-                            sepState = "manual";
-                            selectBuildManifestButton.setEnabled(true);
-                        } else {
-                            sepState = "latest";
-                            sepComboBox.setSelectedItem("Latest SEP");
-                            if (bbState.equals("latest") || bbState.equals("none"))
-                                selectBuildManifestButton.setEnabled(false);
-                        }
-                        break;
-                }
+                    }
+                    break;
             }
         });
-        stopFutureRestoreUnsafeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Process futureRestoreProcess = FutureRestoreWorker.futureRestoreProcess;
+        stopFutureRestoreUnsafeButton.addActionListener(e -> {
+            Process futureRestoreProcess = FutureRestoreWorker.futureRestoreProcess;
 
-                if (futureRestoreProcess != null) {
-                    if (futureRestoreProcess.isAlive()) {
-                        int response = JOptionPane.showConfirmDialog(mainMenuView, "Are you sure you want to stop FutureRestore? This is considered unsafe if the device is currently restoring.", "Stop FutureRestore?", JOptionPane.YES_NO_OPTION);
-                        if (response == JOptionPane.YES_OPTION) {
-                            futureRestoreProcess.destroy();
-                            appendToLog("FutureRestore process killed.");
-                        }
-                    }
-                }
-
-                startFutureRestoreButton.setEnabled(true);
-                currentTaskTextField.setText("");
-            }
-        });
-
-        downloadFutureRestoreButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                String osName = System.getProperty("os.name").toLowerCase();
-                String urlString = null;
-                String downloadName = null;
-
-                if (osName.contains("mac")) {
-                    try {
-                        Map<String, String> result = getLatestFrDownload("mac");
-                        urlString = result.get("link");
-                        downloadName = result.get("name");
-                    } catch (IOException e) {
-                        JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                        return;
-                    }
-                } else if (osName.contains("win")) {
-                    try {
-                        Map<String, String> result = getLatestFrDownload("win");
-                        urlString = result.get("link");
-                        downloadName = result.get("name");
-                    } catch (IOException e) {
-                        JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                        return;
-                    }
-                } else if (osName.contains("linux")) {
-                    try {
-                        JOptionPane.showMessageDialog(mainMenuView, "Linux OS detected. Ubuntu is the only OS with a working compiled FutureRestore build. Ensure you are running Ubuntu.", "Ubuntu Only", JOptionPane.INFORMATION_MESSAGE);
-                        Map<String, String> result = getLatestFrDownload("ubuntu");
-                        urlString = result.get("link");
-                        downloadName = result.get("name");
-                    } catch (IOException e) {
-                        JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                        return;
-                    }
-                } else {
-                    Object[] choices = {"Open link", "Ok"};
-                    Object defaultChoice = choices[0];
-
-                    int response = JOptionPane.showOptionDialog(mainMenuView, "Unknown operating system detected. Please download FutureRestore manually for your operating system.\n" +
-                            "https://github.com/marijuanARM/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+            if (futureRestoreProcess != null) {
+                if (futureRestoreProcess.isAlive()) {
+                    int response = JOptionPane.showConfirmDialog(mainMenuView, "Are you sure you want to stop FutureRestore? This is considered unsafe if the device is currently restoring.", "Stop FutureRestore?", JOptionPane.YES_NO_OPTION);
                     if (response == JOptionPane.YES_OPTION) {
-                        FutureRestoreWorker.openWebpage("https://github.com/marijuanARM/futurerestore/releases/latest/");
+                        futureRestoreProcess.destroy();
+                        appendToLog("FutureRestore process killed.");
                     }
                 }
-
-                // Pop-up for this error already shown in getLatestFrDownload()
-                if (urlString == null)
-                    return;
-
-
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        currentTaskTextField.setText("Downloading FutureRestore...");
-                        appendToLog("Downloading FutureRestore...");
-                    }
-                });
-                downloadFutureRestore(urlString, downloadName);
-
             }
+
+            startFutureRestoreButton.setEnabled(true);
+            currentTaskTextField.setText("");
+        });
+
+        downloadFutureRestoreButton.addActionListener(event -> {
+            String osName = System.getProperty("os.name").toLowerCase();
+            String urlString = null;
+            String downloadName = null;
+
+            if (osName.contains("mac")) {
+                try {
+                    Map<String, String> result = getLatestFrDownload("mac");
+                    urlString = result.get("link");
+                    downloadName = result.get("name");
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                    return;
+                }
+            } else if (osName.contains("win")) {
+                try {
+                    Map<String, String> result = getLatestFrDownload("win");
+                    urlString = result.get("link");
+                    downloadName = result.get("name");
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                    return;
+                }
+            } else if (osName.contains("linux")) {
+                try {
+                    JOptionPane.showMessageDialog(mainMenuView, "Linux OS detected. Ubuntu is the only OS with a working compiled FutureRestore build. Ensure you are running Ubuntu.", "Ubuntu Only", JOptionPane.INFORMATION_MESSAGE);
+                    Map<String, String> result = getLatestFrDownload("ubuntu");
+                    urlString = result.get("link");
+                    downloadName = result.get("name");
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                    return;
+                }
+            } else {
+                Object[] choices = {"Open link", "Ok"};
+                Object defaultChoice = choices[0];
+
+                int response = JOptionPane.showOptionDialog(mainMenuView, "Unknown operating system detected. Please download FutureRestore manually for your operating system.\n" +
+                        "https://github.com/marijuanARM/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+                if (response == JOptionPane.YES_OPTION) {
+                    FutureRestoreWorker.openWebpage("https://github.com/marijuanARM/futurerestore/releases/latest/");
+                }
+            }
+
+            // Pop-up for this error already shown in getLatestFrDownload()
+            if (urlString == null)
+                return;
+
+
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    currentTaskTextField.setText("Downloading FutureRestore...");
+                    appendToLog("Downloading FutureRestore...");
+                }
+            });
+            downloadFutureRestore(urlString, downloadName, osName);
+
         });
     }
 
@@ -487,29 +454,26 @@ public class MainMenu {
         }
 
         String finalSystemTheme = systemTheme;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JFrame frame = new JFrame("FutureRestore GUI");
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("FutureRestore GUI");
 
-                MainMenu mainMenuInstance = new MainMenu();
+            MainMenu mainMenuInstance = new MainMenu();
 
-                //Auto scroll log
-                new SmartScroller(mainMenuInstance.logScrollPane, SmartScroller.VERTICAL, SmartScroller.END);
+            //Auto scroll log
+            new SmartScroller(mainMenuInstance.logScrollPane, SmartScroller.VERTICAL, SmartScroller.END);
 
-                frame.setContentPane(mainMenuInstance.mainMenuView);
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.pack();
-                frame.setLocationRelativeTo(null);
+            frame.setContentPane(mainMenuInstance.mainMenuView);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
 
-                //Prepare for dark mode
-                if (finalSystemTheme.equals("dark"))
-                    turnDark(mainMenuInstance);
+            //Prepare for dark mode
+            if (finalSystemTheme.equals("dark"))
+                turnDark(mainMenuInstance);
 
-                //Centers it on screen
-                frame.setVisible(true);
+            //Centers it on screen
+            frame.setVisible(true);
 
-            }
         });
 
     }
@@ -651,12 +615,9 @@ public class MainMenu {
     }
 
     void appendToLog(String string) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                logTextArea.append("[" + lineNumber + "] " + string + "\n");
-                lineNumber++;
-            }
+        SwingUtilities.invokeLater(() -> {
+            logTextArea.append("[" + lineNumber + "] " + string + "\n");
+            lineNumber++;
         });
     }
 
@@ -731,7 +692,7 @@ public class MainMenu {
         return linkNameMap;
     }
 
-    void downloadFutureRestore(String urlString, String downloadName) {
+    void downloadFutureRestore(String urlString, String downloadName, String operatingSystem) {
         //Download asynchronously
         new Thread(() -> {
             String homeDirectory = System.getProperty("user.home");
@@ -764,7 +725,7 @@ public class MainMenu {
                         fos, 1024);
                 byte[] data = new byte[1024];
                 long downloadedFileSize = 0;
-                int x = 0;
+                int x;
                 while ((x = in.read(data, 0, 1024)) >= 0) {
                     downloadedFileSize += x;
 
@@ -772,24 +733,16 @@ public class MainMenu {
                     final int currentProgress = (int) ((((double) downloadedFileSize) / ((double) completeFileSize)) * 100000d);
 
                     // update progress bar
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            logProgressBar.setValue(currentProgress);
-                        }
-                    });
+                    SwingUtilities.invokeLater(() -> logProgressBar.setValue(currentProgress));
 
                     bout.write(data, 0, x);
                 }
                 bout.close();
                 in.close();
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        currentTaskTextField.setText("");
-                        logProgressBar.setValue(0);
-                        appendToLog("FutureRestore finished downloading.");
-                    }
+                SwingUtilities.invokeLater(() -> {
+                    currentTaskTextField.setText("");
+                    logProgressBar.setValue(0);
+                    appendToLog("FutureRestore finished downloading.");
                 });
             } catch (IOException e) {
                 System.out.println("Unable to download FutureRestore.");
@@ -798,18 +751,15 @@ public class MainMenu {
                 return;
             }
             //Now unzip the file
-            unzipFutureRestore(zipPath, finalFrPath);
+            unzipFutureRestore(zipPath, finalFrPath, operatingSystem);
         }).start();
 
     }
 
-    void unzipFutureRestore(String filePath, String finalFrPath) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                currentTaskTextField.setText("Decompressing FutureRestore...");
-                appendToLog("Decompressing FutureRestore...");
-            }
+    void unzipFutureRestore(String filePath, String finalFrPath, String operatingSystem) {
+        SwingUtilities.invokeLater(() -> {
+            currentTaskTextField.setText("Decompressing FutureRestore...");
+            appendToLog("Decompressing FutureRestore...");
         });
 
         File archive = new File(filePath);
@@ -846,28 +796,30 @@ public class MainMenu {
             return;
         }
 
-        //Make FutureRestore executable
-        Process process = null;
-        try {
-            process = Runtime.getRuntime().exec("chmod +x " + futureRestoreExecutable);
-            process.waitFor();
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Unable to make FutureRestore executable.");
-            appendToLog("Unable to make FutureRestore executable.");
-            e.printStackTrace();
+        //Only run on MacOS and Linux
+        if (operatingSystem.contains("mac") || operatingSystem.contains("linux")) {
+            //Make FutureRestore executable
+            Process process;
+            try {
+                process = Runtime.getRuntime().exec("chmod +x " + futureRestoreExecutable);
+                process.waitFor();
+            } catch (IOException | InterruptedException e) {
+                System.out.println("Unable to make FutureRestore executable.");
+                appendToLog("Unable to make FutureRestore executable.");
+                e.printStackTrace();
+            }
         }
 
 
-        File finalFutureRestoreExecutable = futureRestoreExecutable;
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 currentTaskTextField.setText("");
                 appendToLog("Decompressed FutureRestore");
-                futureRestoreFilePath = finalFutureRestoreExecutable.getAbsolutePath();
-                appendToLog("Set " + finalFutureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
+                futureRestoreFilePath = futureRestoreExecutable.getAbsolutePath();
+                appendToLog("Set " + futureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
                 //Set name of button to blob file name
-                selectFutureRestoreBinaryExecutableButton.setText("✓ " + finalFutureRestoreExecutable.getName());
+                selectFutureRestoreBinaryExecutableButton.setText("✓ " + futureRestoreExecutable.getName());
             }
         });
 
