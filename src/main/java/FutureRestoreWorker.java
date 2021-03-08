@@ -1,10 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
@@ -31,6 +30,16 @@ public class FutureRestoreWorker {
 
         // Read Process Stream Output
         BufferedReader reader = new BufferedReader(new InputStreamReader(futureRestoreProcess.getInputStream()));
+
+        //Log automatically
+        String homeDirectory = System.getProperty("user.home");
+        File frGuiLogsDirectory = new File(homeDirectory + "/FutureRestoreGUI/logs");
+        if (!frGuiLogsDirectory.exists())
+            frGuiLogsDirectory.mkdir();
+        LocalDateTime dateTime = LocalDateTime.now();
+        String dateTimeString = dateTime.toString().replaceAll(":", ".");
+        System.out.println("Date and time is " + dateTimeString);
+        FileWriter writer = new FileWriter(frGuiLogsDirectory + "/" + "FRLog_" + dateTimeString + ".txt");
 
         String line;
         while ((line = reader.readLine()) != null) {
@@ -192,7 +201,7 @@ public class FutureRestoreWorker {
                         break;
                     }
                 }
-                logTextArea.append(line + "\n");
+                appendToLog(logTextArea, writer, line);
             }
 
             //If it is a progress bar
@@ -204,13 +213,14 @@ public class FutureRestoreWorker {
                 }
             } else {
                 logProgressBar.setValue(0);
-                logTextArea.append(line + "\n");
+                appendToLog(logTextArea, writer, line);
             }
         }
 
 
         System.out.println("Done reading, closing reader");
         reader.close();
+        writer.close();
 
 //        futureRestoreProcess.waitFor();
         System.out.println("FutureRestore process ended.");
@@ -224,6 +234,12 @@ public class FutureRestoreWorker {
     /*
      * Utilities *
      */
+
+    public static void appendToLog(JTextArea logTextArea, FileWriter writer, String string) throws IOException {
+        string += "\n";
+        logTextArea.append(string);
+        writer.append(string);
+    }
 
     public static boolean openWebpage(String uriString) {
         URI uri = null;
