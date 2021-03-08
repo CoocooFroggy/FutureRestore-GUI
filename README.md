@@ -26,14 +26,14 @@ Universal builds work on Mac, Windows, and Linux.
 - Ensures you don't select incorrect files: The program will ensure you have a working FutureRestore build. You can only select .iPSW files for target firmware, .BBFW files for baseband, etc.
 - Option to connect to GitHub and check if your version of FutureRestore is the latest version.
 - **Download FutureRestore** will automatically fetch the latest FutureRestore for your operating system, extract it, and select it.
-- **Exit Recovery** button to run futurerestore --exit recovery
+- **Exit Recovery** button to run `futurerestore --exit recovery`
 - **Stop FutureRestore** to kill the FutureRestore process. Button dynamically changes to "Stop FutureRestore (Unsafe)" while the process is running. Pop-up to confirm killing the process if it's currently running.
 - Automatically launch with **Dark or Light mode theme** (not supported on Linux).
 - **Error parsing** such as iBEC, APTicket-APNonce mismatch, unable to place device in recovery mode. Will show a pop-up with some help and a link on where to get help. 
 ![Error Parsing Example](.github/FutureRestoreGUIiBEC.png?raw=true "FutureRestore GUI iBEC Error")
 - **Automatically retry** FutureRestore only once if error received is "unable to place device in recovery mode."
 - Inline **GUI progress bar** for downloading SEP, BB, Sending Filesystem, etc.
-- Automatically **saves all logs** to /[Home]/FutureRestoreGUI/logs. Never worry about accidentally closing terminal, forgetting to paste your terminal to pastebin, etc.
+- Automatically **saves all logs** to `/[Home]/FutureRestoreGUI/logs`. Never worry about accidentally closing terminal, forgetting to paste your terminal to pastebin, etc.
 - **Current task** text field to simply show what FutureRestore is doing.
 - Log **smart autoscroll** when scrolled to the bottom.
 
