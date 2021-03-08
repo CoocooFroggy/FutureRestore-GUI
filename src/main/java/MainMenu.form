@@ -23,7 +23,7 @@
           <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Select Target IPSW File..."/>
+          <text value="Select Target iPSW File..."/>
         </properties>
       </component>
       <component id="801d1" class="javax.swing.JLabel">
