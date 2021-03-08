@@ -41,7 +41,7 @@ public class FutureRestoreWorker {
                 e.printStackTrace();
             }
             //Parse messages
-            final Matcher matcher = Pattern.compile("(\\[DOWN\\] downloading file)|(downloading SEP)|(downloading SE firmware)|(downloading Baseband)|(downloading Rose firmware)|(Checking BuildIdentity)|(downloading Savage)|(downloading Veridian DigestMap)|(downloading Veridian FirmwareMap)|(Entering recovery mode)|(code=([0-9]+))|(Extracting BuildManifest from iPSW)|(\\[IMG4TOOL\\] checking hash for)|(Extracting filesystem from iPSW)|(Sending iBEC)|(Sending NORData)|(Unmounting filesystems)|(Sending FDR Trust data now)|(Sending filesystem now)|(Verifying restore)|(Checking filesystems)|(Mounting filesystems)|(Flashing firmware)|(Requesting FUD data)|(Updating baseband)|(Sending SystemImageRootHash now)|(Status: Restore Finished)|(what=(.*))|(Waiting for device to disconnect)").matcher(line);
+            final Matcher matcher = Pattern.compile("(\\[DOWN\\] downloading file)|(downloading SEP)|(downloading SE firmware)|(downloading Baseband)|(downloading Rose firmware)|(Checking BuildIdentity)|(downloading Savage)|(downloading Veridian DigestMap)|(downloading Veridian FirmwareMap)|(Entering recovery mode)|(code=([0-9]+))|(Extracting BuildManifest from iPSW)|(\\[IMG4TOOL\\] checking hash for)|(Extracting filesystem from iPSW)|(Sending iBEC)|(Sending NORData)|(Unmounting filesystems)|(Sending FDR Trust data now)|(Sending filesystem now)|(Verifying restore)|(Checking filesystems)|(Mounting filesystems)|(Flashing firmware)|(Requesting FUD data)|(Updating baseband)|(Sending SystemImageRootHash now)|(Status: Restore Finished)|(what=(.*))|(Waiting for device to disconnect)|(Connecting to FDR)|(About to send NOR)|(Connecting to ASR)|(waiting for message)").matcher(line);
             if (matcher.find()) {
                 for (int i = 1; i <= matcher.groupCount(); i++) {
                     if (matcher.group(i) != null) {
@@ -181,6 +181,18 @@ public class FutureRestoreWorker {
                             //Cases 29 and 30 are error messages
                             case 31:
                                 currentTaskTextField.setText("Waiting for device to disconnect...");
+                                break;
+                            case 32:
+                                currentTaskTextField.setText("Connecting to FDR client...");
+                                break;
+                            case 33:
+                                currentTaskTextField.setText("About to send NOR data...");
+                                break;
+                            case 34:
+                                currentTaskTextField.setText("Connecting to ASR...");
+                                break;
+                            case 35:
+                                currentTaskTextField.setText("Waiting for message from FDR...");
                                 break;
                         }
 
