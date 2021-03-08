@@ -1,11 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,14 +15,13 @@ public class FutureRestoreWorker {
 
     public static Process futureRestoreProcess;
     static boolean hasRecoveryRestarted = false;
-    private static final Console con = System.console();
 
     static void runFutureRestore(String futureRestoreFilePath, ArrayList<String> allArgs, JPanel mainMenuView, JTextArea logTextArea, JProgressBar logProgressBar, JTextField currentTaskTextField, JButton startFutureRestoreButton, JButton stopFutureRestoreButton) throws IOException, InterruptedException, TimeoutException {
-        ProcessBuilder processBuilder = new ProcessBuilder();
         ArrayList<String> argsAndFR = (ArrayList<String>) allArgs.clone();
         argsAndFR.add(0, futureRestoreFilePath);
         String[] allArgsArray = Arrays.copyOf(argsAndFR.toArray(), argsAndFR.toArray().length, String[].class);
 
+        ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(allArgsArray);
         processBuilder.redirectErrorStream(true);
         futureRestoreProcess = processBuilder.start();
@@ -212,7 +212,7 @@ public class FutureRestoreWorker {
         System.out.println("Done reading, closing reader");
         reader.close();
 
-        futureRestoreProcess.waitFor();
+//        futureRestoreProcess.waitFor();
         System.out.println("FutureRestore process ended.");
         SwingUtilities.invokeLater(() -> {
             startFutureRestoreButton.setEnabled(true);
