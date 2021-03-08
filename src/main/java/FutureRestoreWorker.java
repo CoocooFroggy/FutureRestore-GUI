@@ -116,6 +116,13 @@ public class FutureRestoreWorker {
 
                                         break;
                                     }
+                                    case "44498961": {
+                                        JOptionPane.showMessageDialog(mainMenuView, "Looks like you got an APTicket—APNonce mismatch error. This is a common error.\n" +
+                                                "Ensure you've set the correct generator that corresponds with your blob's APNonce on your device and try again.",
+                                                "APTicket does not match APNonce", JOptionPane.WARNING_MESSAGE);
+
+                                        break;
+                                    }
                                 }
                                 break;
                             }
