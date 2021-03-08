@@ -20,7 +20,7 @@
       <component id="bfc3f" class="javax.swing.JButton" binding="selectTargetIPSWFileButton" default-binding="true">
         <constraints>
           <grid row="5" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="0.0"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="Select Target iPSW File..."/>
@@ -87,7 +87,7 @@
       <component id="35159" class="javax.swing.JSeparator">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="6" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="14" weightx="0.0" weighty="0.0" ipady="1"/>
+          <gridbag weightx="0.0" weighty="0.0" ipady="1"/>
         </constraints>
         <properties/>
       </component>
@@ -116,7 +116,7 @@
       <component id="87ade" class="javax.swing.JButton" binding="selectBlobFileButton" default-binding="true">
         <constraints>
           <grid row="4" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="0.0"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <hideActionText value="false"/>
@@ -144,7 +144,7 @@
           <grid row="9" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <editable value="false"/>
@@ -168,7 +168,7 @@
           <grid row="10" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <editable value="false"/>
@@ -218,7 +218,7 @@
       <component id="74301" class="javax.swing.JButton" binding="selectBuildManifestButton" default-binding="true">
         <constraints>
           <grid row="12" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <enabled value="false"/>
@@ -306,7 +306,7 @@
       <component id="df6ff" class="javax.swing.JButton" binding="stopFutureRestoreUnsafeButton" default-binding="true">
         <constraints>
           <grid row="14" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="Stop FutureRestore"/>
@@ -322,7 +322,7 @@
       <component id="12b05" class="javax.swing.JButton" binding="downloadFutureRestoreButton" default-binding="true">
         <constraints>
           <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="Download FutureRestore"/>

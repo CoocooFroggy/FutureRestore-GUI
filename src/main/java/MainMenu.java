@@ -857,6 +857,7 @@ public class MainMenu {
         gbc.gridwidth = 5;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(selectTargetIPSWFileButton, gbc);
         final JLabel label2 = new JLabel();
         Font label2Font = this.$$$getFont$$$(null, Font.BOLD, -1, label2.getFont());
@@ -923,7 +924,6 @@ public class MainMenu {
         gbc.gridwidth = 6;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipady = 1;
-        gbc.insets = new Insets(0, 0, 0, 14);
         mainMenuView.add(separator1, gbc);
         logScrollPane = new JScrollPane();
         gbc = new GridBagConstraints();
@@ -955,6 +955,7 @@ public class MainMenu {
         gbc.gridwidth = 5;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(selectBlobFileButton, gbc);
         basebandComboBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
@@ -977,6 +978,7 @@ public class MainMenu {
         gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(basebandTextField, gbc);
         sepComboBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
@@ -998,6 +1000,7 @@ public class MainMenu {
         gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(sepTextField, gbc);
         final JSeparator separator2 = new JSeparator();
         gbc = new GridBagConstraints();
@@ -1050,6 +1053,7 @@ public class MainMenu {
         gbc.gridx = 5;
         gbc.gridy = 12;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(selectBuildManifestButton, gbc);
         updateUCheckBox = new JCheckBox();
         updateUCheckBox.setText("Update (-u)");
@@ -1130,6 +1134,7 @@ public class MainMenu {
         gbc.gridx = 5;
         gbc.gridy = 14;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(stopFutureRestoreUnsafeButton, gbc);
         logProgressBar = new JProgressBar();
         gbc = new GridBagConstraints();
@@ -1144,6 +1149,7 @@ public class MainMenu {
         gbc.gridx = 5;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(downloadFutureRestoreButton, gbc);
     }
 
