@@ -26,7 +26,7 @@ public class FutureRestoreWorker {
         processBuilder.redirectErrorStream(true);
         futureRestoreProcess = processBuilder.start();
 
-//        futureRestoreProcess.getOutputStream().close();
+        futureRestoreProcess.getOutputStream().close();
 //        futureRestoreProcess.getErrorStream().close();
 
         // Read Process Stream Output
