@@ -4,8 +4,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +38,10 @@ public class FutureRestoreWorker {
         LocalDateTime dateTime = LocalDateTime.now();
         String dateTimeString = dateTime.toString().replaceAll(":", ".");
         System.out.println("Date and time is " + dateTimeString);
-        FileWriter writer = new FileWriter(frGuiLogsDirectory + "/" + "FRLog_" + dateTimeString + ".txt");
+
+        String logName = "FRLog_" + dateTimeString + ".txt";
+        String logPath = frGuiLogsDirectory + "/" + logName;
+        FileWriter writer = new FileWriter(logPath);
 
         String line;
         while ((line = reader.readLine()) != null) {
@@ -228,6 +230,10 @@ public class FutureRestoreWorker {
         reader.close();
         writer.close();
 
+        if (MainMenu.properties.getProperty("upload_logs").equals("true")) {
+            uploadLog(logPath, logName);
+        }
+
 //        futureRestoreProcess.waitFor();
         System.out.println("FutureRestore process ended.");
         SwingUtilities.invokeLater(() -> {
@@ -265,5 +271,24 @@ public class FutureRestoreWorker {
             }
         }
         return false;
+    }
+
+    public static void uploadLog(String logPath, String logName) {
+        Map<String, Object> rootJson = new HashMap<>();
+
+        File logFile = new File(logPath);
+        String logString;
+        try {
+            logString = new Scanner(logFile).useDelimiter("\\Z").next();
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to read log.");
+            e.printStackTrace();
+            return;
+        }
+
+        rootJson.put("log", logString);
+        rootJson.put("logName", logName);
+//        rootJson
+
     }
 }
