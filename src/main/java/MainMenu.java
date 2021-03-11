@@ -493,7 +493,7 @@ public class MainMenu {
 
             // Settings Menu
             settingsMenuFrame.setContentPane(settingsMenuInstance.settingsMenuView);
-            //Set settings frame to invisble on close
+            //Set settings frame to invisible on close
             settingsMenuFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
             settingsMenuFrame.pack();
             //Centers it on screen
