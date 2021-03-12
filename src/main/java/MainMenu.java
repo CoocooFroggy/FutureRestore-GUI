@@ -129,7 +129,7 @@ public class MainMenu {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = buildManifestFileChooser.getSelectedFile();
                 //This is where a real application would open the file.
-                appendToLog("Set " + file.getAbsolutePath() + " to BuildManinfest.");
+                appendToLog("Set " + file.getAbsolutePath() + " to BuildManifest.");
                 buildManifestPath = file.getAbsolutePath();
                 //Set name of button to ipsw file name
                 selectBuildManifestButton.setText("✓ " + file.getName());
