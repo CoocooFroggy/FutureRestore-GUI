@@ -274,6 +274,7 @@ public class FutureRestoreWorker {
     }
 
     public static void uploadLog(String logPath, String logName) {
+        String discordName = MainMenu.properties.getProperty("discord_name");
         Map<String, Object> rootJson = new HashMap<>();
 
         File logFile = new File(logPath);
@@ -288,7 +289,8 @@ public class FutureRestoreWorker {
 
         rootJson.put("log", logString);
         rootJson.put("logName", logName);
-//        rootJson
+        rootJson.put("discord", discordName);
+        //TODO: Post request
 
     }
 }

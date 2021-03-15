@@ -491,6 +491,12 @@ public class MainMenu {
             //Centers it on screen
             mainMenuFrame.setLocationRelativeTo(null);
 
+            //load and init prefs
+            initializePreferences();
+
+            // init SettingsMenu
+            SettingsMenu.initializeSettingsMenu(settingsMenuInstance);
+
             // Settings Menu
             settingsMenuFrame.setContentPane(settingsMenuInstance.settingsMenuView);
             //Set settings frame to invisible on close
@@ -502,9 +508,6 @@ public class MainMenu {
             //Prepare for dark mode
             if (finalSystemTheme.equals("dark"))
                 turnDark(mainMenuInstance);
-
-            //load and init prefs
-            initializePreferences();
 
             if (properties.getProperty("upload_logs").equals("true")) {
                 mainMenuInstance.appendToLog("Help improve FutureRestore by sharing logs: Enabled");
@@ -739,14 +742,14 @@ public class MainMenu {
             String homeDirectory = System.getProperty("user.home");
             File frGuiDir = new File(homeDirectory + "/FutureRestoreGUI/");
 
-            //Wipe the directory
+            /*//Wipe the directory
             try {
                 Process process = Runtime.getRuntime().exec("rm -r " + frGuiDir);
                 process.waitFor();
             } catch (IOException | InterruptedException e) {
                 System.out.println("Unable to wipe FutureRestoreGUI directory.");
                 e.printStackTrace();
-            }
+            }*/
 
             //Make directory to store files
             if (!frGuiDir.exists()) {
@@ -892,10 +895,16 @@ public class MainMenu {
         if (properties.getProperty("discord_name") == null)
             properties.setProperty("discord_name", "None");
 
-        savePreferences(prefsFile);
+        if (properties.getProperty("preview_command") == null)
+            properties.setProperty("preview_command", "false");
+
+        savePreferences();
     }
 
-    static void savePreferences(File prefsFile) {
+    static void savePreferences() {
+        String homeDirectory = System.getProperty("user.home");
+        File prefsFile = new File(homeDirectory + "/FutureRestoreGUI/preferences.properties");
+
         FileOutputStream outputStrem;
         try {
             outputStrem = new FileOutputStream(prefsFile);
