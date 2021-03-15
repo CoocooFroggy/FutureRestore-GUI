@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="MainMenu">
   <grid id="27dc6" binding="mainMenuView" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="20" width="783" height="473"/>
+      <xy x="20" y="20" width="813" height="473"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -67,7 +67,7 @@
       </component>
       <component id="37e3d" class="javax.swing.JLabel">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="10" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -81,7 +81,7 @@
           <gridbag top="0" left="10" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="by CoocooFroggy — v1.53"/>
+          <text value="by CoocooFroggy — v1.54"/>
         </properties>
       </component>
       <component id="35159" class="javax.swing.JSeparator">
@@ -215,16 +215,6 @@
           <text value="Debug (-d)"/>
         </properties>
       </component>
-      <component id="74301" class="javax.swing.JButton" binding="selectBuildManifestButton" default-binding="true">
-        <constraints>
-          <grid row="12" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <enabled value="false"/>
-          <text value="Select BuildManifest..."/>
-        </properties>
-      </component>
       <component id="b77e0" class="javax.swing.JCheckBox" binding="updateUCheckBox" default-binding="true">
         <constraints>
           <grid row="7" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -303,21 +293,21 @@
           <horizontalAlignment value="0"/>
         </properties>
       </component>
-      <component id="df6ff" class="javax.swing.JButton" binding="stopFutureRestoreUnsafeButton" default-binding="true">
-        <constraints>
-          <grid row="14" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <text value="Stop FutureRestore"/>
-        </properties>
-      </component>
       <component id="e0dd6" class="javax.swing.JProgressBar" binding="logProgressBar">
         <constraints>
           <grid row="15" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
+      </component>
+      <component id="e5e5f" class="javax.swing.JButton" binding="settingsButton" default-binding="true">
+        <constraints>
+          <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Settings"/>
+        </properties>
       </component>
       <component id="12b05" class="javax.swing.JButton" binding="downloadFutureRestoreButton" default-binding="true">
         <constraints>
@@ -326,6 +316,25 @@
         </constraints>
         <properties>
           <text value="Download FutureRestore"/>
+        </properties>
+      </component>
+      <component id="74301" class="javax.swing.JButton" binding="selectBuildManifestButton" default-binding="true">
+        <constraints>
+          <grid row="12" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <enabled value="false"/>
+          <text value="Select BuildManifest..."/>
+        </properties>
+      </component>
+      <component id="df6ff" class="javax.swing.JButton" binding="stopFutureRestoreUnsafeButton" default-binding="true">
+        <constraints>
+          <grid row="14" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Stop FutureRestore"/>
         </properties>
       </component>
     </children>

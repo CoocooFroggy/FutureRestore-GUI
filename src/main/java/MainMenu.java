@@ -11,6 +11,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -41,6 +44,7 @@ public class MainMenu {
     private JTextField currentTaskTextField;
     private JButton stopFutureRestoreUnsafeButton;
     private JButton downloadFutureRestoreButton;
+    private JButton settingsButton;
 
     private String futureRestoreFilePath;
     private String blobName;
@@ -438,7 +442,18 @@ public class MainMenu {
             downloadFutureRestore(urlString, downloadName, osName);
 
         });
+
+        settingsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                settingsMenuFrame.setVisible(true);
+            }
+        });
     }
+
+    public static Properties properties = new Properties();
+
+    static JFrame settingsMenuFrame;
 
     public static void main(String[] args) {
         String systemTheme = "light";
@@ -461,24 +476,49 @@ public class MainMenu {
 
         String finalSystemTheme = systemTheme;
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("FutureRestore GUI");
+            JFrame mainMenuFrame = new JFrame("FutureRestore GUI");
+            settingsMenuFrame = new JFrame("Settings");
 
             MainMenu mainMenuInstance = new MainMenu();
+            SettingsMenu settingsMenuInstance = new SettingsMenu();
 
             //Auto scroll log
             new SmartScroller(mainMenuInstance.logScrollPane, SmartScroller.VERTICAL, SmartScroller.END);
 
-            frame.setContentPane(mainMenuInstance.mainMenuView);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.pack();
-            frame.setLocationRelativeTo(null);
+            // Main Menu
+            mainMenuFrame.setContentPane(mainMenuInstance.mainMenuView);
+            //End program on close
+            mainMenuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            mainMenuFrame.pack();
+            //Centers it on screen
+            mainMenuFrame.setLocationRelativeTo(null);
+
+            //load and init prefs
+            initializePreferences();
+
+            // init SettingsMenu
+            SettingsMenu.initializeSettingsMenu(settingsMenuInstance);
+
+            // Settings Menu
+            settingsMenuFrame.setContentPane(settingsMenuInstance.settingsMenuView);
+            //Set settings frame to invisible on close
+            settingsMenuFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            settingsMenuFrame.pack();
+            //Centers it on screen
+            settingsMenuFrame.setLocationRelativeTo(null);
 
             //Prepare for dark mode
             if (finalSystemTheme.equals("dark"))
                 turnDark(mainMenuInstance);
 
-            //Centers it on screen
-            frame.setVisible(true);
+            if (properties.getProperty("upload_logs").equals("true")) {
+                mainMenuInstance.appendToLog("Help improve FutureRestore by sharing logs: Enabled");
+            } else {
+                mainMenuInstance.appendToLog("Help improve FutureRestore by sharing logs: Disabled");
+            }
+
+            //Shows the view
+            mainMenuFrame.setVisible(true);
 
         });
 
@@ -614,6 +654,42 @@ public class MainMenu {
 
         System.out.println("Starting FutureRestore...");
 
+        //If they want to preview command
+        if (properties.getProperty("preview_command").equals("true")) {
+            StringBuilder commandStringBuilder = new StringBuilder();
+            commandStringBuilder.append(futureRestoreFilePath + " ");
+            for (String arg : allArgs) {
+                commandStringBuilder.append(arg + " ");
+            }
+
+            //Build the preview area
+            JTextArea commandPreviewTextArea = new JTextArea();
+            commandPreviewTextArea.setEditable(false);
+            commandPreviewTextArea.setLineWrap(true);
+
+            String finalCommand = commandStringBuilder.toString();
+            commandPreviewTextArea.setText(finalCommand);
+
+            Object[] choices = {"Copy command only", "Copy command and run", "Only run"};
+            int response = JOptionPane.showOptionDialog(mainMenuView, commandPreviewTextArea, "Command preview", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
+
+            StringSelection stringSelection = new StringSelection(finalCommand);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            switch (response) {
+                case 0: {
+                    //Copy command only
+                    clipboard.setContents(stringSelection, null);
+                    return;
+                }
+                case 1: {
+                    //Copy command and run
+                    clipboard.setContents(stringSelection, null);
+                    break;
+                }
+                //Case 2 is run only
+            }
+        }
+
         new Thread(() -> {
             try {
                 FutureRestoreWorker.runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton, stopFutureRestoreUnsafeButton);
@@ -709,14 +785,14 @@ public class MainMenu {
             String homeDirectory = System.getProperty("user.home");
             File frGuiDir = new File(homeDirectory + "/FutureRestoreGUI/");
 
-            //Wipe the directory
+            /*//Wipe the directory
             try {
                 Process process = Runtime.getRuntime().exec("rm -r " + frGuiDir);
                 process.waitFor();
             } catch (IOException | InterruptedException e) {
                 System.out.println("Unable to wipe FutureRestoreGUI directory.");
                 e.printStackTrace();
-            }
+            }*/
 
             //Make directory to store files
             if (!frGuiDir.exists()) {
@@ -833,6 +909,63 @@ public class MainMenu {
 
     }
 
+    static void initializePreferences() {
+        //Read preferences
+        String homeDirectory = System.getProperty("user.home");
+        File prefsFile = new File(homeDirectory + "/FutureRestoreGUI/preferences.properties");
+
+        //Init
+        if (!prefsFile.exists()) {
+            try {
+                prefsFile.createNewFile();
+            } catch (IOException e) {
+                System.out.println("Unable to initialize preferences.");
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        try {
+            properties.load(new FileReader(prefsFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        if (properties.getProperty("upload_logs") == null)
+            properties.setProperty("upload_logs", "true");
+
+        if (properties.getProperty("discord_name") == null)
+            properties.setProperty("discord_name", "None");
+
+        if (properties.getProperty("preview_command") == null)
+            properties.setProperty("preview_command", "false");
+
+        savePreferences();
+    }
+
+    static void savePreferences() {
+        String homeDirectory = System.getProperty("user.home");
+        File prefsFile = new File(homeDirectory + "/FutureRestoreGUI/preferences.properties");
+
+        FileOutputStream outputStrem;
+        try {
+            outputStrem = new FileOutputStream(prefsFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to create output stream for preferences.");
+            e.printStackTrace();
+            return;
+        }
+
+        try {
+            properties.store(outputStrem, "Preferences for FutureRestore GUI");
+        } catch (IOException e) {
+            System.out.println("Unable to save preferences.");
+            e.printStackTrace();
+            return;
+        }
+    }
+
     /**
      * Method generated by IntelliJ IDEA GUI Designer
      * >>> IMPORTANT!! <<<
@@ -909,12 +1042,12 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 6;
+        gbc.gridwidth = 5;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 10, 0, 0);
         mainMenuView.add(label5, gbc);
         final JLabel label6 = new JLabel();
-        label6.setText("by CoocooFroggy — vRC");
+        label6.setText("by CoocooFroggy — v1.54");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -1051,15 +1184,6 @@ public class MainMenu {
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         mainMenuView.add(debugDCheckBox, gbc);
-        selectBuildManifestButton = new JButton();
-        selectBuildManifestButton.setEnabled(false);
-        selectBuildManifestButton.setText("Select BuildManifest...");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 5;
-        gbc.gridy = 12;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(0, 0, 0, 10);
-        mainMenuView.add(selectBuildManifestButton, gbc);
         updateUCheckBox = new JCheckBox();
         updateUCheckBox.setText("Update (-u)");
         gbc = new GridBagConstraints();
@@ -1133,14 +1257,6 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(currentTaskTextField, gbc);
-        stopFutureRestoreUnsafeButton = new JButton();
-        stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 5;
-        gbc.gridy = 14;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 0, 0, 10);
-        mainMenuView.add(stopFutureRestoreUnsafeButton, gbc);
         logProgressBar = new JProgressBar();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -1148,6 +1264,14 @@ public class MainMenu {
         gbc.gridwidth = 6;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(logProgressBar, gbc);
+        settingsButton = new JButton();
+        settingsButton.setText("Settings");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 5;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = new Insets(0, 0, 0, 10);
+        mainMenuView.add(settingsButton, gbc);
         downloadFutureRestoreButton = new JButton();
         downloadFutureRestoreButton.setText("Download FutureRestore");
         gbc = new GridBagConstraints();
@@ -1156,6 +1280,23 @@ public class MainMenu {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(downloadFutureRestoreButton, gbc);
+        selectBuildManifestButton = new JButton();
+        selectBuildManifestButton.setEnabled(false);
+        selectBuildManifestButton.setText("Select BuildManifest...");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 5;
+        gbc.gridy = 12;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 0, 0, 10);
+        mainMenuView.add(selectBuildManifestButton, gbc);
+        stopFutureRestoreUnsafeButton = new JButton();
+        stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 5;
+        gbc.gridy = 14;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 0, 10);
+        mainMenuView.add(stopFutureRestoreUnsafeButton, gbc);
     }
 
     /**
