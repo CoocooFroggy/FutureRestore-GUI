@@ -1,3 +1,13 @@
+import com.google.gson.Gson;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -236,6 +246,7 @@ public class FutureRestoreWorker {
 
 //        futureRestoreProcess.waitFor();
         System.out.println("FutureRestore process ended.");
+        logTextArea.append("FutureRestore process ended.");
         SwingUtilities.invokeLater(() -> {
             startFutureRestoreButton.setEnabled(true);
             stopFutureRestoreButton.setText("Stop FutureRestore");
@@ -273,7 +284,7 @@ public class FutureRestoreWorker {
         return false;
     }
 
-    public static void uploadLog(String logPath, String logName) {
+    public static void uploadLog(String logPath, String logName) throws IOException {
         String discordName = MainMenu.properties.getProperty("discord_name");
         Map<String, Object> rootJson = new HashMap<>();
 
@@ -287,10 +298,22 @@ public class FutureRestoreWorker {
             return;
         }
 
+        Gson gson = new Gson();
         rootJson.put("log", logString);
         rootJson.put("logName", logName);
         rootJson.put("discord", discordName);
-        //TODO: Post request
+        String rootJsonString = gson.toJson(rootJson);
+
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("http://futurerestorelogserver.eastus.cloudapp.azure.com:6969/upload");
+        StringEntity requestEntity = new StringEntity(rootJsonString, ContentType.APPLICATION_JSON);
+        httpPost.setEntity(requestEntity);
+        httpPost.addHeader("authorization", "CoocooFroggy rocks");
+
+        HttpResponse response = httpClient.execute(httpPost);
+        HttpEntity entity = response.getEntity();
+        String responseString = EntityUtils.toString(entity, "UTF-8");
+        System.out.println(responseString);
 
     }
 }

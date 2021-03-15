@@ -11,6 +11,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -444,7 +446,6 @@ public class MainMenu {
         settingsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: Open settings
                 settingsMenuFrame.setVisible(true);
             }
         });
@@ -453,6 +454,7 @@ public class MainMenu {
     public static Properties properties = new Properties();
 
     static JFrame settingsMenuFrame;
+
     public static void main(String[] args) {
         String systemTheme = "light";
         try {
@@ -646,6 +648,42 @@ public class MainMenu {
     void runCommand(ArrayList<String> allArgs) {
 
         System.out.println("Starting FutureRestore...");
+
+        //If they want to preview command
+        if (properties.getProperty("preview_command").equals("true")) {
+            StringBuilder commandStringBuilder = new StringBuilder();
+            commandStringBuilder.append(futureRestoreFilePath + " ");
+            for (String arg : allArgs) {
+                commandStringBuilder.append(arg + " ");
+            }
+
+            //Build the preview area
+            JTextArea commandPreviewTextArea = new JTextArea();
+            commandPreviewTextArea.setEditable(false);
+            commandPreviewTextArea.setLineWrap(true);
+
+            String finalCommand = commandStringBuilder.toString();
+            commandPreviewTextArea.setText(finalCommand);
+
+            Object[] choices = {"Copy command only", "Copy command and run", "Only run"};
+            int response = JOptionPane.showOptionDialog(mainMenuView, commandPreviewTextArea, "Command preview", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
+
+            StringSelection stringSelection = new StringSelection(finalCommand);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            switch (response) {
+                case 0: {
+                    //Copy command only
+                    clipboard.setContents(stringSelection, null);
+                    return;
+                }
+                case 1: {
+                    //Copy command and run
+                    clipboard.setContents(stringSelection, null);
+                    break;
+                }
+                //Case 2 is run only
+            }
+        }
 
         new Thread(() -> {
             try {
@@ -1004,7 +1042,7 @@ public class MainMenu {
         gbc.insets = new Insets(10, 10, 0, 0);
         mainMenuView.add(label5, gbc);
         final JLabel label6 = new JLabel();
-        label6.setText("by CoocooFroggy — v1.52");
+        label6.setText("by CoocooFroggy — v1.54");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
