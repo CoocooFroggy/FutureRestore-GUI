@@ -133,7 +133,7 @@ public class MainMenu {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = buildManifestFileChooser.getSelectedFile();
                 //This is where a real application would open the file.
-                appendToLog("Set " + file.getAbsolutePath() + " to BuildManinfest.");
+                appendToLog("Set " + file.getAbsolutePath() + " to BuildManifest.");
                 buildManifestPath = file.getAbsolutePath();
                 //Set name of button to ipsw file name
                 selectBuildManifestButton.setText("✓ " + file.getName());
@@ -543,14 +543,19 @@ public class MainMenu {
                 return "mac";
             }
         } else if (operatingSystem.contains("win")) {
-            final String REGISTRY_PATH = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
-            final String REGISTRY_VALUE = "AppsUseLightTheme";
-            if
-            (Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, REGISTRY_PATH, REGISTRY_VALUE) &&
-                    Advapi32Util.registryGetIntValue(WinReg.HKEY_CURRENT_USER, REGISTRY_PATH, REGISTRY_VALUE) == 0)
-                return "dark";
-            else
+            if (operatingSystem.contains("windows 10")) {
+                System.out.println("Windows 10");
+                final String REGISTRY_PATH = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
+                final String REGISTRY_VALUE = "AppsUseLightTheme";
+                if
+                (Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, REGISTRY_PATH, REGISTRY_VALUE) &&
+                        Advapi32Util.registryGetIntValue(WinReg.HKEY_CURRENT_USER, REGISTRY_PATH, REGISTRY_VALUE) == 0)
+                    return "dark";
+                else
+                    return "light";
+            } else {
                 return "light";
+            }
         } else {
             return "light";
         }
