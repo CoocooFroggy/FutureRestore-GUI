@@ -912,6 +912,9 @@ public class MainMenu {
     static void initializePreferences() {
         //Read preferences
         String homeDirectory = System.getProperty("user.home");
+        File frGuiDirectory = new File(homeDirectory + "/FutureRestoreGUI/");
+        if (!frGuiDirectory.exists())
+            frGuiDirectory.mkdir();
         File prefsFile = new File(homeDirectory + "/FutureRestoreGUI/preferences.properties");
 
         //Init
