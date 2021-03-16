@@ -200,7 +200,7 @@ public class MainMenu {
             }
 
             //If IPSW has a build name in it
-            Pattern ipswPattern = Pattern.compile(".*?_.*?_([0-9A-Z]+)_");
+            Pattern ipswPattern = Pattern.compile(".*_([A-Z0-9]{5})");
             Matcher ipswMatcher = ipswPattern.matcher(targetIpswName);
             String targetIpswBuild = null;
             if (ipswMatcher.find()) {
