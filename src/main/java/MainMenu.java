@@ -303,7 +303,6 @@ public class MainMenu {
 
             //Set current task to starting...
             currentTaskTextField.setText("Starting FutureRestore...");
-            appendToLog("Make sure to hit \"trust\" on your device if prompted!");
 
             //Run command
             runCommand(allArgs);
@@ -653,6 +652,7 @@ public class MainMenu {
     void runCommand(ArrayList<String> allArgs) {
 
         System.out.println("Starting FutureRestore...");
+        appendToLog("Make sure to hit \"trust\" on your device if prompted!");
 
         //If they want to preview command
         if (properties.getProperty("preview_command").equals("true")) {
@@ -671,7 +671,7 @@ public class MainMenu {
             commandPreviewTextArea.setText(finalCommand);
 
             Object[] choices = {"Copy command only", "Copy command and run", "Only run"};
-            int response = JOptionPane.showOptionDialog(mainMenuView, commandPreviewTextArea, "Command preview", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
+            int response = JOptionPane.showOptionDialog(mainMenuView, new JScrollPane(commandPreviewTextArea), "Command preview", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
 
             StringSelection stringSelection = new StringSelection(finalCommand);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -1050,11 +1050,11 @@ public class MainMenu {
         gbc.insets = new Insets(10, 10, 0, 0);
         mainMenuView.add(label5, gbc);
         final JLabel label6 = new JLabel();
-        label6.setText("by CoocooFroggy — v1.54");
+        label6.setText("by CoocooFroggy — v1.55");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 6;
+        gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 10, 0);
         mainMenuView.add(label6, gbc);

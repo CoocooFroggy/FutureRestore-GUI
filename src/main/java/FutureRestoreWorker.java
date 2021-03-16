@@ -246,7 +246,7 @@ public class FutureRestoreWorker {
 
 //        futureRestoreProcess.waitFor();
         System.out.println("FutureRestore process ended.");
-        logTextArea.append("FutureRestore process ended.");
+        logTextArea.append("FutureRestore process ended.\n");
         SwingUtilities.invokeLater(() -> {
             startFutureRestoreButton.setEnabled(true);
             stopFutureRestoreButton.setText("Stop FutureRestore");
