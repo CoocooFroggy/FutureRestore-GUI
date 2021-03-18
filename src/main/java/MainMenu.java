@@ -191,7 +191,7 @@ public class MainMenu {
             }
 
             //If blob name has a build number in it
-            Pattern blobPattern = Pattern.compile("[0-9]{16}_.*?_.*?_.*?-([0-9A-Z]+)_");
+            Pattern blobPattern = Pattern.compile(".*([A-Z0-9]{5})_");
             Matcher blobMatcher = blobPattern.matcher(blobName);
             String blobBuild = null;
             if (blobMatcher.find()) {
