@@ -1050,7 +1050,7 @@ public class MainMenu {
         gbc.insets = new Insets(10, 10, 0, 0);
         mainMenuView.add(label5, gbc);
         final JLabel label6 = new JLabel();
-        label6.setText("by CoocooFroggy — v1.58");
+        label6.setText("by CoocooFroggy — v1.60");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
