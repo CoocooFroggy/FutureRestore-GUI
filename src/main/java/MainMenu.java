@@ -1,8 +1,12 @@
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.google.gson.Gson;
+import com.sun.javafx.application.PlatformImpl;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.stage.FileChooser;
 import org.rauschig.jarchivelib.Archiver;
 import org.rauschig.jarchivelib.ArchiverFactory;
 
@@ -19,6 +23,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,82 +69,99 @@ public class MainMenu {
     public MainMenu() {
         $$$setupUI$$$();
         selectFutureRestoreBinaryExecutableButton.addActionListener(e -> {
-            //Create a file chooser
-            final JFileChooser futureRestoreFileChooser = new JFileChooser();
-            //In response to a button click:
-            int returnVal = futureRestoreFileChooser.showOpenDialog(mainMenuView);
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = futureRestoreFileChooser.getSelectedFile();
-                //This is where a real application would open the file.
-                appendToLog("Set " + file.getAbsolutePath() + " to FutureRestore executable.");
-                futureRestoreFilePath = file.getAbsolutePath();
-                //Set name of button to blob file name
-                selectFutureRestoreBinaryExecutableButton.setText("✓ " + file.getName());
-            } else {
-                System.out.println("Cancelled");
-            }
+
+            Platform.runLater(() -> {
+                mainMenuFrame.setEnabled(false);
+                //Create a file chooser
+                FileChooser futureRestoreFileChooser = new FileChooser();
+                //Open dialogue and set the return file
+                File file = file = futureRestoreFileChooser.showOpenDialog(null);
+
+                if (file != null) {
+                    appendToLog("Set " + file.getAbsolutePath() + " to FutureRestore executable.");
+                    futureRestoreFilePath = file.getAbsolutePath();
+                    //Set name of button to blob file name
+                    selectFutureRestoreBinaryExecutableButton.setText("✓ " + file.getName());
+                } else
+                    System.out.println("Cancelled");
+                mainMenuFrame.setEnabled(true);
+            });
         });
         selectBlobFileButton.addActionListener(e -> {
-            //Create a file chooser
-            final JFileChooser blobFileChooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Blob File (SHSH2)", "shsh2");
-            blobFileChooser.setFileFilter(filter);
-            //In response to a button click:
-            int returnVal = blobFileChooser.showOpenDialog(mainMenuView);
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = blobFileChooser.getSelectedFile();
-                //This is where a real application would open the file.
-                appendToLog("Set " + file.getAbsolutePath() + " to SHSH2 blob.");
-                blobFilePath = file.getAbsolutePath();
-                blobName = file.getName();
-                selectBlobFileButton.setText("✓ " + file.getName());
+            Platform.runLater(() -> {
+                mainMenuFrame.setEnabled(false);
+                //Create a file chooser
+                FileChooser blobFileChooser = new FileChooser();
+                //Set filter
+                FileChooser.ExtensionFilter fileFilter =
+                        new FileChooser.ExtensionFilter(
+                                "Blob File (SHSH2)", "*.shsh2");
+                blobFileChooser.getExtensionFilters().add(fileFilter);
+                //Open dialogue and set the return file
+                File file = file = blobFileChooser.showOpenDialog(null);
 
-            } else {
-                System.out.println("Cancelled");
-            }
+                if (file != null) {
+                    appendToLog("Set " + file.getAbsolutePath() + " to SHSH2 blob.");
+                    blobFilePath = file.getAbsolutePath();
+                    blobName = file.getName();
+                    selectBlobFileButton.setText("✓ " + file.getName());
+                } else
+                    System.out.println("Cancelled");
+                mainMenuFrame.setEnabled(true);
+            });
 
         });
         selectTargetIPSWFileButton.addActionListener(e -> {
-            //Create a file chooser
-            final JFileChooser targetIpswFileChooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("iOS Firmware (IPSW)", "ipsw");
-            targetIpswFileChooser.setFileFilter(filter);
-            //In response to a button click:
-            int returnVal = targetIpswFileChooser.showOpenDialog(mainMenuView);
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = targetIpswFileChooser.getSelectedFile();
-                //This is where a real application would open the file.
-                appendToLog("Set " + file.getAbsolutePath() + " to target IPSW.");
-                targetIpswPath = file.getAbsolutePath();
-                targetIpswName = file.getName();
-                //Set name of button to ipsw file name
-                selectTargetIPSWFileButton.setText("✓ " + file.getName());
-            } else {
-                System.out.println("Cancelled");
-            }
+            Platform.runLater(() -> {
+                mainMenuFrame.setEnabled(false);
+                //Create a file chooser
+                FileChooser targetIpswFileChooser = new FileChooser();
+                //Set filter
+                FileChooser.ExtensionFilter fileFilter =
+                        new FileChooser.ExtensionFilter(
+                                "iOS Firmware (IPSW)", "*.ipsw");
+                targetIpswFileChooser.getExtensionFilters().add(fileFilter);
+                //Open dialogue and set the return file
+                File file = file = targetIpswFileChooser.showOpenDialog(null);
+
+                if (file != null) {
+                    appendToLog("Set " + file.getAbsolutePath() + " to target IPSW.");
+                    targetIpswPath = file.getAbsolutePath();
+                    targetIpswName = file.getName();
+                    //Set name of button to ipsw file name
+                    selectTargetIPSWFileButton.setText("✓ " + file.getName());
+                } else
+                    System.out.println("Cancelled");
+                mainMenuFrame.setEnabled(true);
+            });
         });
 
         selectBuildManifestButton.addActionListener(e -> {
-            //Create a file chooser
-            final JFileChooser buildManifestFileChooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("BuildManifest (plist)", "plist");
-            buildManifestFileChooser.setFileFilter(filter);
-            //In response to a button click:
-            int returnVal = buildManifestFileChooser.showOpenDialog(mainMenuView);
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = buildManifestFileChooser.getSelectedFile();
-                //This is where a real application would open the file.
-                appendToLog("Set " + file.getAbsolutePath() + " to BuildManifest.");
-                buildManifestPath = file.getAbsolutePath();
-                //Set name of button to ipsw file name
-                selectBuildManifestButton.setText("✓ " + file.getName());
-            } else {
-                System.out.println("Cancelled");
-            }
+            Platform.runLater(() -> {
+                mainMenuFrame.setEnabled(false);
+                //Create a file chooser
+                FileChooser targetIpswFileChooser = new FileChooser();
+                //Set filter
+                FileChooser.ExtensionFilter fileFilter =
+                        new FileChooser.ExtensionFilter(
+                                "BuildManifest (PList)", "*.plist");
+                targetIpswFileChooser.getExtensionFilters().add(fileFilter);
+                //Open dialogue and set the return file
+                File file = file = targetIpswFileChooser.showOpenDialog(null);
+
+                if (file != null) {
+                    appendToLog("Set " + file.getAbsolutePath() + " to BuildManifest.");
+                    buildManifestPath = file.getAbsolutePath();
+                    //Set name of button to ipsw file name
+                    selectBuildManifestButton.setText("✓ " + file.getName());
+                } else
+                    System.out.println("Cancelled");
+                mainMenuFrame.setEnabled(true);
+            });
         });
 
         ActionListener optionsListener = e -> {
@@ -325,15 +347,17 @@ public class MainMenu {
                         selectBuildManifestButton.setEnabled(false);
                     break;
                 case "Manual Baseband":
-                    if (chooseBbfw()) {
-                        bbState = "manual";
-                        selectBuildManifestButton.setEnabled(true);
-                    } else {
-                        bbState = "latest";
-                        basebandComboBox.setSelectedItem("Latest Baseband");
-                        if (sepState.equals("latest"))
-                            selectBuildManifestButton.setEnabled(false);
-                    }
+                    Platform.runLater(() -> {
+                        if (chooseBbfw()) {
+                            bbState = "manual";
+                            selectBuildManifestButton.setEnabled(true);
+                        } else {
+                            bbState = "latest";
+                            basebandComboBox.setSelectedItem("Latest Baseband");
+                            if (sepState.equals("latest"))
+                                selectBuildManifestButton.setEnabled(false);
+                        }
+                    });
                     break;
                 case "No Baseband":
                     bbState = "none";
@@ -352,15 +376,17 @@ public class MainMenu {
                         selectBuildManifestButton.setEnabled(false);
                     break;
                 case "Manual SEP":
-                    if (chooseSep()) {
-                        sepState = "manual";
-                        selectBuildManifestButton.setEnabled(true);
-                    } else {
-                        sepState = "latest";
-                        sepComboBox.setSelectedItem("Latest SEP");
-                        if (bbState.equals("latest") || bbState.equals("none"))
-                            selectBuildManifestButton.setEnabled(false);
-                    }
+                    Platform.runLater(() -> {
+                        if (chooseSep()) {
+                            sepState = "manual";
+                            selectBuildManifestButton.setEnabled(true);
+                        } else {
+                            sepState = "latest";
+                            sepComboBox.setSelectedItem("Latest SEP");
+                            if (bbState.equals("latest") || bbState.equals("none"))
+                                selectBuildManifestButton.setEnabled(false);
+                        }
+                    });
                     break;
             }
         });
@@ -452,6 +478,7 @@ public class MainMenu {
 
     public static Properties properties = new Properties();
 
+    static JFrame mainMenuFrame;
     static JFrame settingsMenuFrame;
 
     public static void main(String[] args) {
@@ -475,7 +502,7 @@ public class MainMenu {
 
         String finalSystemTheme = systemTheme;
         SwingUtilities.invokeLater(() -> {
-            JFrame mainMenuFrame = new JFrame("FutureRestore GUI");
+            mainMenuFrame = new JFrame("FutureRestore GUI");
             settingsMenuFrame = new JFrame("Settings");
 
             MainMenu mainMenuInstance = new MainMenu();
@@ -483,6 +510,9 @@ public class MainMenu {
 
             //Auto scroll log
             new SmartScroller(mainMenuInstance.logScrollPane, SmartScroller.VERTICAL, SmartScroller.END);
+
+            //For JavaFX
+            new JFXPanel();
 
             // Main Menu
             mainMenuFrame.setContentPane(mainMenuInstance.mainMenuView);
@@ -607,15 +637,16 @@ public class MainMenu {
 
     boolean chooseBbfw() {
         //Create a file chooser
-        final JFileChooser basebandFileChooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Baseband Firmware (BBFW)", "bbfw");
-        basebandFileChooser.setFileFilter(filter);
-        //In response to a button click:
-        int returnVal = basebandFileChooser.showOpenDialog(mainMenuView);
+        FileChooser targetIpswFileChooser = new FileChooser();
+        //Set filter
+        FileChooser.ExtensionFilter fileFilter =
+                new FileChooser.ExtensionFilter(
+                        "Baseband Firmware (BBFW)", "*.bbfw");
+        targetIpswFileChooser.getExtensionFilters().add(fileFilter);
+        //Open dialogue and set the return file
+        File file = targetIpswFileChooser.showOpenDialog(null);
 
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = basebandFileChooser.getSelectedFile();
-            //This is where a real application would open the file.
+        if (file != null) {
             appendToLog("Set " + file.getAbsolutePath() + " to baseband firmware.");
             basebandTextField.setText("✓ " + file.getName());
             basebandFilePath = file.getAbsolutePath();
@@ -626,17 +657,19 @@ public class MainMenu {
         }
     }
 
+
     boolean chooseSep() {
         //Create a file chooser
-        final JFileChooser sepFileChooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("SEP (im4p)", "im4p");
-        sepFileChooser.setFileFilter(filter);
-        //In response to a button click:
-        int returnVal = sepFileChooser.showOpenDialog(mainMenuView);
+        FileChooser targetIpswFileChooser = new FileChooser();
+        //Set filter
+        FileChooser.ExtensionFilter fileFilter =
+                new FileChooser.ExtensionFilter(
+                        "SEP (IM4P)", "*.im4p");
+        targetIpswFileChooser.getExtensionFilters().add(fileFilter);
+        //Open dialogue and set the return file
+        File file = targetIpswFileChooser.showOpenDialog(null);
 
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = sepFileChooser.getSelectedFile();
-            //This is where a real application would open the file.
+        if (file != null) {
             appendToLog("Set " + file.getAbsolutePath() + " to SEP IM4P.");
             sepTextField.setText("✓ " + file.getName());
             sepFilePath = file.getAbsolutePath();
@@ -1050,7 +1083,7 @@ public class MainMenu {
         gbc.insets = new Insets(10, 10, 0, 0);
         mainMenuView.add(label5, gbc);
         final JLabel label6 = new JLabel();
-        label6.setText("by CoocooFroggy — v1.60");
+        label6.setText("by CoocooFroggy — v1.61");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
