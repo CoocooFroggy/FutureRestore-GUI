@@ -83,6 +83,7 @@ public class MainMenu {
                 } else
                     System.out.println("Cancelled");
                 mainMenuFrame.setEnabled(true);
+                mainMenuFrame.requestFocus();
             });
         });
         selectBlobFileButton.addActionListener(e -> {
@@ -107,6 +108,7 @@ public class MainMenu {
                 } else
                     System.out.println("Cancelled");
                 mainMenuFrame.setEnabled(true);
+                mainMenuFrame.requestFocus();
             });
 
         });
@@ -133,6 +135,7 @@ public class MainMenu {
                 } else
                     System.out.println("Cancelled");
                 mainMenuFrame.setEnabled(true);
+                mainMenuFrame.requestFocus();
             });
         });
 
@@ -158,6 +161,7 @@ public class MainMenu {
                 } else
                     System.out.println("Cancelled");
                 mainMenuFrame.setEnabled(true);
+                mainMenuFrame.requestFocus();
             });
         });
 
@@ -642,6 +646,7 @@ public class MainMenu {
         targetIpswFileChooser.getExtensionFilters().add(fileFilter);
         //Open dialogue and set the return file
         File file = targetIpswFileChooser.showOpenDialog(null);
+        mainMenuFrame.requestFocus();
 
         if (file != null) {
             appendToLog("Set " + file.getAbsolutePath() + " to baseband firmware.");
@@ -665,6 +670,7 @@ public class MainMenu {
         targetIpswFileChooser.getExtensionFilters().add(fileFilter);
         //Open dialogue and set the return file
         File file = targetIpswFileChooser.showOpenDialog(null);
+        mainMenuFrame.requestFocus();
 
         if (file != null) {
             appendToLog("Set " + file.getAbsolutePath() + " to SEP IM4P.");
