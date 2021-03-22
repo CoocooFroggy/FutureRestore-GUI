@@ -66,14 +66,12 @@ public class MainMenu {
     public MainMenu() {
         $$$setupUI$$$();
         selectFutureRestoreBinaryExecutableButton.addActionListener(e -> {
-
-
             Platform.runLater(() -> {
                 mainMenuFrame.setEnabled(false);
                 //Create a file chooser
                 FileChooser futureRestoreFileChooser = new FileChooser();
                 //Open dialogue and set the return file
-                File file = file = futureRestoreFileChooser.showOpenDialog(null);
+                File file = futureRestoreFileChooser.showOpenDialog(null);
 
                 if (file != null) {
                     appendToLog("Set " + file.getAbsolutePath() + " to FutureRestore executable.");
@@ -98,7 +96,7 @@ public class MainMenu {
                                 "Blob File (SHSH2)", "*.shsh2");
                 blobFileChooser.getExtensionFilters().add(fileFilter);
                 //Open dialogue and set the return file
-                File file = file = blobFileChooser.showOpenDialog(null);
+                File file = blobFileChooser.showOpenDialog(null);
 
                 if (file != null) {
                     appendToLog("Set " + file.getAbsolutePath() + " to SHSH2 blob.");
@@ -124,7 +122,7 @@ public class MainMenu {
                                 "iOS Firmware (IPSW)", "*.ipsw");
                 targetIpswFileChooser.getExtensionFilters().add(fileFilter);
                 //Open dialogue and set the return file
-                File file = file = targetIpswFileChooser.showOpenDialog(null);
+                File file = targetIpswFileChooser.showOpenDialog(null);
 
                 if (file != null) {
                     appendToLog("Set " + file.getAbsolutePath() + " to target IPSW.");
@@ -151,7 +149,7 @@ public class MainMenu {
                                 "BuildManifest (PList)", "*.plist");
                 targetIpswFileChooser.getExtensionFilters().add(fileFilter);
                 //Open dialogue and set the return file
-                File file = file = targetIpswFileChooser.showOpenDialog(null);
+                File file = targetIpswFileChooser.showOpenDialog(null);
 
                 if (file != null) {
                     appendToLog("Set " + file.getAbsolutePath() + " to BuildManifest.");
