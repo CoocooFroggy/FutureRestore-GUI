@@ -5,7 +5,7 @@ plugins {
 }
 
 javafx {
-    version = "15.0.1"
+    version = "11.0.2"
     modules = [ 'javafx.swing' ]
 }
 
