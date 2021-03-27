@@ -1,8 +1,7 @@
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.google.gson.Gson;
-import com.sun.jna.platform.win32.Advapi32Util;
-import com.sun.jna.platform.win32.WinReg;
+import com.jthemedetecor.OsThemeDetector;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
@@ -481,25 +480,17 @@ public class MainMenu {
     static JFrame settingsMenuFrame;
 
     public static void main(String[] args) {
-        String systemTheme = "light";
-        try {
-            systemTheme = getSystemTheme();
-        } catch (IOException e) {
-            System.out.println("Unable to determine if computer is in dark or light mode.");
-            e.printStackTrace();
-        }
-
+        final OsThemeDetector detector = OsThemeDetector.getDetector();
+        final boolean isDarkThemeUsed = detector.isDark();
         //Must set L&F before we create instance of MainMenu
-        switch (systemTheme) {
-            case "dark":
-                FlatDarculaLaf.install();
-                break;
-            case "light":
+        if (isDarkThemeUsed) {
+            FlatDarculaLaf.install();
+        } else {
+            //Only set if not Mac
+            if (!System.getProperty("os.name").contains("mac"))
                 FlatIntelliJLaf.install();
-                break;
         }
 
-        String finalSystemTheme = systemTheme;
         SwingUtilities.invokeLater(() -> {
             mainMenuFrame = new JFrame("FutureRestore GUI");
             settingsMenuFrame = new JFrame("Settings");
@@ -536,9 +527,15 @@ public class MainMenu {
             settingsMenuFrame.setLocationRelativeTo(null);
 
             //Prepare for dark mode
-            if (finalSystemTheme.equals("dark"))
+            if (isDarkThemeUsed)
                 turnDark(mainMenuInstance);
+            else {
+                //Custom light UI setup
+                mainMenuInstance.startFutureRestoreButton.setBackground(new Color(135, 180, 255));
+            }
 
+
+            //Tell them if they are or are not sharing logs
             if (properties.getProperty("upload_logs").equals("true")) {
                 mainMenuInstance.appendToLog("Help improve FutureRestore by sharing logs: Enabled");
             } else {
@@ -552,43 +549,7 @@ public class MainMenu {
 
     }
 
-    /*
-     * UTILITIES
-     */
-
-    static String getSystemTheme() throws IOException {
-        //Get light or dark mode
-        //If on mac
-        String operatingSystem = System.getProperty("os.name").toLowerCase();
-        if (operatingSystem.contains("mac")) {
-            Process process = Runtime.getRuntime().exec("defaults read -g AppleInterfaceStyle");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String macTheme = reader.readLine();
-            if (macTheme != null) {
-                //dark mode
-                return "dark";
-            } else {
-                return "mac";
-            }
-        } else if (operatingSystem.contains("win")) {
-            if (operatingSystem.contains("windows 10")) {
-                System.out.println("Windows 10");
-                final String REGISTRY_PATH = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
-                final String REGISTRY_VALUE = "AppsUseLightTheme";
-                if
-                (Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, REGISTRY_PATH, REGISTRY_VALUE) &&
-                        Advapi32Util.registryGetIntValue(WinReg.HKEY_CURRENT_USER, REGISTRY_PATH, REGISTRY_VALUE) == 0)
-                    return "dark";
-                else
-                    return "light";
-            } else {
-                return "light";
-            }
-        } else {
-            return "light";
-        }
-
-    }
+    /*UTILITIES*/
 
     static void turnDark(MainMenu mainMenu) {
         JPanel mainMenuView = mainMenu.mainMenuView;
@@ -656,7 +617,6 @@ public class MainMenu {
             return false;
         }
     }
-
 
     boolean chooseSep() {
         //Create a file chooser
@@ -1253,7 +1213,7 @@ public class MainMenu {
         gbc.gridx = 2;
         gbc.gridy = 12;
         gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(startFutureRestoreButton, gbc);
         exitRecoveryButton = new JButton();
         exitRecoveryButton.setText("Exit Recovery");
