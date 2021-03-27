@@ -487,7 +487,7 @@ public class MainMenu {
             FlatDarculaLaf.install();
         } else {
             //Only set if not Mac
-            if (!System.getProperty("os.name").contains("mac"))
+            if (!System.getProperty("os.name").toLowerCase().contains("mac"))
                 FlatIntelliJLaf.install();
         }
 
