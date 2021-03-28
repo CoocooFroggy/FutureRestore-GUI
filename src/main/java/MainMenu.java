@@ -18,6 +18,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
@@ -25,6 +27,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainMenu {
+    static String futureRestoreGUIVersion = "1.70";
+
     private JButton selectBlobFileButton;
     private JButton selectTargetIPSWFileButton;
     private JCheckBox updateUCheckBox;
@@ -46,6 +50,7 @@ public class MainMenu {
     private JButton stopFutureRestoreUnsafeButton;
     private JButton downloadFutureRestoreButton;
     private JButton settingsButton;
+    private JLabel authorAndVersionLabel;
 
     private String futureRestoreFilePath;
     private String blobName;
@@ -267,7 +272,7 @@ public class MainMenu {
                     try {
                         String latestVersion = getLatestFutureRestore();
                         if (version.equals(latestVersion)) {
-                            JOptionPane.showMessageDialog(mainMenuView, "You're up to date! The latest version is " + latestVersion + ".");
+                            JOptionPane.showMessageDialog(mainMenuView, "You're up to date! The latest version is v" + latestVersion + ".");
                         } else {
                             JOptionPane.showMessageDialog(mainMenuView, "You're not on the latest version. The latest version is " + latestVersion + ", and you're on " + version + ".", "Version Mismatch", JOptionPane.WARNING_MESSAGE);
                         }
@@ -542,9 +547,18 @@ public class MainMenu {
                 mainMenuInstance.appendToLog("Help improve FutureRestore by sharing logs: Disabled");
             }
 
+            //Set text for version
+            mainMenuInstance.authorAndVersionLabel.setText("by CoocooFroggy — v" + futureRestoreGUIVersion);
+
             //Shows the view
             mainMenuFrame.setVisible(true);
 
+            //Only if they have the setting enabled, check for updates
+            if (properties.getProperty("check_updates").equals("true")) {
+                System.out.println("Checking for FutureRestore GUI updates in the background...");
+                mainMenuInstance.appendToLog("Checking for FutureRestore GUI updates in the background...");
+                alertIfNewerFRGUIAvailable(mainMenuInstance, futureRestoreGUIVersion);
+            }
         });
 
     }
@@ -766,7 +780,7 @@ public class MainMenu {
         Object defaultChoice = choices[0];
 
         int response = JOptionPane.showOptionDialog(mainMenuView, "No FutureRestore asset found for your operating system. Check releases to see if there's one available.\n" +
-                "https://github.com/marijuanARM/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+                "https://github.com/marijuanARM/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
         if (response == JOptionPane.YES_OPTION) {
             FutureRestoreWorker.openWebpage("https://github.com/marijuanARM/futurerestore/releases/latest/");
         }
@@ -931,12 +945,12 @@ public class MainMenu {
 
         if (properties.getProperty("upload_logs") == null)
             properties.setProperty("upload_logs", "true");
-
         if (properties.getProperty("discord_name") == null)
             properties.setProperty("discord_name", "None");
-
         if (properties.getProperty("preview_command") == null)
             properties.setProperty("preview_command", "false");
+        if (properties.getProperty("check_updates") == null)
+            properties.setProperty("check_updates", "true");
 
         savePreferences();
     }
@@ -961,6 +975,54 @@ public class MainMenu {
             e.printStackTrace();
             return;
         }
+    }
+
+    static void alertIfNewerFRGUIAvailable(MainMenu mainMenuInstance, String currentFRGUIVersion) {
+        new Thread(() -> {
+            try {
+                URL url = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                Gson gson = new Gson();
+
+                con.setRequestMethod("GET");
+
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuilder content = new StringBuilder();
+                while ((inputLine = in.readLine()) != null) {
+                    content.append(inputLine);
+                }
+                in.close();
+                con.disconnect();
+
+                ArrayList<Map<String, Object>> result = gson.fromJson(content.toString(), ArrayList.class);
+                Map<String, Object> newestRelease = result.get(0);
+                String newestTag = (String) newestRelease.get("tag_name");
+                System.out.println("Newest FRGUI version: " + newestTag);
+
+                //If user is not on latest version
+                if (!newestTag.contains(currentFRGUIVersion)) {
+                    System.out.println("A newer version of FutureRestore GUI is available.");
+                    mainMenuInstance.appendToLog("A newer version of FutureRestore GUI is available.");
+
+                    Object[] choices = {"Open link", "Ok"};
+                    Object defaultChoice = choices[0];
+
+                    int response = JOptionPane.showOptionDialog(mainMenuInstance.mainMenuView, "A newer version of FutureRestore GUI is available.\n" +
+                            "You're on version " + currentFRGUIVersion + " and the latest version is " + newestTag + ".\n" +
+                            "https://github.com/CoocooFroggy/FutureRestore-GUI/releases", "Update FutureRestore GUI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
+                    if (response == JOptionPane.YES_OPTION) {
+                        FutureRestoreWorker.openWebpage("https://github.com/CoocooFroggy/FutureRestore-GUI/releases");
+                    }
+                } else {
+                    System.out.println("You're on the latest version of FutureRestore GUI.");
+                    mainMenuInstance.appendToLog("You're on the latest version of FutureRestore GUI.");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     /**
@@ -1043,15 +1105,15 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 10, 0, 0);
         mainMenuView.add(label5, gbc);
-        final JLabel label6 = new JLabel();
-        label6.setText("by CoocooFroggy — v1.70");
+        authorAndVersionLabel = new JLabel();
+        authorAndVersionLabel.setText("by CoocooFroggy");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 10, 0);
-        mainMenuView.add(label6, gbc);
+        mainMenuView.add(authorAndVersionLabel, gbc);
         final JSeparator separator1 = new JSeparator();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -1189,13 +1251,13 @@ public class MainMenu {
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         mainMenuView.add(updateUCheckBox, gbc);
-        final JLabel label7 = new JLabel();
-        label7.setText("Arguments");
+        final JLabel label6 = new JLabel();
+        label6.setText("Arguments");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 7;
         gbc.anchor = GridBagConstraints.WEST;
-        mainMenuView.add(label7, gbc);
+        mainMenuView.add(label6, gbc);
         final JSeparator separator5 = new JSeparator();
         separator5.setOrientation(1);
         gbc = new GridBagConstraints();
@@ -1232,16 +1294,16 @@ public class MainMenu {
         gbc.weighty = 0.01;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(separator6, gbc);
-        final JLabel label8 = new JLabel();
-        Font label8Font = this.$$$getFont$$$(null, Font.BOLD, -1, label8.getFont());
-        if (label8Font != null) label8.setFont(label8Font);
-        label8.setText("Current Task");
+        final JLabel label7 = new JLabel();
+        Font label7Font = this.$$$getFont$$$(null, Font.BOLD, -1, label7.getFont());
+        if (label7Font != null) label7.setFont(label7Font);
+        label7.setText("Current Task");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 14;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(15, 10, 15, 10);
-        mainMenuView.add(label8, gbc);
+        mainMenuView.add(label7, gbc);
         currentTaskTextField = new JTextField();
         currentTaskTextField.setEditable(false);
         Font currentTaskTextFieldFont = this.$$$getFont$$$(null, -1, 18, currentTaskTextField.getFont());

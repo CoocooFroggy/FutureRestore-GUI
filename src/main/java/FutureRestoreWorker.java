@@ -240,13 +240,19 @@ public class FutureRestoreWorker {
         reader.close();
         writer.close();
 
-        if (MainMenu.properties.getProperty("upload_logs").equals("true")) {
-            uploadLog(logPath, logName);
-        }
-
-//        futureRestoreProcess.waitFor();
         System.out.println("FutureRestore process ended.");
         logTextArea.append("FutureRestore process ended.\n");
+
+        if (MainMenu.properties.getProperty("upload_logs").equals("true")) {
+            //Make all args into a String
+            StringBuilder builder = new StringBuilder();
+            for (String value : allArgsArray) {
+                builder.append(value);
+            }
+            String fullCommand = builder.toString();
+            uploadLog(logPath, logName, fullCommand);
+        }
+
         SwingUtilities.invokeLater(() -> {
             startFutureRestoreButton.setEnabled(true);
             stopFutureRestoreButton.setText("Stop FutureRestore");
@@ -284,7 +290,7 @@ public class FutureRestoreWorker {
         return false;
     }
 
-    public static void uploadLog(String logPath, String logName) throws IOException {
+    public static void uploadLog(String logPath, String logName, String command) throws IOException {
         String discordName = MainMenu.properties.getProperty("discord_name");
         Map<String, Object> rootJson = new HashMap<>();
 
@@ -299,9 +305,11 @@ public class FutureRestoreWorker {
         }
 
         Gson gson = new Gson();
+        rootJson.put("command", command);
         rootJson.put("log", logString);
         rootJson.put("logName", logName);
         rootJson.put("discord", discordName);
+        rootJson.put("guiVersion", MainMenu.futureRestoreGUIVersion);
         String rootJsonString = gson.toJson(rootJson);
 
         HttpClient httpClient = HttpClients.createDefault();
