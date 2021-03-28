@@ -4,18 +4,19 @@
 ![Github issues](https://img.shields.io/github/issues/JohnnnnyKlayy/FutureRestore-GUI.svg)
 ![Github repo size](https://img.shields.io/github/repo-size/JohnnnnyKlayy/FutureRestore-GUI.svg)
 
-A GUI implementation for FutureRestore written in Java 8.
+A GUI implementation for FutureRestore written in Java.
 
 ![Screenshot of FutureRestore GUI in Light Theme](.github/FutureRestoreGUILight.png?raw=true "FutureRestore GUI Light")
 ![Screenshot of FutureRestore GUI in Dark Theme](.github/FutureRestoreGUIDark.png?raw=true "FutureRestore GUI Dark")
 
 ## Installation
 
-Download from [releases](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/releases). Java 8 required for Mac, Windows, and Universal builds. Install Java from the [official source](https://www.java.com/download/).
+Download from [releases](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/releases). No Java download required (it's bundled).
 
-Mac builds work on MacOS.
-Windows builds work on Windows.
-Universal builds work on Mac, Windows, and Linux.
+Mac builds work on MacOS.  
+Windows builds work on Windows.  
+Linux builds work on all major desktop distributions of Linux that support AppImage.  
+Universal builds work on Mac, Windows, and Linux, but Java 11 or later is required, along with JaxaFX.
 
 ## Features
 - Fancy, user-friendly interface for selecting files for FutureRestore. No more huge commands such as:
@@ -37,11 +38,14 @@ Universal builds work on Mac, Windows, and Linux.
 - **Current task** text field to simply show what FutureRestore is doing.
 - Log **smart autoscroll** when scrolled to the bottom.
 
+## Settings
+- **Share logs**: Shares logs automatically to help develop FutureRestore.
+- **Preview command**: Preview the final FutureRestore command. You can then choose to copy and/or run the command.
+- **GUI update**: Automatically checks for updates for this program on launch.
+
 ## Usage
 
 See [how to use FutureRestore](https://github.com/marijuanARM/futurerestore#how-to-use).
-
-Double click to open. On Linux, make the .jar executable with `chmod -x [Drag FutureRestore GUI.jar]`
 
 1. Download FutureRestore automatically through the **Download FutureRestore** button, or manually from [marijuanARM's fork](https://github.com/marijuanARM/futurerestore/releases).
 2. Select your **blob** (SHSH2) file.
