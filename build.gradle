@@ -33,6 +33,7 @@ dependencies {
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     implementation 'com.github.Dansoftowner:jSystemThemeDetector:2.1'
     implementation 'com.github.oshi:oshi-core:5.6.1'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.8.0'
 }
 
 test {
