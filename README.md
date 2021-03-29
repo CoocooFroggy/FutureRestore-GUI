@@ -13,11 +13,14 @@ A GUI implementation for FutureRestore written in Java.
 
 Download from [releases](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/releases). No Java download required (it's bundled).
 
-On Mac, right click the Mac app and click "Open" to open.  
-On Windows, double click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.  
-On Debian based Linux systems, such as Ubuntu and Mint, double click the DEB to install it. Launch it from your application library.  
-On RPM based Linux systems, such as Red Hat, Fedora, and CentOS, double click the file to install it. Launch it from your application library.  
-On Linux systems which support none of these, download the Linux-Universal build, and run the runFRGUI.sh script in terminal to launch the GUI.
+On Mac, right click the Mac app and click "Open" to open.
+
+On Windows, double click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.
+
+Linux (64 bit, amd64 + x86_64):  
+- On Debian based Linux systems, such as Ubuntu and Mint, double click the DEB to install it. Launch it from your application library.  
+- On RPM based Linux systems, such as Red Hat, Fedora, and CentOS, double click the file to install it. Launch it from your application library.  
+- On Linux systems which support none of these, download the Linux-Universal build, and run the runFRGUI.sh script in terminal to launch the GUI.
 
 ## Features
 - Fancy, user-friendly interface for selecting files for FutureRestore. No more huge commands such as:
