@@ -7,6 +7,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
 import org.rauschig.jarchivelib.Archiver;
 import org.rauschig.jarchivelib.ArchiverFactory;
+import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -18,8 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
@@ -27,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainMenu {
-    static String futureRestoreGUIVersion = "1.70";
+    static String futureRestoreGUIVersion = "1.71";
 
     private JButton selectBlobFileButton;
     private JButton selectTargetIPSWFileButton;
@@ -559,6 +558,23 @@ public class MainMenu {
                 mainMenuInstance.appendToLog("Checking for FutureRestore GUI updates in the background...");
                 alertIfNewerFRGUIAvailable(mainMenuInstance, futureRestoreGUIVersion);
             }
+
+            //If they previously downloaded FR, set it
+            String homeDirectory = System.getProperty("user.home");
+            String frPath = homeDirectory + "/FutureRestoreGUI/";
+            File extracted = new File(frPath + "extracted/");
+            //If ~/FRGUI/extracted/ exists
+            if (extracted.exists()) {
+                //If a file exists in there, set it
+                File frExecutable = extracted.listFiles()[0];
+                if (frExecutable.exists()) {
+                    mainMenuInstance.futureRestoreFilePath = frExecutable.getAbsolutePath();
+                    mainMenuInstance.appendToLog("Set previous FutureRestore download, " + frExecutable.getAbsolutePath() + ", to FutureRestore executable.");
+                    //Set name of button to blob file name
+                    mainMenuInstance.selectFutureRestoreBinaryExecutableButton.setText("✓ " + frExecutable.getName());
+                }
+            }
+
         });
 
     }
@@ -859,6 +875,21 @@ public class MainMenu {
 
         File archive = new File(filePath);
         File destination = new File(finalFrPath + "extracted/");
+
+        if (destination.exists())
+            if (destination.listFiles().length > 0) {
+                System.out.println("More than 0 files in dir. Cleaning");
+                try {
+                    FileUtils.cleanDirectory(destination);
+                } catch (IOException e) {
+                    System.out.println("Unable to delete all existing files in extracted directory. Aborting.");
+                    appendToLog("Unable to delete all existing files in extracted directory. Aborting.");
+                    e.printStackTrace();
+                    currentTaskTextField.setText("");
+                    return;
+                }
+            }
+
         if (archive.getName().endsWith(".zip")) {
             Archiver archiver = ArchiverFactory.createArchiver("zip");
             try {
