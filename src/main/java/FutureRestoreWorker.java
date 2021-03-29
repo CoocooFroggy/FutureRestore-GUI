@@ -247,7 +247,7 @@ public class FutureRestoreWorker {
             //Make all args into a String
             StringBuilder builder = new StringBuilder();
             for (String value : allArgsArray) {
-                builder.append(value);
+                builder.append(value + " ");
             }
             String fullCommand = builder.toString();
             uploadLog(logPath, logName, fullCommand);
