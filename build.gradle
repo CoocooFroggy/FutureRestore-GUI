@@ -1,6 +1,12 @@
 plugins {
     id 'java'
     id "com.github.johnrengelman.shadow" version "6.1.0"
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+}
+
+javafx {
+    version = "11.0.2"
+    modules = [ 'javafx.swing' ]
 }
 
 jar {
@@ -24,11 +30,12 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.formdev:flatlaf:1.0'
-    compile group: 'net.java.dev.jna', name: 'platform', version: '3.5.2'
     implementation 'net.lingala.zip4j:zip4j:2.7.0'
     implementation group: 'org.tukaani', name: 'xz', version: '1.8'
     implementation group: 'org.rauschig', name: 'jarchivelib', version: '0.7.1'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+    implementation 'com.github.Dansoftowner:jSystemThemeDetector:2.1'
+    implementation 'com.github.oshi:oshi-core:5.6.1'
 }
 
 test {
