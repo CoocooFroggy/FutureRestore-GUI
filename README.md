@@ -1,17 +1,17 @@
 # Futurerestore GUI
-![Github CI](https://img.shields.io/github/workflow/status/JohnnnnyKlayy/FutureRestore-GUI/Java%20CI%20with%20Gradle.svg)
-![Github releases](https://img.shields.io/github/v/release/JohnnnnyKlayy/FutureRestore-GUI?include_prereleases.svg)
-![Github issues](https://img.shields.io/github/issues/JohnnnnyKlayy/FutureRestore-GUI.svg)
-![Github repo size](https://img.shields.io/github/repo-size/JohnnnnyKlayy/FutureRestore-GUI.svg)
+![Github CI](https://img.shields.io/github/workflow/status/CoocooFroggy/FutureRestore-GUI/Java%20CI%20with%20Gradle.svg)
+![Github releases](https://img.shields.io/github/v/release/CoocooFroggy/FutureRestore-GUI?include_prereleases.svg)
+![Github issues](https://img.shields.io/github/issues/CoocooFroggy/FutureRestore-GUI.svg)
+![Github repo size](https://img.shields.io/github/repo-size/CoocooFroggy/FutureRestore-GUI.svg)
 
 A GUI implementation for FutureRestore written in Java.
 
-![Screenshot of FutureRestore GUI in Light Theme](.github/FutureRestoreGUILight.png?raw=true "FutureRestore GUI Light")
-![Screenshot of FutureRestore GUI in Dark Theme](.github/FutureRestoreGUIDark.png?raw=true "FutureRestore GUI Dark")
+![Screenshot of FutureRestore GUI in Light Theme](.github/Light.png?raw=true "FutureRestore GUI Light")
+![Screenshot of FutureRestore GUI in Dark Theme](.github/Dark.png?raw=true "FutureRestore GUI Dark")
 
 ## Installation
 
-Download from [releases](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/releases). No Java download required (it's bundled).
+Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/releases). No Java download required (it's bundled).
 
 Right click the Mac app and click "Open" to open.  
 Double click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.  
@@ -69,13 +69,13 @@ Download FutureRestore using the button included in the GUI, or manually from [h
 
 For FutureRestore related issues, refer to #futurerestore-help in the [r/jailbreak Discord server](https://discord.gg/GaCUYSDGt9).
 
-For GUI related issues, open an issue in the GitHub [issues section](https://github.com/JohnnnnyKlayy/FutureRestore-GUI/issues).
+For GUI related issues, open an issue in the GitHub [issues section](https://github.com/CoocooFroggy/FutureRestore-GUI/issues).
 
 ## Contributing
 
 Cloning the repository:
 ```
-git clone https://github.com/JohnnnnyKlayy/FutureRestore-GUI.git
+git clone https://github.com/CoocooFroggy/FutureRestore-GUI.git
 ```
 
 Pull requests are welcome. For major feature requests, please open an issue to discuss what improvements you would like to see.
