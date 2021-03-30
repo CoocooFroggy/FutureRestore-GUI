@@ -29,9 +29,14 @@ public class FutureRestoreWorker {
         argsAndFR.add(0, futureRestoreFilePath);
         String[] allArgsArray = Arrays.copyOf(argsAndFR.toArray(), argsAndFR.toArray().length, String[].class);
 
+        String homeDirectory = System.getProperty("user.home");
+        File frGuiDirectory = new File(homeDirectory + "/FutureRestoreGUI");
+
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(allArgsArray);
         processBuilder.redirectErrorStream(true);
+        processBuilder.directory(frGuiDirectory);
+
         futureRestoreProcess = processBuilder.start();
 
         futureRestoreProcess.getOutputStream().close();
@@ -41,7 +46,6 @@ public class FutureRestoreWorker {
         BufferedReader reader = new BufferedReader(new InputStreamReader(futureRestoreProcess.getInputStream()));
 
         //Log automatically
-        String homeDirectory = System.getProperty("user.home");
         File frGuiLogsDirectory = new File(homeDirectory + "/FutureRestoreGUI/logs");
         if (!frGuiLogsDirectory.exists())
             frGuiLogsDirectory.mkdir();
