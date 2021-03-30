@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainMenu {
-    static String futureRestoreGUIVersion = "1.71";
+    static String futureRestoreGUIVersion = "1.72";
 
     private JButton selectBlobFileButton;
     private JButton selectTargetIPSWFileButton;
