@@ -76,9 +76,14 @@ For GUI related issues, open an issue in the GitHub [issues section](https://git
 
 ## Contributing
 
-Cloning the repository:
+#### Cloning the repository:
 ```
 git clone https://github.com/CoocooFroggy/FutureRestore-GUI.git
 ```
+
+#### Building:
+Build a .jar with `gradle shadowjar`. Requires Java 11 or later.
+
+Package to a Windows .msi, Mac .app, or Linux .deb, .rpm, app-image with JPackage from Java 14 or later (continuous integration releases use Java 15).
 
 Pull requests are welcome. For major feature requests, please open an issue to discuss what improvements you would like to see.
