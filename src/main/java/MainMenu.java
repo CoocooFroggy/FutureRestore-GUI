@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainMenu {
-    static String futureRestoreGUIVersion = "1.72";
+    static String futureRestoreGUIVersion = "1.73";
 
     private JButton selectBlobFileButton;
     private JButton selectTargetIPSWFileButton;
@@ -238,51 +238,6 @@ public class MainMenu {
                     JOptionPane.showMessageDialog(mainMenuView, "The build in your blob name, " + blobBuild + ", does not match the one in the IPSW name, " + targetIpswBuild + ". Ensure you have the right blob and IPSW before continuing.", "Warning", JOptionPane.WARNING_MESSAGE);
                 }
 
-            //Check FutureRestore version
-            Runtime runtime = Runtime.getRuntime();
-            String version = null;
-            try {
-                Process process = runtime.exec(futureRestoreFilePath);
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                Pattern pattern = Pattern.compile("Version: [0-9a-z]+ - ([0-9]+)");
-                String s;
-                //Only check the first 5 lines
-                for (int i = 0; i < 5; i++) {
-                    s = bufferedReader.readLine();
-                    Matcher matcher = pattern.matcher(s);
-                    if (matcher.find())
-                        version = matcher.group(1);
-                }
-
-            } catch (IOException ioException) {
-                System.out.println("Unable to check FutureRestore version.");
-                JOptionPane.showMessageDialog(mainMenuView, "Unable to run FutureRestore. Ensure you selected the correct FutureRestore executable.", "Error", JOptionPane.ERROR_MESSAGE);
-                ioException.printStackTrace();
-                startFutureRestoreButton.setEnabled(true);
-                stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
-                return;
-            }
-
-            if (version == null) {
-                JOptionPane.showMessageDialog(mainMenuView, "Unable to check FutureRestore version from selected executable. Manually ensure you have the latest version.", "Warning", JOptionPane.ERROR_MESSAGE);
-            } else {
-                int response = JOptionPane.showConfirmDialog(mainMenuView, "Your FutureRestore's version: v" + version + ". Would you like to ensure this is the latest version on marijuanARM's fork?", "FutureRestore Version", JOptionPane.YES_NO_OPTION);
-                if (response == JOptionPane.YES_OPTION) {
-                    try {
-                        String latestVersion = getLatestFutureRestore();
-                        if (version.equals(latestVersion)) {
-                            JOptionPane.showMessageDialog(mainMenuView, "You're up to date! The latest version is v" + latestVersion + ".");
-                        } else {
-                            JOptionPane.showMessageDialog(mainMenuView, "You're not on the latest version. The latest version is " + latestVersion + ", and you're on " + version + ".", "Version Mismatch", JOptionPane.WARNING_MESSAGE);
-                        }
-                    } catch (IOException ioException) {
-                        System.out.println("Unable to check for latest FutureRestore");
-                        JOptionPane.showMessageDialog(mainMenuView, "Unable to fetch FutureRestore's latest version. Manually check that " + version + " is the latest.", "Unable to Fetch Version", JOptionPane.WARNING_MESSAGE);
-                        ioException.printStackTrace();
-                    }
-                }
-            }
-
             //Build their final command
             ArrayList<String> allArgs = new ArrayList<>();
 
@@ -329,7 +284,7 @@ public class MainMenu {
             currentTaskTextField.setText("Starting FutureRestore...");
 
             //Run command
-            runCommand(allArgs);
+            runCommand(allArgs, true);
         });
         exitRecoveryButton.addActionListener(e -> {
             //If they haven't selected a futurerestore yet
@@ -338,7 +293,7 @@ public class MainMenu {
                 return;
             }
 
-            runCommand(new ArrayList<>(Arrays.asList("--exit-recovery")));
+            runCommand(new ArrayList<>(Arrays.asList("--exit-recovery")), false);
         });
         basebandComboBox.addActionListener(e -> {
             switch (basebandComboBox.getSelectedItem().toString()) {
@@ -673,46 +628,61 @@ public class MainMenu {
 
     int lineNumber = 1;
 
-    void runCommand(ArrayList<String> allArgs) {
+    void runCommand(ArrayList<String> allArgs, boolean fullFR) {
+
+        previewCommand(allArgs);
+
+        //If they're running an actual restore
+        if (fullFR) {
+            //Check FutureRestore version
+            Runtime runtime = Runtime.getRuntime();
+            String version = null;
+            try {
+                Process process = runtime.exec(futureRestoreFilePath);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                Pattern pattern = Pattern.compile("Version: [0-9a-z]+ - ([0-9]+)");
+                String s;
+                //Only check the first 5 lines
+                for (int i = 0; i < 5; i++) {
+                    s = bufferedReader.readLine();
+                    Matcher matcher = pattern.matcher(s);
+                    if (matcher.find())
+                        version = matcher.group(1);
+                }
+
+            } catch (IOException ioException) {
+                System.out.println("Unable to check FutureRestore version.");
+                JOptionPane.showMessageDialog(mainMenuView, "Unable to run FutureRestore. Ensure you selected the correct FutureRestore executable.", "Error", JOptionPane.ERROR_MESSAGE);
+                ioException.printStackTrace();
+                startFutureRestoreButton.setEnabled(true);
+                stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
+                return;
+            }
+
+            //Ask if they want to check for latest
+            if (version == null) {
+                JOptionPane.showMessageDialog(mainMenuView, "Unable to check FutureRestore version from selected executable. Manually ensure you have the latest version.", "Warning", JOptionPane.ERROR_MESSAGE);
+            } else {
+                int response = JOptionPane.showConfirmDialog(mainMenuView, "Your FutureRestore's version: v" + version + ". Would you like to ensure this is the latest version on marijuanARM's fork?", "FutureRestore Version", JOptionPane.YES_NO_OPTION);
+                if (response == JOptionPane.YES_OPTION) {
+                    try {
+                        String latestVersion = getLatestFutureRestore();
+                        if (version.equals(latestVersion)) {
+                            JOptionPane.showMessageDialog(mainMenuView, "You're up to date! The latest version is v" + latestVersion + ".");
+                        } else {
+                            JOptionPane.showMessageDialog(mainMenuView, "You're not on the latest version. The latest version is " + latestVersion + ", and you're on " + version + ".", "Version Mismatch", JOptionPane.WARNING_MESSAGE);
+                        }
+                    } catch (IOException ioException) {
+                        System.out.println("Unable to check for latest FutureRestore");
+                        JOptionPane.showMessageDialog(mainMenuView, "Unable to fetch FutureRestore's latest version. Manually check that " + version + " is the latest.", "Unable to Fetch Version", JOptionPane.WARNING_MESSAGE);
+                        ioException.printStackTrace();
+                    }
+                }
+            }
+        }
 
         System.out.println("Starting FutureRestore...");
         appendToLog("Make sure to hit \"trust\" on your device if prompted!");
-
-        //If they want to preview command
-        if (properties.getProperty("preview_command").equals("true")) {
-            StringBuilder commandStringBuilder = new StringBuilder();
-            commandStringBuilder.append(futureRestoreFilePath + " ");
-            for (String arg : allArgs) {
-                commandStringBuilder.append(arg + " ");
-            }
-
-            //Build the preview area
-            JTextArea commandPreviewTextArea = new JTextArea();
-            commandPreviewTextArea.setEditable(false);
-            commandPreviewTextArea.setLineWrap(true);
-
-            String finalCommand = commandStringBuilder.toString();
-            commandPreviewTextArea.setText(finalCommand);
-
-            Object[] choices = {"Copy command only", "Copy command and run", "Only run"};
-            int response = JOptionPane.showOptionDialog(mainMenuView, new JScrollPane(commandPreviewTextArea), "Command preview", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
-
-            StringSelection stringSelection = new StringSelection(finalCommand);
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            switch (response) {
-                case 0: {
-                    //Copy command only
-                    clipboard.setContents(stringSelection, null);
-                    return;
-                }
-                case 1: {
-                    //Copy command and run
-                    clipboard.setContents(stringSelection, null);
-                    break;
-                }
-                //Case 2 is run only
-            }
-        }
 
         new Thread(() -> {
             try {
@@ -1005,6 +975,44 @@ public class MainMenu {
             System.out.println("Unable to save preferences.");
             e.printStackTrace();
             return;
+        }
+    }
+
+    void previewCommand(ArrayList<String> allArgs) {
+        //If they want to preview command
+        if (properties.getProperty("preview_command").equals("true")) {
+            StringBuilder commandStringBuilder = new StringBuilder();
+            commandStringBuilder.append(futureRestoreFilePath + " ");
+            for (String arg : allArgs) {
+                commandStringBuilder.append(arg + " ");
+            }
+
+            //Build the preview area
+            JTextArea commandPreviewTextArea = new JTextArea();
+            commandPreviewTextArea.setEditable(false);
+            commandPreviewTextArea.setLineWrap(true);
+
+            String finalCommand = commandStringBuilder.toString();
+            commandPreviewTextArea.setText(finalCommand);
+
+            Object[] choices = {"Copy command only", "Copy command and run", "Only run"};
+            int response = JOptionPane.showOptionDialog(mainMenuView, new JScrollPane(commandPreviewTextArea), "Command preview", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
+
+            StringSelection stringSelection = new StringSelection(finalCommand);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            switch (response) {
+                case 0: {
+                    //Copy command only
+                    clipboard.setContents(stringSelection, null);
+                    return;
+                }
+                case 1: {
+                    //Copy command and run
+                    clipboard.setContents(stringSelection, null);
+                    break;
+                }
+                //Case 2 is run only
+            }
         }
     }
 
