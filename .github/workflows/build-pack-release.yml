@@ -324,9 +324,9 @@ jobs:
           release_id=$(tail release-id.txt)
           echo "::set-output name=release-id::$release_id"
 
-      - name: Publish release from draft
-        uses: StuYarrow/publish-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          id: ${{ steps.output-release-id.outputs.release-id }}
+     # - name: Publish release from draft
+     #   uses: StuYarrow/publish-release@v1
+     #   env:
+     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+     #   with:
+     #     id: ${{ steps.output-release-id.outputs.release-id }}
