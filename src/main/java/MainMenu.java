@@ -219,8 +219,8 @@ public class MainMenu {
             Matcher blobMatcher = blobPattern.matcher(blobName);
             String blobBuild = null;
             if (blobMatcher.find()) {
-                System.out.println("Blob build is " + blobMatcher.group(1));
-                blobBuild = blobMatcher.group(1);
+//                System.out.println("Blob build is " + blobMatcher.group(0));
+                blobBuild = blobMatcher.group(0);
             }
 
             //If IPSW has a build name in it
@@ -228,8 +228,8 @@ public class MainMenu {
             Matcher ipswMatcher = ipswPattern.matcher(targetIpswName);
             String targetIpswBuild = null;
             if (ipswMatcher.find()) {
-                System.out.println("IPSW build is " + ipswMatcher.group(1));
-                targetIpswBuild = ipswMatcher.group(1);
+//                System.out.println("IPSW build is " + ipswMatcher.group(0));
+                targetIpswBuild = ipswMatcher.group(0);
             }
 
             //If they're different
