@@ -215,7 +215,7 @@ public class MainMenu {
             }
 
             //If blob name has a build number in it
-            Pattern blobPattern = Pattern.compile(".*([A-Z0-9]{5})_");
+            Pattern blobPattern = Pattern.compile("(?<=_|-)[A-Z0-9]{5,10}[a-z]?(?=_|-)");
             Matcher blobMatcher = blobPattern.matcher(blobName);
             String blobBuild = null;
             if (blobMatcher.find()) {
@@ -224,7 +224,7 @@ public class MainMenu {
             }
 
             //If IPSW has a build name in it
-            Pattern ipswPattern = Pattern.compile(".*_([A-Z0-9]{5})");
+            Pattern ipswPattern = Pattern.compile("(?<=_|-)[A-Z0-9]{5,10}[a-z]?(?=_|-)");
             Matcher ipswMatcher = ipswPattern.matcher(targetIpswName);
             String targetIpswBuild = null;
             if (ipswMatcher.find()) {
@@ -295,6 +295,7 @@ public class MainMenu {
 
             runCommand(new ArrayList<>(Arrays.asList("--exit-recovery")), false);
         });
+
         basebandComboBox.addActionListener(e -> {
             switch (basebandComboBox.getSelectedItem().toString()) {
                 case "Latest Baseband":
