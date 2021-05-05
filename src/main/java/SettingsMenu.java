@@ -15,6 +15,9 @@ public class SettingsMenu {
     private JTextArea discordTextArea;
     private JCheckBox previewCommandCheckBox;
     private JCheckBox GUIUpdatesCheckBox;
+    private JRadioButton autoRadioButton;
+    private JRadioButton lightRadioButton;
+    private JRadioButton darkRadioButton;
 
     public SettingsMenu() {
         shareLogsCheckBox.addActionListener(new ActionListener() {
@@ -78,6 +81,30 @@ public class SettingsMenu {
                 }
             }
         });
+
+        //Changing theme pref
+        ActionListener listener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JRadioButton buttonPressed = (JRadioButton) e.getSource();
+
+                //I'm sorry, tried to get a switch statement to work here but nothing was constant it seemed
+                if (buttonPressed.equals(autoRadioButton)) {
+                    MainMenu.properties.setProperty("theme_preference", "auto");
+                    MainMenu.savePreferences();
+                } else if (buttonPressed.equals(lightRadioButton)) {
+                    MainMenu.properties.setProperty("theme_preference", "light");
+                    MainMenu.savePreferences();
+                } else if (buttonPressed.equals(darkRadioButton)) {
+                    MainMenu.properties.setProperty("theme_preference", "dark");
+                    MainMenu.savePreferences();
+                }
+
+            }
+        };
+        autoRadioButton.addActionListener(listener);
+        lightRadioButton.addActionListener(listener);
+        darkRadioButton.addActionListener(listener);
     }
 
     static void initializeSettingsMenu(SettingsMenu settingsMenuInstance) {
@@ -104,6 +131,13 @@ public class SettingsMenu {
             settingsMenuInstance.GUIUpdatesCheckBox.setSelected(true);
         else
             settingsMenuInstance.GUIUpdatesCheckBox.setSelected(false);
+
+        //Theme prefs radio buttons
+        switch (MainMenu.properties.getProperty("theme_preference")) {
+            case "auto": settingsMenuInstance.autoRadioButton.setSelected(true); break;
+            case "light": settingsMenuInstance.lightRadioButton.setSelected(true); break;
+            case "dark": settingsMenuInstance.darkRadioButton.setSelected(true); break;
+        }
     }
 
     {
@@ -129,13 +163,14 @@ public class SettingsMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         settingsMenuView.add(shareLogsCheckBox, gbc);
         final JSeparator separator1 = new JSeparator();
         separator1.setOrientation(1);
         gbc = new GridBagConstraints();
-        gbc.gridx = 1;
+        gbc.gridx = 3;
         gbc.gridy = 2;
         gbc.gridheight = 2;
         gbc.fill = GridBagConstraints.BOTH;
@@ -144,12 +179,13 @@ public class SettingsMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.VERTICAL;
         settingsMenuView.add(spacer1, gbc);
         final JLabel label1 = new JLabel();
         label1.setText("(Optional) Let us contact you about your logs by providing your Discord");
         gbc = new GridBagConstraints();
-        gbc.gridx = 2;
+        gbc.gridx = 4;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 0, 0, 10);
@@ -157,7 +193,8 @@ public class SettingsMenu {
         final JPanel spacer2 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 8;
+        gbc.gridy = 10;
+        gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.VERTICAL;
         settingsMenuView.add(spacer2, gbc);
         previewCommandCheckBox = new JCheckBox();
@@ -165,13 +202,14 @@ public class SettingsMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 5;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         settingsMenuView.add(previewCommandCheckBox, gbc);
         final JLabel label2 = new JLabel();
         label2.setText("See a preview of the final command before it runs");
         gbc = new GridBagConstraints();
-        gbc.gridx = 2;
+        gbc.gridx = 4;
         gbc.gridy = 5;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 0, 0, 10);
@@ -183,13 +221,14 @@ public class SettingsMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 3;
+        gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(0, 10, 0, 0);
         settingsMenuView.add(discordTextArea, gbc);
         final JLabel label3 = new JLabel();
         label3.setText("Automatically share logs to help make FutureRestore better");
         gbc = new GridBagConstraints();
-        gbc.gridx = 2;
+        gbc.gridx = 4;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 0, 0, 10);
@@ -202,6 +241,7 @@ public class SettingsMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(10, 10, 0, 0);
         settingsMenuView.add(label4, gbc);
@@ -209,20 +249,20 @@ public class SettingsMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 4;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 5;
         gbc.fill = GridBagConstraints.BOTH;
         settingsMenuView.add(separator2, gbc);
         final JSeparator separator3 = new JSeparator();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 6;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 5;
         gbc.fill = GridBagConstraints.BOTH;
         settingsMenuView.add(separator3, gbc);
         final JSeparator separator4 = new JSeparator();
         separator4.setOrientation(1);
         gbc = new GridBagConstraints();
-        gbc.gridx = 1;
+        gbc.gridx = 3;
         gbc.gridy = 5;
         gbc.fill = GridBagConstraints.BOTH;
         settingsMenuView.add(separator4, gbc);
@@ -232,13 +272,14 @@ public class SettingsMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 7;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         settingsMenuView.add(GUIUpdatesCheckBox, gbc);
         final JLabel label5 = new JLabel();
         label5.setText("Automatically check for updates for FutureRestore GUI");
         gbc = new GridBagConstraints();
-        gbc.gridx = 2;
+        gbc.gridx = 4;
         gbc.gridy = 7;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 0, 0, 10);
@@ -246,10 +287,59 @@ public class SettingsMenu {
         final JSeparator separator5 = new JSeparator();
         separator5.setOrientation(1);
         gbc = new GridBagConstraints();
-        gbc.gridx = 1;
+        gbc.gridx = 3;
         gbc.gridy = 7;
         gbc.fill = GridBagConstraints.BOTH;
         settingsMenuView.add(separator5, gbc);
+        autoRadioButton = new JRadioButton();
+        autoRadioButton.setText("Auto");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 9;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 10, 0, 0);
+        settingsMenuView.add(autoRadioButton, gbc);
+        lightRadioButton = new JRadioButton();
+        lightRadioButton.setText("Light");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 9;
+        gbc.anchor = GridBagConstraints.WEST;
+        settingsMenuView.add(lightRadioButton, gbc);
+        darkRadioButton = new JRadioButton();
+        darkRadioButton.setText("Dark");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 9;
+        gbc.anchor = GridBagConstraints.WEST;
+        settingsMenuView.add(darkRadioButton, gbc);
+        final JSeparator separator6 = new JSeparator();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        gbc.gridwidth = 5;
+        gbc.fill = GridBagConstraints.BOTH;
+        settingsMenuView.add(separator6, gbc);
+        final JSeparator separator7 = new JSeparator();
+        separator7.setOrientation(1);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 9;
+        gbc.fill = GridBagConstraints.BOTH;
+        settingsMenuView.add(separator7, gbc);
+        final JLabel label6 = new JLabel();
+        label6.setText("Set the theme of the GUI. Requires a restart to take effect.");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 4;
+        gbc.gridy = 9;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 0, 0, 10);
+        settingsMenuView.add(label6, gbc);
+        ButtonGroup buttonGroup;
+        buttonGroup = new ButtonGroup();
+        buttonGroup.add(autoRadioButton);
+        buttonGroup.add(lightRadioButton);
+        buttonGroup.add(darkRadioButton);
     }
 
     /**

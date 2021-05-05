@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainMenu {
-    static String futureRestoreGUIVersion = "1.73";
+    static String futureRestoreGUIVersion = "1.74";
 
     private JButton selectBlobFileButton;
     private JButton selectTargetIPSWFileButton;
@@ -215,21 +215,21 @@ public class MainMenu {
             }
 
             //If blob name has a build number in it
-            Pattern blobPattern = Pattern.compile(".*([A-Z0-9]{5})_");
+            Pattern blobPattern = Pattern.compile("(?<=_|-)[A-Z0-9]{5,10}[a-z]?(?=_|-)");
             Matcher blobMatcher = blobPattern.matcher(blobName);
             String blobBuild = null;
             if (blobMatcher.find()) {
-                System.out.println("Blob build is " + blobMatcher.group(1));
-                blobBuild = blobMatcher.group(1);
+//                System.out.println("Blob build is " + blobMatcher.group(0));
+                blobBuild = blobMatcher.group(0);
             }
 
             //If IPSW has a build name in it
-            Pattern ipswPattern = Pattern.compile(".*_([A-Z0-9]{5})");
+            Pattern ipswPattern = Pattern.compile("(?<=_|-)[A-Z0-9]{5,10}[a-z]?(?=_|-)");
             Matcher ipswMatcher = ipswPattern.matcher(targetIpswName);
             String targetIpswBuild = null;
             if (ipswMatcher.find()) {
-                System.out.println("IPSW build is " + ipswMatcher.group(1));
-                targetIpswBuild = ipswMatcher.group(1);
+//                System.out.println("IPSW build is " + ipswMatcher.group(0));
+                targetIpswBuild = ipswMatcher.group(0);
             }
 
             //If they're different
@@ -295,6 +295,7 @@ public class MainMenu {
 
             runCommand(new ArrayList<>(Arrays.asList("--exit-recovery")), false);
         });
+
         basebandComboBox.addActionListener(e -> {
             switch (basebandComboBox.getSelectedItem().toString()) {
                 case "Latest Baseband":
@@ -439,17 +440,41 @@ public class MainMenu {
     static JFrame settingsMenuFrame;
 
     public static void main(String[] args) {
-        final OsThemeDetector detector = OsThemeDetector.getDetector();
-        final boolean isDarkThemeUsed = detector.isDark();
-        //Must set L&F before we create instance of MainMenu
-        if (isDarkThemeUsed) {
-            FlatDarculaLaf.install();
-        } else {
-            //Only set if not Mac
-            if (!System.getProperty("os.name").toLowerCase().contains("mac"))
-                FlatIntelliJLaf.install();
+        //load and init prefs
+        initializePreferences();
+
+        boolean isDarkThemeUsed = false;
+        switch (properties.getProperty("theme_preference")) {
+            case "auto": {
+                final OsThemeDetector detector = OsThemeDetector.getDetector();
+                isDarkThemeUsed = detector.isDark();
+                //Must set L&F before we create instance of MainMenu
+                if (isDarkThemeUsed) {
+                    FlatDarculaLaf.install();
+                } else {
+                    //Only set if not Mac
+                    if (!System.getProperty("os.name").toLowerCase().contains("mac"))
+                        FlatIntelliJLaf.install();
+                }
+                break;
+            }
+            case "light": {
+                //Good practice
+                isDarkThemeUsed = false;
+                //Only set if not Mac
+                if (!System.getProperty("os.name").toLowerCase().contains("mac"))
+                    FlatIntelliJLaf.install();
+                break;
+            }
+            case "dark": {
+                isDarkThemeUsed = true;
+                FlatDarculaLaf.install();
+                break;
+            }
+
         }
 
+        final boolean finalIsDarkThemeUsed = isDarkThemeUsed;
         SwingUtilities.invokeLater(() -> {
             mainMenuFrame = new JFrame("FutureRestore GUI");
             settingsMenuFrame = new JFrame("Settings");
@@ -471,9 +496,6 @@ public class MainMenu {
             //Centers it on screen
             mainMenuFrame.setLocationRelativeTo(null);
 
-            //load and init prefs
-            initializePreferences();
-
             // init SettingsMenu
             SettingsMenu.initializeSettingsMenu(settingsMenuInstance);
 
@@ -486,7 +508,7 @@ public class MainMenu {
             settingsMenuFrame.setLocationRelativeTo(null);
 
             //Prepare for dark mode
-            if (isDarkThemeUsed)
+            if (finalIsDarkThemeUsed)
                 turnDark(mainMenuInstance);
             else {
                 //Custom light UI setup
@@ -531,7 +553,6 @@ public class MainMenu {
             }
 
         });
-
     }
 
     /*UTILITIES*/
@@ -952,6 +973,8 @@ public class MainMenu {
             properties.setProperty("preview_command", "false");
         if (properties.getProperty("check_updates") == null)
             properties.setProperty("check_updates", "true");
+        if (properties.getProperty("theme_preference") == null)
+            properties.setProperty("theme_preference", "auto");
 
         savePreferences();
     }
