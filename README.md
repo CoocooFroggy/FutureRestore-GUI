@@ -19,6 +19,7 @@ On Windows, double click the Windows MSI to install the App. Launch it from the 
 
 Linux (64 bit, amd64 + x86_64):  
 - On Debian based Linux systems, such as Ubuntu and Mint, double click the DEB to install it. Launch it from your application library.  
+  - You can also run this one-liner to add the repository and install FutureRestore GUI: ```u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"KEY.gpg" | sudo apt-key add - && sudo curl -s --compressed -o /etc/apt/sources.list.d/coocoofroggyppa.list $u"coocoofroggyppa.list" && sudo apt update && sudo apt install futurerestore-gui```
 - On RPM based Linux systems, such as Red Hat, Fedora, and CentOS, double click the file to install it. Launch it from your application library.  
 - On Linux systems which support none of these, download the Linux-Universal build, and run the runFRGUI.sh script in terminal to launch the GUI.
 
