@@ -258,6 +258,7 @@ public class FutureRestoreWorker {
         }
 
         SwingUtilities.invokeLater(() -> {
+            mainMenuView.setEnabled(true);
             startFutureRestoreButton.setEnabled(true);
             stopFutureRestoreButton.setText("Stop FutureRestore");
         });
