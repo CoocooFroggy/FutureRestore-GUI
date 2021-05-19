@@ -17,29 +17,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      - name: Find Comment
-        uses: peter-evans/find-comment@v1
-        id: find-comment
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: CoocooFroggy
-          body-includes: FutureRestore GUI — v
-          direction: last
-
-      - name: Parse comment
-        id: parse-comment
-        env:
-          COMMENT_BODY: ${{ steps.find-comment.outputs.comment-body }}
+      
+      - name: Parse version
+        id: parse-version
         run: |
-          echo "Comment body is: $COMMENT_BODY"
-          version=$(echo "$COMMENT_BODY" | grep -Po '(?<=FutureRestore GUI — v).*')
-          echo "Version set to $version"
-          echo "::set-output name=version::$version"
+          version=$(cat src/main/java/Main.java | grep -Po '(?<=futureRestoreGUIVersion = \").*(?=\")')
           echo $version > version.txt
-          release_body=$(echo "$COMMENT_BODY" | sed '1d')
-          echo "Release body set to $release_body"
-          echo "::set-output name=release-body::$release_body"
+          echo '::set-output name=version::$version'
 
       - name: Set up JDK 11
         uses: actions/setup-java@v1
@@ -69,9 +53,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.parse-comment.outputs.version }}
-          release_name: FutureRestore GUI — v${{ steps.parse-comment.outputs.version }}
-          body: ${{ steps.parse-comment.outputs.release-body }}
+          tag_name: v${{ steps.parse-version.outputs.version }}
+          release_name: FutureRestore GUI — v${{ steps.parse-version.outputs.version }}
           draft: true
           prerelease: false
 
