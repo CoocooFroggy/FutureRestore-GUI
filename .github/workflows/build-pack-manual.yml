@@ -1,15 +1,12 @@
-name: Build, Pack, Release
+name: Build, Pack; Manual
 
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push but only for the master branch
-  pull_request:
-    types: [ closed ]
+  workflow_dispatch:
 
 jobs:
   build-and-create-draft:
-    # Only run if it was a PR merge
-    if: github.event.pull_request.merged == true
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -292,24 +289,3 @@ jobs:
           asset_path: ${{ steps.grep_msi_name.outputs.msi_filename }}
           asset_name: FutureRestore-GUI-Windows-${{ steps.output-version.outputs.version }}.msi
           asset_content_type: application/octet-stream
-
-  publish-release:
-    needs: [ ubuntu-pack, macos-pack, windows-pack ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download release ID
-        uses: actions/download-artifact@v2
-        with:
-          name: release-id
-      - name: Output release ID
-        id: output-release-id
-        run: |
-          release_id=$(tail release-id.txt)
-          echo "::set-output name=release-id::$release_id"
-
-     # - name: Publish release from draft
-     #   uses: StuYarrow/publish-release@v1
-     #   env:
-     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-     #   with:
-     #     id: ${{ steps.output-release-id.outputs.release-id }}
