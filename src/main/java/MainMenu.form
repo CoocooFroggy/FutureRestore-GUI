@@ -324,7 +324,7 @@
       <component id="7091a" class="javax.swing.JCheckBox" binding="waitWCheckBox" default-binding="true">
         <constraints>
           <grid row="7" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="0.0"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="AP Nonce Collision"/>
@@ -370,7 +370,7 @@
       <component id="51f43" class="javax.swing.JCheckBox" binding="pwnedRestoreCheckBox" default-binding="true">
         <constraints>
           <grid row="7" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
+          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="Pwned Restore"/>
