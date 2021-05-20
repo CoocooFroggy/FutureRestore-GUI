@@ -61,169 +61,122 @@ public class FutureRestoreWorker {
         while ((line = reader.readLine()) != null) {
             //Parse messages
             Pattern progressBarPattern = Pattern.compile("\u001B\\[A\u001B\\[J([0-9]{3})");
-            final Matcher matcher = Pattern.compile("(\\[DOWN\\] downloading file)|(downloading SEP)|(downloading SE firmware)|(downloading Baseband)|(downloading Rose firmware)|(Checking BuildIdentity)|(downloading Savage)|(downloading Veridian DigestMap)|(downloading Veridian FirmwareMap)|(Entering recovery mode)|(code=([0-9]+))|(Extracting BuildManifest from iPSW)|(\\[IMG4TOOL\\] checking hash for)|(Extracting filesystem from iPSW)|(Sending iBEC)|(Sending NORData)|(Unmounting filesystems)|(Sending FDR Trust data now)|(Sending filesystem now)|(Verifying restore)|(Checking filesystems)|(Mounting filesystems)|(Flashing firmware)|(Requesting FUD data)|(Updating baseband)|(Sending SystemImageRootHash now)|(Status: Restore Finished)|(what=(.*))|(Waiting for device to disconnect)|(Connecting to FDR)|(About to send NOR)|(Connecting to ASR)|(waiting for message)").matcher(line);
-            if (matcher.find()) {
-                for (int i = 1; i <= matcher.groupCount(); i++) {
-                    if (matcher.group(i) != null) {
-                        switch (i) {
-                            case 1:
-                                currentTaskTextField.setText("Downloading firmwares.json...");
-                                break;
-                            case 2:
-                                currentTaskTextField.setText("Downloading SEP...");
-                                break;
-                            case 3:
-                                currentTaskTextField.setText("Downloading SE firmware...");
-                                break;
-                            case 4:
-                                currentTaskTextField.setText("Downloading baseband...");
-                                break;
-                            case 5:
-                                currentTaskTextField.setText("Downloading Rose firmware...");
-                                break;
-                            case 6:
-                                currentTaskTextField.setText("Checking BuildIdentity...");
-                                break;
-                            case 7:
-                                currentTaskTextField.setText("Downloading Savage...");
-                                break;
-                            case 8:
-                                currentTaskTextField.setText("Downloading Veridian DigestMap...");
-                                break;
-                            case 9:
-                                currentTaskTextField.setText("Downloading Veridian FirmwareMap...");
-                                break;
-                            case 10:
-                                currentTaskTextField.setText("Entering recovery mode...");
-                                break;
-                            case 11: // Error codes, same as case 12
-                            case 12: {
-                                //Parse error codes
-                                switch (matcher.group(12)) {
-                                    //Unable to enter recovery mode
-                                    case "9043985": {
-                                        if (!hasRecoveryRestarted) {
-                                            hasRecoveryRestarted = true;
-                                            //Ensure current process is killed
-                                            if (futureRestoreProcess.isAlive())
-                                                futureRestoreProcess.destroy();
-                                            //Restart
-                                            new Thread(() -> {
-                                                try {
-                                                    runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton, stopFutureRestoreButton);
-                                                } catch (IOException | InterruptedException | TimeoutException e) {
-                                                    System.out.println("Unable to rerun FutureRestore.");
-                                                    e.printStackTrace();
-                                                }
-                                            }).start();
-                                            return;
-                                        }
-                                        break;
+            HashMap<String, String> parseableMessages = new HashMap<>() {{
+                //Normal status messages during restore
+                put("[DOWN] downloading file", "Downloading firmwares.json...");
+                put("downloading SEP", "Downloading SEP...");
+                put("downloading SE firmware", "Downloading SE firmware...");
+                put("downloading Baseband", "Downloading Baseband...");
+                put("downloading Rose firmware", "Downloading Rose firmware...");
+                put("Checking BuildIdentity", "Checking BuildIdentity...");
+                put("downloading Savage", "Downloading Savage...");
+                put("downloading Veridian DigestMap", "Downloading Veridian DigestMap...");
+                put("downloading Veridian FirmwareMap", "Downloading Veridian FirmwareMap...");
+                put("Entering recovery mode", "Entering recovery mode...");
+                put("Extracting BuildManifest from iPSW", "Extracting BuildManifest from iPSW...");
+                put("[IMG4TOOL] checking hash for", "Checking hashes...");
+                put("Extracting filesystem from iPSW", "Extracting filesystem from iPSW...");
+                put("Sending iBEC", "Sending iBEC...");
+                put("Sending NORData", "Sending NORData...");
+                put("Unmounting filesystems", "Unmounting filesystems...");
+                put("Sending FDR Trust data now", "Sending FDR trust data...");
+                put("Sending filesystem now", "Sending filesystem...");
+                put("Verifying restore", "Verifying restore...");
+                put("Checking filesystems", "Checking filesystems...");
+                put("Mounting filesystems", "Mounting filesystems...");
+                put("Flashing firmware", "Flashing firmware...");
+                put("Requesting FUD data", "Requesting FUD data...");
+                put("Updating baseband", "Updating Baseband...");
+                put("Sending SystemImageRootHash now", "Sending SystemImageRootHash...");
+                put("Waiting for device to disconnect", "Waiting for device to disconnect...");
+                put("Connecting to FDR", "Connecting to FDR client...");
+                put("About to send NOR", "About to send NOR data...");
+                put("Connecting to ASR", "Connecting to ASR...");
+                put("waiting for message", "Waiting for message from FDR...");
+
+                //Special messages
+                put("Status: Restore Finished", "Restore Finished!");
+                put("what=", null);
+                put("code=", null);
+                put("unknown option -- use-pwndfu", null);
+            }};
+
+            for (Map.Entry<String, String> entrySet : parseableMessages.entrySet()) {
+                String futureRestorePossibleMatch = entrySet.getKey();
+                String fancyLog = entrySet.getValue();
+                if (line.contains(futureRestorePossibleMatch)) {
+                    // If there's a normal value
+                    if (fancyLog != null) {
+                        currentTaskTextField.setText(fancyLog);
+                    }
+                    // Otherwise, error was parsed
+                    else {
+                        if (futureRestorePossibleMatch.equals("code=")) {
+                            String code = line.replaceFirst("code=", "");
+                            //Parse error codes
+                            switch (code) {
+                                //Unable to enter recovery mode
+                                case "9043985": {
+                                    if (!hasRecoveryRestarted) {
+                                        hasRecoveryRestarted = true;
+                                        //Ensure current process is killed
+                                        if (futureRestoreProcess.isAlive())
+                                            futureRestoreProcess.destroy();
+                                        //Restart
+                                        new Thread(() -> {
+                                            try {
+                                                runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton, stopFutureRestoreButton);
+                                            } catch (IOException | InterruptedException | TimeoutException e) {
+                                                System.out.println("Unable to rerun FutureRestore.");
+                                                e.printStackTrace();
+                                            }
+                                        }).start();
+                                        return;
                                     }
-                                    //iBEC Error
-                                    case "64684049": {
-                                        Object[] choices = {"Open link", "Ok"};
-
-                                        int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an iBEC error. This is a common error and easily fixable.\n" +
-                                                "A solution for this error is available here:\n" +
-                                                "https://github.com/marijuanARM/futurerestore#restoring-on-windows-10", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
-                                        if (response == JOptionPane.YES_OPTION) {
-                                            openWebpage("https://github.com/marijuanARM/futurerestore#restoring-on-windows-10");
-                                        }
-
-                                        break;
-                                    }
-                                    case "44498961": {
-                                        Object[] choices = {"Open link", "Ok"};
-
-                                        int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an APTicket—APNonce mismatch error. This is a common error.\n" +
-                                                        "Ensure you've set the correct generator on your device that corresponds with your blob's APNonce and try again.\n" +
-                                                        "If you need more help, try the #futurerestore-help channel in the r/jailbreak Discord server.\n" +
-                                                        "https://discord.gg/GaCUYSDGt9",
-                                                "APTicket does not match APNonce", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, choices, choices[0]);
-                                        if (response == JOptionPane.YES_OPTION) {
-                                            openWebpage("https://discord.gg/GaCUYSDGt9");
-                                        }
-
-                                        break;
-                                    }
+                                    break;
                                 }
-                                break;
-                            }
-                            case 13:
-                                currentTaskTextField.setText("Extracting BuildManifest from iPSW...");
-                                break;
-                            case 14:
-                                currentTaskTextField.setText("Checking hashes...");
-                                break;
-                            case 15:
-                                currentTaskTextField.setText("Extracting filesystem from iPSW...");
-                                break;
-                            case 16:
-                                currentTaskTextField.setText("Sending iBEC...");
-                                break;
-                            case 17:
-                                currentTaskTextField.setText("Sending NORData...");
-                                break;
-                            case 18:
-                                currentTaskTextField.setText("Unmounting filesystems...");
-                                break;
-                            case 19:
-                                currentTaskTextField.setText("Sending FDR trust data...");
-                                break;
-                            case 20:
-                                currentTaskTextField.setText("Sending filesystem...");
-                                break;
-                            case 21:
-                                currentTaskTextField.setText("Verifying restore...");
-                                break;
-                            case 22:
-                                currentTaskTextField.setText("Checking filesystems...");
-                                break;
-                            case 23:
-                                currentTaskTextField.setText("Mounting filesystems");
-                                break;
-                            case 24:
-                                currentTaskTextField.setText("Flashing firmware...");
-                                break;
-                            case 25:
-                                currentTaskTextField.setText("Requesting FUD data...");
-                                break;
-                            case 26:
-                                currentTaskTextField.setText("Updating baseband...");
-                                break;
-                            case 27:
-                                currentTaskTextField.setText("Sending SystemImageRootHash...");
-                                break;
-                            case 28:
-                                currentTaskTextField.setText("Restore Finished!");
-                                break;
-                            case 29:
-                            case 30:
-                                currentTaskTextField.setText(matcher.group(30));
-                                break;
-                            //Cases 29 and 30 are error messages
-                            case 31:
-                                currentTaskTextField.setText("Waiting for device to disconnect...");
-                                break;
-                            case 32:
-                                currentTaskTextField.setText("Connecting to FDR client...");
-                                break;
-                            case 33:
-                                currentTaskTextField.setText("About to send NOR data...");
-                                break;
-                            case 34:
-                                currentTaskTextField.setText("Connecting to ASR...");
-                                break;
-                            case 35:
-                                currentTaskTextField.setText("Waiting for message from FDR...");
-                                break;
-                        }
+                                //iBEC Error
+                                case "64684049": {
+                                    Object[] choices = {"Open link", "Ok"};
 
-                        break;
+                                    int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an iBEC error. This is a common error and easily fixable.\n" +
+                                            "A solution for this error is available here:\n" +
+                                            "https://github.com/marijuanARM/futurerestore#restoring-on-windows-10", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+                                    if (response == JOptionPane.YES_OPTION) {
+                                        openWebpage("https://github.com/marijuanARM/futurerestore#restoring-on-windows-10");
+                                    }
+
+                                    break;
+                                }
+                                // AP Nonce mismatch
+                                case "44498961": {
+                                    Object[] choices = {"Open link", "Ok"};
+
+                                    int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an APTicket—APNonce mismatch error. This is a common error.\n" +
+                                                    "Ensure you've set the correct generator on your device that corresponds with your blob's APNonce and try again.\n" +
+                                                    "If you need more help, follow the steps to set generator on \"ios.cfw.guide\".\n" +
+                                                    "https://ios.cfw.guide/futurerestore#getting-started",
+                                            "APTicket does not match APNonce", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, choices, choices[0]);
+                                    if (response == JOptionPane.YES_OPTION) {
+                                        openWebpage("https://ios.cfw.guide/futurerestore#getting-started");
+                                    }
+
+                                    break;
+                                }
+                            }
+                        }
+                        if (futureRestorePossibleMatch.equals("what=")) {
+                            String error = line.replaceFirst("what=", "");
+                            currentTaskTextField.setText(error);
+                        }
+                        if (futureRestorePossibleMatch.equals("unknown option -- use-pwndfu")) {
+                            JOptionPane.showMessageDialog(mainMenuView,
+                                    "Looks like there is no pwndfu argument on this version of FutureRestore.\n" +
+                                    "Ensure you're using a FutureRestore version which supports this argument, or turn off \"Pwned Restore.\"",
+                                    "FutureRestore PWNDFU Unknown", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 }
-                appendToLog(logTextArea, writer, line);
             }
 
             //If it is a progress bar
@@ -258,6 +211,10 @@ public class FutureRestoreWorker {
         }
 
         SwingUtilities.invokeLater(() -> {
+            // Clear text field if there was no real information
+            if (currentTaskTextField.getText().contains("Starting FutureRestore"))
+                currentTaskTextField.setText("");
+            mainMenuView.setEnabled(true);
             startFutureRestoreButton.setEnabled(true);
             stopFutureRestoreButton.setText("Stop FutureRestore");
         });
