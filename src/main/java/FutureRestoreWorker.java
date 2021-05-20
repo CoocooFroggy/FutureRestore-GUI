@@ -171,8 +171,8 @@ public class FutureRestoreWorker {
                         }
                         if (futureRestorePossibleMatch.equals("unknown option -- use-pwndfu")) {
                             JOptionPane.showMessageDialog(mainMenuView,
-                                    "Looks like there is no pwndfu option on this version of FutureRestore.\n" +
-                                    "Ensure you're using a FutureRestore version which supports this argument, or turn off \"Pwned Restore\".",
+                                    "Looks like there is no pwndfu argument on this version of FutureRestore.\n" +
+                                    "Ensure you're using a FutureRestore version which supports this argument, or turn off \"Pwned Restore.\"",
                                     "FutureRestore PWNDFU Unknown", JOptionPane.ERROR_MESSAGE);
                         }
                     }
