@@ -62,6 +62,7 @@ public class FutureRestoreWorker {
             //Parse messages
             Pattern progressBarPattern = Pattern.compile("\u001B\\[A\u001B\\[J([0-9]{3})");
             HashMap<String, String> parseableMessages = new HashMap<>() {{
+                //Normal status messages during restore
                 put("[DOWN] downloading file", "Downloading firmwares.json...");
                 put("downloading SEP", "Downloading SEP...");
                 put("downloading SE firmware", "Downloading SE firmware...");
@@ -93,9 +94,11 @@ public class FutureRestoreWorker {
                 put("Connecting to ASR", "Connecting to ASR...");
                 put("waiting for message", "Waiting for message from FDR...");
 
+                //Special messages
                 put("Status: Restore Finished", "Restore Finished!");
                 put("what=", null);
                 put("code=", null);
+                put("unknown option -- use-pwndfu", null);
             }};
 
             for (Map.Entry<String, String> entrySet : parseableMessages.entrySet()) {
@@ -165,6 +168,11 @@ public class FutureRestoreWorker {
                         if (futureRestorePossibleMatch.equals("what=")) {
                             String error = line.replaceFirst("what=", "");
                             currentTaskTextField.setText(error);
+                        }
+                        if (futureRestorePossibleMatch.equals("unknown option -- use-pwndfu")) {
+                            JOptionPane.showMessageDialog(mainMenuView,
+                                    "Looks like there is no pwndfu option on this version of FutureRestore.\n" +
+                                    "Ensure you're using a FutureRestore version which supports this argument, or turn off \"Pwned Restore\".");
                         }
                     }
                 }
