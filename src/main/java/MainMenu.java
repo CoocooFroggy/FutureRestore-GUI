@@ -1015,9 +1015,11 @@ public class MainMenu {
 
             String finalCommand = commandStringBuilder.toString();
             commandPreviewTextArea.setText(finalCommand);
+            JScrollPane scrollPane = new JScrollPane(commandPreviewTextArea);
+            scrollPane.setPreferredSize(new Dimension(300, 125));
 
             Object[] choices = {"Copy command only", "Copy command and run", "Only run"};
-            int response = JOptionPane.showOptionDialog(mainMenuView, new JScrollPane(commandPreviewTextArea), "Command preview", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
+            int response = JOptionPane.showOptionDialog(mainMenuView, scrollPane, "Command preview", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
 
             StringSelection stringSelection = new StringSelection(finalCommand);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
