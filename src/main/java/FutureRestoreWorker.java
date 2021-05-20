@@ -202,6 +202,9 @@ public class FutureRestoreWorker {
         }
 
         SwingUtilities.invokeLater(() -> {
+            // Clear text field if there was no real information
+            if (currentTaskTextField.getText().contains("Starting FutureRestore"))
+                currentTaskTextField.setText("");
             mainMenuView.setEnabled(true);
             startFutureRestoreButton.setEnabled(true);
             stopFutureRestoreButton.setText("Stop FutureRestore");
