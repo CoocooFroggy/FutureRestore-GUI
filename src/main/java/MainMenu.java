@@ -1044,8 +1044,15 @@ public class MainMenu {
                     //Return true, continue running
                     return true;
                 }
-                //Case 2 is run only
-                //Return true, continue running (see below)
+                case 2: {
+                    //Run only
+                    //Return true, continue running
+                    return true;
+                }
+                case JOptionPane.CLOSED_OPTION: {
+                    //If they close the popup just don't do anything
+                    return false;
+                }
             }
         }
         //Return true, continue running since preview command is disabled
