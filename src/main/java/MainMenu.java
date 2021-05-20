@@ -1003,8 +1003,14 @@ public class MainMenu {
         //If they want to preview command
         if (properties.getProperty("preview_command").equals("true")) {
             StringBuilder commandStringBuilder = new StringBuilder();
-            commandStringBuilder.append(futureRestoreFilePath + " ");
+            // Surround FutureRestore's path in quotes
+            commandStringBuilder.append("\"" + futureRestoreFilePath + "\" ");
             for (String arg : allArgs) {
+                if (!arg.startsWith("-")) {
+                    // If it's an argument that doesn't start with -, (so a file), surround it in quotes.
+                    commandStringBuilder.append("\"" + arg + "\" ");
+                    continue;
+                }
                 commandStringBuilder.append(arg + " ");
             }
 
