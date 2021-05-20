@@ -138,11 +138,11 @@ public class FutureRestoreWorker {
 
                                         int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an APTicket—APNonce mismatch error. This is a common error.\n" +
                                                         "Ensure you've set the correct generator on your device that corresponds with your blob's APNonce and try again.\n" +
-                                                        "If you need more help, try the #futurerestore-help channel in the r/jailbreak Discord server.\n" +
-                                                        "https://discord.gg/GaCUYSDGt9",
+                                                        "If you need more help, follow the steps to set generator on \"ios.cfw.guide\".\n" +
+                                                        "https://ios.cfw.guide/futurerestore#getting-started",
                                                 "APTicket does not match APNonce", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, choices, choices[0]);
                                         if (response == JOptionPane.YES_OPTION) {
-                                            openWebpage("https://discord.gg/GaCUYSDGt9");
+                                            openWebpage("https://ios.cfw.guide/futurerestore#getting-started");
                                         }
 
                                         break;
