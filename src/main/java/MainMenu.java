@@ -1417,6 +1417,7 @@ public class MainMenu {
         gbc.gridy = 7;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(waitWCheckBox, gbc);
         final JLabel label9 = new JLabel();
         Font label9Font = this.$$$getFont$$$("Menlo", -1, 10, label9.getFont());
@@ -1462,7 +1463,6 @@ public class MainMenu {
         gbc.gridy = 7;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(pwnedRestoreCheckBox, gbc);
         final JLabel label11 = new JLabel();
         Font label11Font = this.$$$getFont$$$("Menlo", -1, 10, label11.getFont());
