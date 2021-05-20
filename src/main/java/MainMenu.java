@@ -236,7 +236,7 @@ public class MainMenu {
                 allArgs.add("--debug");
             if (optionUpdateState)
                 allArgs.add("--update");
-            if (optionUpdateState)
+            if (optionPwndfuState)
                 allArgs.add("--use-pwndfu");
             if (optionWaitState)
                 allArgs.add("--wait");
