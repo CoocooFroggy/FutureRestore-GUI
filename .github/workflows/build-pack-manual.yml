@@ -196,27 +196,9 @@ jobs:
           echo ::set-output name=msi_filename::%msi_name%
         # Otherwise it tries powershell
         shell: cmd
-
-      - name: Download URL to upload to
-        uses: actions/download-artifact@v2
+        
+      - name: Upload Windows release
+        uses: actions/upload-artifact@v2
         with:
-          name: upload-url
-        # Make it usable in Github actions
-      - name: Set output for upload-url
-        id: set_upload_url
-        run: |
-          FOR /F "tokens=*" %%g IN ('tail upload-url.txt') do (SET upload_url=%%g)
-          echo ::set-output name=upload-url::%upload_url%
-        # Otherwise it tries powershell
-        shell: cmd
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.set_upload_url.outputs.upload-url }}
-          asset_path: ${{ steps.grep_msi_name.outputs.msi_filename }}
-          asset_name: FutureRestore-GUI-Windows-${{ steps.output-version.outputs.version }}.msi
-          asset_content_type: application/octet-stream
+          name: FutureRestore-GUI-Windows-${{ steps.output-version.outputs.version }}.msi
+          path: ${{ steps.grep_msi_name.outputs.msi_filename }}
