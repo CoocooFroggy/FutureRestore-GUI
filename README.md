@@ -41,12 +41,16 @@ Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/relea
 - **Stop FutureRestore** to kill the FutureRestore process. Button dynamically changes to "Stop FutureRestore (Unsafe)" while the process is running. Pop-up to confirm killing the process if it's currently running.
 - Automatically launch with **Dark or Light mode theme** (not supported on Linux).
 - **Error parsing** such as iBEC, APTicket-APNonce mismatch, unable to place device in recovery mode. Will show a pop-up with some help and a link on where to get help. 
-![Error Parsing Example](.github/FutureRestoreGUIiBEC.png?raw=true "FutureRestore GUI iBEC Error")
+![Error Parsing Example](.github/AP%20Nonce%20Error.png?raw=true "FutureRestore GUI iBEC Error")
 - **Automatically retry** FutureRestore only once if error received is "unable to place device in recovery mode."
 - Inline **GUI progress bar** for downloading SEP, BB, Sending Filesystem, etc.
 - Automatically **saves all logs** to `/[Home]/FutureRestoreGUI/logs`. Never worry about accidentally closing terminal, forgetting to paste your terminal to pastebin, etc.
 - **Current task** text field to simply show what FutureRestore is doing.
 - Log **smart autoscroll** when scrolled to the bottom.
+- Optionally share logs automatically to help improve FutureRestore
+- If you like terminal, you can use this to simply **generate the command and copy it** with one click
+- **Automatic dark mode** supported for MacOS, Windows 10, and some Linux distros
+- **Pwndfu** restore and **onboard** blobs (with a supported FutureRestore build)
 
 ## Settings
 - **Share logs**: Shares logs automatically to help develop FutureRestore.
