@@ -42,6 +42,10 @@ Linux (64 bit, amd64 + x86_64):
 - Automatically **saves all logs** to `/[Home]/FutureRestoreGUI/logs`. Never worry about accidentally closing terminal, forgetting to paste your terminal to pastebin, etc.
 - **Current task** text field to simply show what FutureRestore is doing.
 - Log **smart autoscroll** when scrolled to the bottom.
+- Optionally share logs automatically to help improve FutureRestore
+- If you like terminal, you can use this to simply **generate the command and copy it** with one click
+- **Automatic dark mode** supported for MacOS, Windows 10, and some Linux distros
+- **Pwndfu** restore and **onboard** blobs (with a supported FutureRestore build)
 
 ## Settings
 - **Share logs**: Shares logs automatically to help develop FutureRestore.
