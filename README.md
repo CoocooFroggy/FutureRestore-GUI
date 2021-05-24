@@ -13,15 +13,16 @@ A GUI implementation for FutureRestore written in Java.
 
 Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/releases). No Java download required (it's bundled).
 
-On Mac, right click the Mac app and click "Open" to open.
+On Mac, right click the Mac app and click "Open" to open.  
+You can also run `brew install futurerestore-gui`.
 
-On Windows, double click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.
+On Windows, double click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.  
+You can also run `winget install "FutureRestore GUI"`.
 
 Linux (64 bit, amd64 + x86_64):  
 - On Debian based Linux systems, such as Ubuntu and Mint, double click the DEB to install it. Launch it from your application library.  
   - You can also run this one-liner to add the repository and install FutureRestore GUI: ```u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"KEY.gpg" | sudo apt-key add - && sudo curl -s --compressed -o /etc/apt/sources.list.d/coocoofroggyppa.list $u"coocoofroggyppa.list" && sudo apt update && sudo apt install futurerestore-gui```
-- On RPM based Linux systems, such as Red Hat, Fedora, and CentOS, double click the file to install it. Launch it from your application library.  
-- On Linux systems which support none of these, download the Linux-Universal build, and run the runFRGUI.sh script in terminal to launch the GUI.
+- On other Linux systems, download the Linux-Universal build, and run the runFRGUI.sh script in terminal to launch the GUI.
 
 ## Features
 - Fancy, user-friendly interface for selecting files for FutureRestore. No more huge commands such as:
