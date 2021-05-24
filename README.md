@@ -14,7 +14,8 @@ A GUI implementation for FutureRestore written in Java.
 #### Quicker Install
 - Mac: `brew install futurerestore-gui`
 - Windows: `winget install futurerestore-gui`
-- Debian Linux: ```
+- Debian Linux:
+```
 u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"KEY.gpg" | sudo apt-key add - && sudo curl -s --compressed -o /etc/apt/sources.list.d/coocoofroggyppa.list $u"coocoofroggyppa.list" && sudo apt update && sudo apt install futurerestore-gui
 ```
 
