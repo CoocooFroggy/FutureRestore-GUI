@@ -11,18 +11,19 @@ A GUI implementation for FutureRestore written in Java.
 
 ## Installation
 
+#### Quicker Install
+- Mac: `brew install futurerestore-gui`
+- Windows: `winget install futurerestore-gui`
+- Debian Linux: ```u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"KEY.gpg" | sudo apt-key add - && sudo curl -s --compressed -o /etc/apt/sources.list.d/coocoofroggyppa.list $u"coocoofroggyppa.list" && sudo apt update && sudo apt install futurerestore-gui```
+
+#### Manual Install
 Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/releases). No Java download required (it's bundled).
 
-On Mac, right click the Mac app and click "Open" to open.  
-You can also run `brew install futurerestore-gui`.
-
-On Windows, double click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.  
-You can also run `winget install "FutureRestore GUI"`.
-
-Linux (64 bit, amd64 + x86_64):  
-- On Debian based Linux systems, such as Ubuntu and Mint, double click the DEB to install it. Launch it from your application library.  
-  - You can also run this one-liner to add the repository and install FutureRestore GUI: ```u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"KEY.gpg" | sudo apt-key add - && sudo curl -s --compressed -o /etc/apt/sources.list.d/coocoofroggyppa.list $u"coocoofroggyppa.list" && sudo apt update && sudo apt install futurerestore-gui```
-- On other Linux systems, download the Linux-Universal build, and run the runFRGUI.sh script in terminal to launch the GUI.
+- Mac: Right click the Mac app and click "Open" to open.  
+- Windows: Double click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.  
+- Linux (64 bit, amd64 + x86_64):  
+  - On Debian based Linux systems, such as Ubuntu and Mint, double click the DEB to install it. Launch it from your application library.  
+  - On other Linux systems, download the Linux-Universal build, and run the runFRGUI.sh script in terminal to launch the GUI.
 
 ## Features
 - Fancy, user-friendly interface for selecting files for FutureRestore. No more huge commands such as:
@@ -48,6 +49,7 @@ Linux (64 bit, amd64 + x86_64):
 - **Share logs**: Shares logs automatically to help develop FutureRestore.
 - **Preview command**: Preview the final FutureRestore command. You can then choose to copy and/or run the command.
 - **GUI update**: Automatically checks for updates for this program on launch.
+- **GUI Theme**: Choose between system theme, force light, or force dark theme.
 
 ## Usage
 
