@@ -56,8 +56,8 @@ u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"
 ## Settings
 - **Share logs**: Shares logs automatically to help develop FutureRestore.
 - **Preview command**: Preview the final FutureRestore command. You can then choose to copy and/or run the command.
-- **GUI update**: Automatically checks for updates for this program on launch.
-- **GUI Theme**: Choose between system theme, force light, or force dark theme.
+- **GUI updates**: Automatically checks for updates for this program on launch.
+- **GUI themes**: Choose between system theme, force light, or force dark theme.
 
 ## Usage
 
