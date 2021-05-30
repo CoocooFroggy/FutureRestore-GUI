@@ -11,15 +11,6 @@ A GUI implementation for FutureRestore written in Java.
 
 ## Installation
 
-#### Quicker Install
-- Mac: `brew install futurerestore-gui`
-- Windows: `winget install futurerestore-gui`
-- Debian Linux:
-```
-u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"KEY.gpg" | sudo apt-key add - && sudo curl -s --compressed -o /etc/apt/sources.list.d/coocoofroggyppa.list $u"coocoofroggyppa.list" && sudo apt update && sudo apt install futurerestore-gui
-```
-
-#### Manual Install
 Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/releases). No Java download required (it's bundled).
 
 - Mac: Right click the Mac app and click "Open" to open.  
@@ -27,6 +18,14 @@ Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/relea
 - Linux (64 bit, amd64 + x86_64):  
   - On Debian based Linux systems, such as Ubuntu and Mint, double click the DEB to install it. Launch it from your application library.  
   - On other Linux systems, download the Linux-Universal build, and run the runFRGUI.sh script in terminal to launch the GUI.
+
+#### Quicker Install
+- Mac: `brew install futurerestore-gui`
+- Windows: `winget install futurerestore-gui`
+- Debian Linux:
+```
+u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"KEY.gpg" | sudo apt-key add - && sudo curl -s --compressed -o /etc/apt/sources.list.d/coocoofroggyppa.list $u"coocoofroggyppa.list" && sudo apt update && sudo apt install futurerestore-gui
+```
 
 ## Features
 - Fancy, user-friendly interface for selecting files for FutureRestore. No more huge commands such as:
