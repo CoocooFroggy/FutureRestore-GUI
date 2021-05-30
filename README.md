@@ -63,10 +63,10 @@ u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"
 
 See [how to use FutureRestore](https://ios.cfw.guide/futurerestore).
 
-1. Download FutureRestore automatically through the **Download FutureRestore** button, or manually from [marijuanARM's fork](https://github.com/marijuanARM/futurerestore/releases).
+1. Download FutureRestore automatically through the **Download FutureRestore** button, or manually from [m1stadev's fork](https://github.com/m1stadev/futurerestore/releases).
 2. Select your **blob** (SHSH2) file.
 3. Select your **target firmware** (iPSW) file.
-4. Choose your desired arguments. See [this table](https://github.com/marijuanARM/futurerestore#help) for an explanation of arguments.
+4. Choose your desired arguments. See [this table](https://github.com/m1stadev/futurerestore#help) for an explanation of arguments.
 5. Baseband and SEP (choose 1 each):
     1. If the latest Baseband and/or SEP firmware is compatible with your target version, select **Latest Baseband**/**Latest SEP**.
     2. Choose **Manual Baseband**/**Manual SEP**, and select your desired **Baseband** and **SEP** (BBFW and IM4P), along with a BuildManifest (.PList).
@@ -78,7 +78,7 @@ See [how to use FutureRestore](https://ios.cfw.guide/futurerestore).
 
 ## Third-Party Assets
 
-Download FutureRestore using the button included in the GUI, or manually from [here](https://github.com/marijuanARM/futurerestore/releases). Download target iPSW from [iPSW.me](https://ipsw.me) or [iPSW.dev](https://ipsw.dev).
+Download FutureRestore using the button included in the GUI, or manually from [here](https://github.com/m1stadev/futurerestore/releases). Download target iPSW from [iPSW.me](https://ipsw.me) or [iPSW.dev](https://ipsw.dev).
 
 ## Troubleshooting
 
