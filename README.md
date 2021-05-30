@@ -4,7 +4,7 @@
 ![Github issues](https://img.shields.io/github/issues/CoocooFroggy/FutureRestore-GUI.svg)
 ![GitHub all releases](https://img.shields.io/github/downloads/CoocooFroggy/FutureRestore-GUI/total)
 
-A GUI implementation for FutureRestore written in Java.
+A GUI wrapper for a hacked up wrapper for a full reimplementation of the restore of a firmware to a device, which allows manually specifying SEP and Baseband for restoring, written in Java with Swing.
 
 ![Screenshot of FutureRestore GUI in Light Theme](.github/Light.png?raw=true "FutureRestore GUI Light")
 ![Screenshot of FutureRestore GUI in Dark Theme](.github/Dark.png?raw=true "FutureRestore GUI Dark")
