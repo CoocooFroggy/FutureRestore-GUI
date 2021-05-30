@@ -61,7 +61,7 @@ u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"
 
 ## Usage
 
-See [how to use FutureRestore](https://github.com/marijuanARM/futurerestore#how-to-use).
+See [how to use FutureRestore](https://ios.cfw.guide/futurerestore).
 
 1. Download FutureRestore automatically through the **Download FutureRestore** button, or manually from [marijuanARM's fork](https://github.com/marijuanARM/futurerestore/releases).
 2. Select your **blob** (SHSH2) file.
