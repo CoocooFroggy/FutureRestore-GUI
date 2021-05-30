@@ -2,7 +2,7 @@
 ![Github CI](https://img.shields.io/github/workflow/status/CoocooFroggy/FutureRestore-GUI/Java%20CI%20with%20Gradle.svg)
 ![Github releases](https://img.shields.io/github/v/release/CoocooFroggy/FutureRestore-GUI?include_prereleases.svg)
 ![Github issues](https://img.shields.io/github/issues/CoocooFroggy/FutureRestore-GUI.svg)
-![Github repo size](https://img.shields.io/github/repo-size/CoocooFroggy/FutureRestore-GUI.svg)
+![GitHub all releases](https://img.shields.io/github/downloads/CoocooFroggy/FutureRestore-GUI/total)
 
 A GUI implementation for FutureRestore written in Java.
 
