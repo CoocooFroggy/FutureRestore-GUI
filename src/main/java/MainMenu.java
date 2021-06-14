@@ -1382,7 +1382,8 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 8;
-        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.insets = new Insets(0, 25, 0, 0);
         mainMenuView.add(label8, gbc);
         waitWCheckBox = new JCheckBox();
         waitWCheckBox.setText("AP Nonce Collision");
@@ -1400,7 +1401,8 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 7;
         gbc.gridy = 8;
-        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.insets = new Insets(0, 25, 0, 0);
         mainMenuView.add(label9, gbc);
         final JSeparator separator5 = new JSeparator();
         gbc = new GridBagConstraints();
@@ -1419,7 +1421,8 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 8;
-        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.insets = new Insets(0, 25, 0, 0);
         mainMenuView.add(label10, gbc);
         debugDCheckBox = new JCheckBox();
         debugDCheckBox.setSelected(true);
@@ -1447,8 +1450,8 @@ public class MainMenu {
         gbc.gridx = 4;
         gbc.gridy = 8;
         gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.NORTH;
-        gbc.insets = new Insets(0, 0, 0, 10);
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.insets = new Insets(0, 25, 0, 0);
         mainMenuView.add(label11, gbc);
         stopFutureRestoreUnsafeButton = new JButton();
         stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
