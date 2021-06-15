@@ -197,10 +197,16 @@ jobs:
         run: |
           jpackage --input ./input --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/mac/FutureRestoreGUIIcons.icns --copyright "© CoocooFroggy 2021" --verbose --mac-package-identifier com.coocoofroggy.futurerestoregui --name "FutureRestore GUI" --module-path ./.github/workflows/mac/javafx-jmods-11.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
           codesign --remove-signature FutureRestore\ GUI.app
+          mkdir dmg-input
+          mv "FutureRestore GUI.app" dmg-input
 
-      - name: Zip .app
-        id: zip_app
-        run: zip -r FutureRestore-GUI-Mac.zip "FutureRestore GUI.app"
+      - name: Create DMG from .app
+        run: |
+          create-dmg --hdiutil-quiet --volname "FutureRestore GUI Installer" --volicon "DMG Images/FRGUI-Drive-Icon.icns" --background "DMG Images/DMG-Background.png" --window-pos 200 120 --window-size 600 342 --icon-size 100 --icon "FutureRestore GUI.app" 80 200 --hide-extension "FutureRestore GUI.app" --app-drop-link 450 200 "FutureRestore GUI Installer.dmg" "dmg-input/"
+
+#      - name: Zip .app
+#        id: zip_app
+#        run: zip -r FutureRestore-GUI-Mac.zip "FutureRestore GUI.app"
 
       - name: Download URL to upload to
         uses: actions/download-artifact@v2
@@ -220,9 +226,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.set_upload_url.outputs.upload-url }}
-          asset_path: FutureRestore-GUI-Mac.zip
-          asset_name: FutureRestore-GUI-Mac-${{ steps.output-version.outputs.version }}.zip
-          asset_content_type: application/zip
+          asset_path: FutureRestore GUI Installer.dmg
+          asset_name: FutureRestore-GUI-Mac-${{ steps.output-version.outputs.version }}.dmg
+          asset_content_type: application/octet-stream
 
   windows-pack:
     needs: [ build-and-create-draft ]

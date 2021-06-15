@@ -634,8 +634,6 @@ public class MainMenu {
         }
     }
 
-    int lineNumber = 1;
-
     void runCommand(ArrayList<String> allArgs, boolean fullFR) {
 
         //Preview command if necessary. If returned false, then they clicked copy only, so don't run command.
@@ -714,6 +712,7 @@ public class MainMenu {
 
     }
 
+    int lineNumber = 1;
     void appendToLog(String string) {
         SwingUtilities.invokeLater(() -> {
             logTextArea.append("[" + lineNumber + "] " + string + "\n");
