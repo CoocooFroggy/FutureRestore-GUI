@@ -152,7 +152,7 @@ jobs:
 
       - name: Create DMG from .app
         run: |
-          create-dmg --hdiutil-quiet --volname "FutureRestore GUI Installer" --volicon "/.github/workflows/mac/DMG Images/FRGUI-Drive-Icon.icns" --background "/.github/workflows/mac/DMG Images/DMG-Background.png" --window-pos 200 120 --window-size 600 342 --icon-size 100 --icon "FutureRestore GUI.app" 80 200 --hide-extension "FutureRestore GUI.app" --app-drop-link 450 200 "FutureRestore GUI Installer.dmg" "dmg-input/"
+          create-dmg --hdiutil-quiet --volname "FutureRestore GUI Installer" --volicon ".github/workflows/mac/DMG Images/FRGUI-Drive-Icon.icns" --background ".github/workflows/mac/DMG Images/DMG-Background.png" --window-pos 200 120 --window-size 600 342 --icon-size 100 --icon "FutureRestore GUI.app" 80 200 --hide-extension "FutureRestore GUI.app" --app-drop-link 450 200 "FutureRestore GUI Installer.dmg" "dmg-input/"
 
 #      - name: Zip .app
 #        id: zip_app
