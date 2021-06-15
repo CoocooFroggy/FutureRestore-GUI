@@ -118,6 +118,9 @@ jobs:
         with:
           java-version: 15
 
+      - name: Install create-dmg
+        run: brew install create-dmg
+
       - name: Download final jar
         uses: actions/download-artifact@v2
         with:
