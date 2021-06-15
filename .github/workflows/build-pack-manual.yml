@@ -147,8 +147,8 @@ jobs:
           mkdir dmg-input
           mv "FutureRestore GUI.app" dmg-input
 
-      - name: Debug with ssh
-        uses: lhotari/action-upterm@v1
+#      - name: Debug with ssh
+#        uses: lhotari/action-upterm@v1
 
       - name: Create DMG from .app
         run: |
