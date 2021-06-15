@@ -45,7 +45,7 @@ jobs:
           path: version.txt
 
   ubuntu-pack:
-    needs: [ build-and-create-draft ]
+    needs: [ build-and-setup ]
     runs-on: ubuntu-latest
     steps:
 
@@ -106,7 +106,7 @@ jobs:
           path: FutureRestore-GUI-Linux-Universal.zip
 
   macos-pack:
-    needs: [ build-and-create-draft ]
+    needs: [ build-and-setup ]
     runs-on: macos-latest
     steps:
 
@@ -162,7 +162,7 @@ jobs:
           path: FutureRestore GUI Installer.dmg
 
   windows-pack:
-    needs: [ build-and-create-draft ]
+    needs: [ build-and-setup ]
     runs-on: windows-latest
     steps:
 
