@@ -9,10 +9,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
@@ -143,7 +140,7 @@ public class FutureRestoreWorker {
                                             "A solution for this error is available here:\n" +
                                             "https://github.com/marijuanARM/futurerestore#restoring-on-windows-10", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
                                     if (response == JOptionPane.YES_OPTION) {
-                                        openWebpage("https://github.com/marijuanARM/futurerestore#restoring-on-windows-10");
+                                        FRUtils.openWebpage("https://github.com/marijuanARM/futurerestore#restoring-on-windows-10");
                                     }
 
                                     break;
@@ -158,7 +155,7 @@ public class FutureRestoreWorker {
                                                     "https://ios.cfw.guide/futurerestore#getting-started",
                                             "APTicket does not match APNonce", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, choices, choices[0]);
                                     if (response == JOptionPane.YES_OPTION) {
-                                        openWebpage("https://ios.cfw.guide/futurerestore#getting-started");
+                                        FRUtils.openWebpage("https://ios.cfw.guide/futurerestore#getting-started");
                                     }
 
                                     break;
@@ -229,26 +226,6 @@ public class FutureRestoreWorker {
         string += "\n";
         logTextArea.append(string);
         writer.append(string);
-    }
-
-    public static boolean openWebpage(String uriString) {
-        URI uri = null;
-        try {
-            uri = new URI(uriString);
-        } catch (URISyntaxException e) {
-            System.out.println("Unable to create link for " + uriString);
-            e.printStackTrace();
-        }
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-            try {
-                desktop.browse(uri);
-                return true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return false;
     }
 
     public static void uploadLog(String logPath, String logName, String command) throws IOException {

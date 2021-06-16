@@ -394,9 +394,9 @@ public class MainMenu {
                 Object defaultChoice = choices[0];
 
                 int response = JOptionPane.showOptionDialog(mainMenuView, "Unknown operating system detected. Please download FutureRestore manually for your operating system.\n" +
-                        "https://github.com/m1stadev/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+                        "https://github.com/m1stadev/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
                 if (response == JOptionPane.YES_OPTION) {
-                    FutureRestoreWorker.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/");
+                    FRUtils.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/");
                 }
             }
 
@@ -786,7 +786,7 @@ public class MainMenu {
         int response = JOptionPane.showOptionDialog(mainMenuView, "No FutureRestore asset found for your operating system. Check releases to see if there's one available.\n" +
                 "https://github.com/m1stadev/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
         if (response == JOptionPane.YES_OPTION) {
-            FutureRestoreWorker.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/");
+            FRUtils.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/");
         }
         return linkNameMap;
     }
@@ -852,7 +852,6 @@ public class MainMenu {
             //Now unzip the file
             unzipFutureRestore(zipPath, finalFrPath, operatingSystem);
         }).start();
-
     }
 
     void unzipFutureRestore(String filePath, String finalFrPath, String operatingSystem) {
@@ -1083,24 +1082,27 @@ public class MainMenu {
                 System.out.println("Newest FRGUI version: " + newestTag);
 
                 //If user is not on latest version
-                if (!newestTag.contains(currentFRGUIVersion)) {
+                if (!newestTag.equals(currentFRGUIVersion)) {
                     System.out.println("A newer version of FutureRestore GUI is available.");
                     mainMenuInstance.appendToLog("A newer version of FutureRestore GUI is available.");
 
-                    Object[] choices = {"Open link", "Ok"};
+                    Object[] choices = {"Update now", "Remind me later"};
                     Object defaultChoice = choices[0];
 
                     int response = JOptionPane.showOptionDialog(mainMenuInstance.mainMenuView, "A newer version of FutureRestore GUI is available.\n" +
                             "You're on version " + currentFRGUIVersion + " and the latest version is " + newestTag + ".\n" +
                             "https://github.com/CoocooFroggy/FutureRestore-GUI/releases", "Update FutureRestore GUI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
                     if (response == JOptionPane.YES_OPTION) {
-                        FutureRestoreWorker.openWebpage("https://github.com/CoocooFroggy/FutureRestore-GUI/releases");
+//                        FRUtils.openWebpage("https://github.com/CoocooFroggy/FutureRestore-GUI/releases");
+                        // TODO: Update now
+                        FRUtils.updateFRGUI(mainMenuInstance, mainMenuInstance.mainMenuView, mainMenuInstance.logProgressBar, mainMenuInstance.currentTaskTextField);
                     }
+
                 } else {
                     System.out.println("You're on the latest version of FutureRestore GUI.");
                     mainMenuInstance.appendToLog("You're on the latest version of FutureRestore GUI.");
                 }
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
