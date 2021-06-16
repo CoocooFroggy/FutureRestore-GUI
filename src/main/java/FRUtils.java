@@ -8,6 +8,8 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FRUtils {
     public static boolean openWebpage(String uriString) {
@@ -55,7 +57,8 @@ public class FRUtils {
             }
             return false;
         } else {
-            downloadFRGUI(mainMenuInstance, frguiDownloadIdentifier, logProgressBar, currentTaskTextField);
+            File downloadedFrgui = downloadFRGUI(mainMenuInstance, frguiDownloadIdentifier, logProgressBar, currentTaskTextField);
+
             // TODO: installFutureRestore
             System.out.println("All done");
             return true;
@@ -146,5 +149,49 @@ public class FRUtils {
         }
         // TODO: Return downloaded file so we can install it
         return downloadedFRGUI;
+    }
+
+    public static boolean installFrgui(File downloadedFrgui, String frguiDownloadIdentifier) throws IOException, InterruptedException {
+        switch (frguiDownloadIdentifier) {
+            case "Mac": {
+                // Mount downloaded DMG
+                ProcessBuilder attachDmgProcessBuilder = new ProcessBuilder("/usr/bin/hdiutil", "attach", downloadedFrgui.getAbsolutePath());
+                Process attachDmgProcess = attachDmgProcessBuilder.start();
+                // If exit code is not 0
+                if (attachDmgProcess.waitFor() != 0) {
+                    //TODO: Unable to attach
+                }
+
+                // Get location
+                String attachDmgResponse = IOUtils.toString(attachDmgProcess.getInputStream(), StandardCharsets.UTF_8);
+                Pattern attachLocationPattern = Pattern.compile("\\/Volumes\\/.*");
+                Matcher attachLocationMatcher = attachLocationPattern.matcher(attachDmgResponse);
+                String attachLocation = null;
+                if (attachLocationMatcher.find()) {
+                    attachLocation = attachLocationMatcher.group(0);
+                }
+
+                if (attachLocation == null) {
+                    // TODO: Unable to find attached location for FRGUI DMG
+                }
+
+                // Open it and bring it to foreground
+                ProcessBuilder openVolumeProcessBuilder = new ProcessBuilder("/usr/bin/open", attachLocation);
+                if (openVolumeProcessBuilder.start().waitFor() != 0) {
+                    //TODO: Unable to bring to foreground
+                }
+                return true;
+            }
+            case "Windows": {
+                return true;
+            }
+            case "Debian": {
+                return true;
+            }
+            default: {
+                // TODO: Not supposed to appear
+                return false;
+            }
+        }
     }
 }

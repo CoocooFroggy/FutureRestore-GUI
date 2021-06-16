@@ -1094,8 +1094,8 @@ public class MainMenu {
                             "https://github.com/CoocooFroggy/FutureRestore-GUI/releases", "Update FutureRestore GUI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
                     if (response == JOptionPane.YES_OPTION) {
 //                        FRUtils.openWebpage("https://github.com/CoocooFroggy/FutureRestore-GUI/releases");
-                        // TODO: Update now
-                        FRUtils.updateFRGUI(mainMenuInstance, mainMenuInstance.mainMenuView, mainMenuInstance.logProgressBar, mainMenuInstance.currentTaskTextField);
+                        boolean didSucceedUpdate = FRUtils.updateFRGUI(mainMenuInstance, mainMenuInstance.mainMenuView, mainMenuInstance.logProgressBar, mainMenuInstance.currentTaskTextField);
+                        // TODO: If update failed
                     }
 
                 } else {
