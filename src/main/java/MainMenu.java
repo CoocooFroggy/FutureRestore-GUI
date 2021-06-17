@@ -832,7 +832,10 @@ public class MainMenu {
                     final int currentProgress = (int) ((((double) downloadedFileSize) / ((double) completeFileSize)) * 100000d);
 
                     // update progress bar
-                    SwingUtilities.invokeLater(() -> logProgressBar.setValue(currentProgress));
+                    SwingUtilities.invokeLater(() -> {
+                        logProgressBar.setMaximum(100000);
+                        logProgressBar.setValue(currentProgress);
+                    });
 
                     bout.write(data, 0, x);
                 }

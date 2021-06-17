@@ -58,6 +58,7 @@ public class FRUtils {
             return false;
         } else {
             File downloadedFrgui = downloadFRGUI(mainMenuInstance, frguiDownloadIdentifier, logProgressBar, currentTaskTextField);
+            installFrgui(downloadedFrgui, frguiDownloadIdentifier);
 
             // TODO: installFutureRestore
             System.out.println("All done");
@@ -71,14 +72,16 @@ public class FRUtils {
         String frguiDownloadUrl = null;
         try {
             System.out.println("Finding download...");
-            URL releasesApiUrl = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases/latest");
+            // TODO: Debug
+            URL releasesApiUrl = new URL("https://api.github.com/repos/Forge-Nius-Trio/FutureRestore-GUI-CI-Test/releases/latest");
+//            URL releasesApiUrl = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases/latest");
             String releasesApiResponse = IOUtils.toString(releasesApiUrl.openConnection().getInputStream(), StandardCharsets.UTF_8);
             Gson gson = new Gson();
             Map<String, Object> latestReleaseApi = gson.fromJson(releasesApiResponse, Map.class);
 
             ArrayList<Map<String, Object>> assetsApi = (ArrayList<Map<String, Object>>) latestReleaseApi.get("assets");
 
-            for (Map<String, Object> asset: assetsApi) {
+            for (Map<String, Object> asset : assetsApi) {
                 frguiDownloadName = (String) asset.get("name");
                 if (frguiDownloadName.contains(frguiDownloadIdentifier)) {
                     // Found a download for our OS
@@ -112,6 +115,9 @@ public class FRUtils {
         File downloadedFRGUI = new File(downloadedFRGUIPath);
         try {
             System.out.println("Downloading...");
+            SwingUtilities.invokeLater(() -> {
+                currentTaskTextField.setText("Downloading FutureRestore GUI...");
+            });
             URL url = new URL(frguiDownloadUrl);
             HttpURLConnection httpConnection = (HttpURLConnection) (url.openConnection());
             long completeFileSize = httpConnection.getContentLength();
@@ -128,9 +134,13 @@ public class FRUtils {
 
                 // calculate progress
                 final int currentProgress = (int) ((((double) downloadedFileSize) / ((double) completeFileSize)) * 100000d);
+                System.out.println("Current progress: " + currentProgress);
 
                 // update progress bar
-                SwingUtilities.invokeLater(() -> logProgressBar.setValue(currentProgress));
+                SwingUtilities.invokeLater(() -> {
+                    logProgressBar.setMaximum(100000);
+                    logProgressBar.setValue(currentProgress);
+                });
 
                 bout.write(data, 0, x);
             }
