@@ -1,4 +1,5 @@
 import com.google.gson.Gson;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import javax.swing.*;
@@ -59,9 +60,8 @@ public class FRUtils {
         } else {
             File downloadedFrgui = downloadFRGUI(mainMenuInstance, frguiDownloadIdentifier, logProgressBar, currentTaskTextField);
             installFrgui(downloadedFrgui, frguiDownloadIdentifier);
-
-            // TODO: installFutureRestore
             System.out.println("All done");
+            System.exit(0);
             return true;
         }
     }
@@ -134,7 +134,6 @@ public class FRUtils {
 
                 // calculate progress
                 final int currentProgress = (int) ((((double) downloadedFileSize) / ((double) completeFileSize)) * 100000d);
-                System.out.println("Current progress: " + currentProgress);
 
                 // update progress bar
                 SwingUtilities.invokeLater(() -> {
@@ -149,11 +148,11 @@ public class FRUtils {
             SwingUtilities.invokeLater(() -> {
                 currentTaskTextField.setText("");
                 logProgressBar.setValue(0);
-                mainMenuInstance.appendToLog("FutureRestore GUI finished downloading.");
+                mainMenuInstance.messageToLog("FutureRestore GUI finished downloading.");
             });
         } catch (IOException e) {
             System.out.println("Unable to download FutureRestore GUI.");
-            mainMenuInstance.appendToLog("Unable to download FutureRestore GUI.");
+            mainMenuInstance.messageToLog("Unable to download FutureRestore GUI.");
             e.printStackTrace();
             return null;
         }
@@ -165,11 +164,12 @@ public class FRUtils {
         switch (frguiDownloadIdentifier) {
             case "Mac": {
                 // Mount downloaded DMG
-                ProcessBuilder attachDmgProcessBuilder = new ProcessBuilder("/usr/bin/hdiutil", "attach", downloadedFrgui.getAbsolutePath());
+                ProcessBuilder attachDmgProcessBuilder = new ProcessBuilder("/usr/bin/hdiutil", "attach", "-nobrowse", downloadedFrgui.getAbsolutePath());
                 Process attachDmgProcess = attachDmgProcessBuilder.start();
                 // If exit code is not 0
                 if (attachDmgProcess.waitFor() != 0) {
                     //TODO: Unable to attach
+                    return false;
                 }
 
                 // Get location
@@ -178,18 +178,42 @@ public class FRUtils {
                 Matcher attachLocationMatcher = attachLocationPattern.matcher(attachDmgResponse);
                 String attachLocation = null;
                 if (attachLocationMatcher.find()) {
-                    attachLocation = attachLocationMatcher.group(0);
+                    attachLocation = attachLocationMatcher.group(0) + "/";
                 }
 
                 if (attachLocation == null) {
                     // TODO: Unable to find attached location for FRGUI DMG
+                    return false;
                 }
 
-                // Open it and bring it to foreground
-                ProcessBuilder openVolumeProcessBuilder = new ProcessBuilder("/usr/bin/open", attachLocation);
+                // Copy to /Applications
+                File newFrguiAppContents = new File(attachLocation + "FutureRestore GUI.app/Contents/");
+                FileUtils.copyDirectory(newFrguiAppContents, new File("/Applications/FutureRestore GUI.app/Contents"));
+                System.out.println("Done copying FRGUI to Applications.");
+
+                // Open the app
+                ProcessBuilder openVolumeProcessBuilder = new ProcessBuilder("/usr/bin/open", "/Applications/FutureRestore GUI.app");
                 if (openVolumeProcessBuilder.start().waitFor() != 0) {
-                    //TODO: Unable to bring to foreground
+//                    TODO: Unable to open new FRGUI
+                    System.out.println("Unable to open new FRGUI.");
+                    return false;
                 }
+
+                // Eject attatched DMG
+                ProcessBuilder ejectDmgProcessBuilder = new ProcessBuilder("/usr/bin/hdiutil", "eject", attachLocation);
+                Process ejectDmgProcess = ejectDmgProcessBuilder.start();
+                // If exit code is not 0
+                if (ejectDmgProcess.waitFor() != 0) {
+                    //TODO: Unable to eject, please do it manually
+                    System.out.println("Unable to eject the DMG, please do it manually");
+                    return false;
+                }
+
+                // Open the DMG and bring it to foreground, so it can be installed manually
+                /*ProcessBuilder openVolumeProcessBuilder = new ProcessBuilder("/usr/bin/open", attachLocation);
+                if (openVolumeProcessBuilder.start().waitFor() != 0) {
+//                    TODO: Unable to bring to foreground
+                }*/
                 return true;
             }
             case "Windows": {

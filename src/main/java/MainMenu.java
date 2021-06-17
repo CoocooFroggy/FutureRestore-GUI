@@ -79,7 +79,7 @@ public class MainMenu {
                 File file = futureRestoreFileChooser.showOpenDialog(null);
 
                 if (file != null) {
-                    appendToLog("Set " + file.getAbsolutePath() + " to FutureRestore executable.");
+                    messageToLog("Set " + file.getAbsolutePath() + " to FutureRestore executable.");
                     futureRestoreFilePath = file.getAbsolutePath();
                     //Set name of button to blob file name
                     selectFutureRestoreBinaryExecutableButton.setText("✓ " + file.getName());
@@ -104,7 +104,7 @@ public class MainMenu {
                 File file = blobFileChooser.showOpenDialog(null);
 
                 if (file != null) {
-                    appendToLog("Set " + file.getAbsolutePath() + " to SHSH blob.");
+                    messageToLog("Set " + file.getAbsolutePath() + " to SHSH blob.");
                     blobFilePath = file.getAbsolutePath();
                     blobName = file.getName();
                     selectBlobFileButton.setText("✓ " + file.getName());
@@ -130,7 +130,7 @@ public class MainMenu {
                 File file = targetIpswFileChooser.showOpenDialog(null);
 
                 if (file != null) {
-                    appendToLog("Set " + file.getAbsolutePath() + " to target IPSW.");
+                    messageToLog("Set " + file.getAbsolutePath() + " to target IPSW.");
                     targetIpswPath = file.getAbsolutePath();
                     targetIpswName = file.getName();
                     //Set name of button to ipsw file name
@@ -157,7 +157,7 @@ public class MainMenu {
                 File file = targetIpswFileChooser.showOpenDialog(null);
 
                 if (file != null) {
-                    appendToLog("Set " + file.getAbsolutePath() + " to BuildManifest.");
+                    messageToLog("Set " + file.getAbsolutePath() + " to BuildManifest.");
                     buildManifestPath = file.getAbsolutePath();
                     //Set name of button to ipsw file name
                     selectBuildManifestButton.setText("✓ " + file.getName());
@@ -343,7 +343,7 @@ public class MainMenu {
                     int response = JOptionPane.showConfirmDialog(mainMenuView, "Are you sure you want to stop FutureRestore? This is considered unsafe if the device is currently restoring.", "Stop FutureRestore?", JOptionPane.YES_NO_OPTION);
                     if (response == JOptionPane.YES_OPTION) {
                         futureRestoreProcess.destroy();
-                        appendToLog("FutureRestore process killed.");
+                        messageToLog("FutureRestore process killed.");
                     }
                 }
             }
@@ -407,7 +407,7 @@ public class MainMenu {
 
             SwingUtilities.invokeLater(() -> {
                 currentTaskTextField.setText("Downloading FutureRestore...");
-                appendToLog("Downloading FutureRestore...");
+                messageToLog("Downloading FutureRestore...");
             });
             downloadFutureRestore(urlString, downloadName, osName);
 
@@ -505,9 +505,9 @@ public class MainMenu {
 
             //Tell them if they are or are not sharing logs
             if (properties.getProperty("upload_logs").equals("true")) {
-                mainMenuInstance.appendToLog("Help improve FutureRestore by sharing logs: Enabled");
+                mainMenuInstance.messageToLog("Help improve FutureRestore by sharing logs: Enabled");
             } else {
-                mainMenuInstance.appendToLog("Help improve FutureRestore by sharing logs: Disabled");
+                mainMenuInstance.messageToLog("Help improve FutureRestore by sharing logs: Disabled");
             }
 
             //Set text for version
@@ -519,7 +519,7 @@ public class MainMenu {
             //Only if they have the setting enabled, check for updates
             if (properties.getProperty("check_updates").equals("true")) {
                 System.out.println("Checking for FutureRestore GUI updates in the background...");
-                mainMenuInstance.appendToLog("Checking for FutureRestore GUI updates in the background...");
+                mainMenuInstance.messageToLog("Checking for FutureRestore GUI updates in the background...");
                 alertIfNewerFRGUIAvailable(mainMenuInstance, futureRestoreGUIVersion);
             }
 
@@ -533,7 +533,7 @@ public class MainMenu {
                 File frExecutable = extracted.listFiles()[0];
                 if (frExecutable.exists()) {
                     mainMenuInstance.futureRestoreFilePath = frExecutable.getAbsolutePath();
-                    mainMenuInstance.appendToLog("Set previous FutureRestore download, " + frExecutable.getAbsolutePath() + ", to FutureRestore executable.");
+                    mainMenuInstance.messageToLog("Set previous FutureRestore download, " + frExecutable.getAbsolutePath() + ", to FutureRestore executable.");
                     //Set name of button to blob file name
                     mainMenuInstance.selectFutureRestoreBinaryExecutableButton.setText("✓ " + frExecutable.getName());
                 }
@@ -601,7 +601,7 @@ public class MainMenu {
         mainMenuFrame.requestFocus();
 
         if (file != null) {
-            appendToLog("Set " + file.getAbsolutePath() + " to baseband firmware.");
+            messageToLog("Set " + file.getAbsolutePath() + " to baseband firmware.");
             basebandTextField.setText("✓ " + file.getName());
             basebandFilePath = file.getAbsolutePath();
             return true;
@@ -624,7 +624,7 @@ public class MainMenu {
         mainMenuFrame.requestFocus();
 
         if (file != null) {
-            appendToLog("Set " + file.getAbsolutePath() + " to SEP IM4P.");
+            messageToLog("Set " + file.getAbsolutePath() + " to SEP IM4P.");
             sepTextField.setText("✓ " + file.getName());
             sepFilePath = file.getAbsolutePath();
             return true;
@@ -663,12 +663,12 @@ public class MainMenu {
                     if (matcher.find())
                         version = matcher.group(1);
                 }
-
             } catch (IOException ioException) {
                 System.out.println("Unable to check FutureRestore version.");
                 JOptionPane.showMessageDialog(mainMenuView, "Unable to run FutureRestore. Ensure you selected the correct FutureRestore executable.", "Error", JOptionPane.ERROR_MESSAGE);
                 ioException.printStackTrace();
                 startFutureRestoreButton.setEnabled(true);
+                currentTaskTextField.setText("");
                 stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
                 return;
             }
@@ -696,7 +696,7 @@ public class MainMenu {
         }
 
         System.out.println("Starting FutureRestore...");
-        appendToLog("Make sure to hit \"trust\" on your device if prompted!");
+        messageToLog("Make sure to hit \"trust\" on your device if prompted!");
 
         new Thread(() -> {
             try {
@@ -713,7 +713,7 @@ public class MainMenu {
     }
 
     int lineNumber = 1;
-    void appendToLog(String string) {
+    void messageToLog(String string) {
         SwingUtilities.invokeLater(() -> {
             logTextArea.append("[" + lineNumber + "] " + string + "\n");
             lineNumber++;
@@ -844,11 +844,11 @@ public class MainMenu {
                 SwingUtilities.invokeLater(() -> {
                     currentTaskTextField.setText("");
                     logProgressBar.setValue(0);
-                    appendToLog("FutureRestore finished downloading.");
+                    messageToLog("FutureRestore finished downloading.");
                 });
             } catch (IOException e) {
                 System.out.println("Unable to download FutureRestore.");
-                appendToLog("Unable to download FutureRestore.");
+                messageToLog("Unable to download FutureRestore.");
                 e.printStackTrace();
                 return;
             }
@@ -860,7 +860,7 @@ public class MainMenu {
     void unzipFutureRestore(String filePath, String finalFrPath, String operatingSystem) {
         SwingUtilities.invokeLater(() -> {
             currentTaskTextField.setText("Decompressing FutureRestore...");
-            appendToLog("Decompressing FutureRestore...");
+            messageToLog("Decompressing FutureRestore...");
         });
 
         File archive = new File(filePath);
@@ -873,7 +873,7 @@ public class MainMenu {
                     FileUtils.cleanDirectory(destination);
                 } catch (IOException e) {
                     System.out.println("Unable to delete all existing files in extracted directory. Aborting.");
-                    appendToLog("Unable to delete all existing files in extracted directory. Aborting.");
+                    messageToLog("Unable to delete all existing files in extracted directory. Aborting.");
                     e.printStackTrace();
                     currentTaskTextField.setText("");
                     return;
@@ -886,7 +886,7 @@ public class MainMenu {
                 archiver.extract(archive, destination);
             } catch (IOException e) {
                 System.out.println("Unable to decompress " + filePath);
-                appendToLog("Unable to decompress " + filePath);
+                messageToLog("Unable to decompress " + filePath);
                 e.printStackTrace();
             }
         } else if (archive.getName().endsWith(".tar.xz")) {
@@ -895,12 +895,12 @@ public class MainMenu {
                 archiver.extract(archive, destination);
             } catch (IOException e) {
                 System.out.println("Unable to decompress " + filePath);
-                appendToLog("Unable to decompress " + filePath);
+                messageToLog("Unable to decompress " + filePath);
                 e.printStackTrace();
             }
         } else {
             System.out.println("Cannot decompress, unknown file format :(");
-            appendToLog("Cannot decompress, unknown file format :(");
+            messageToLog("Cannot decompress, unknown file format :(");
             return;
         }
 
@@ -908,7 +908,7 @@ public class MainMenu {
 
         if (futureRestoreExecutable == null) {
             System.out.println("Unable to decompress " + filePath);
-            appendToLog("Unable to decompress " + filePath);
+            messageToLog("Unable to decompress " + filePath);
             return;
         }
 
@@ -921,7 +921,7 @@ public class MainMenu {
                 process.waitFor();
             } catch (IOException | InterruptedException e) {
                 System.out.println("Unable to make FutureRestore executable.");
-                appendToLog("Unable to make FutureRestore executable.");
+                messageToLog("Unable to make FutureRestore executable.");
                 e.printStackTrace();
             }
         }
@@ -929,9 +929,9 @@ public class MainMenu {
 
         SwingUtilities.invokeLater(() -> {
             currentTaskTextField.setText("");
-            appendToLog("Decompressed FutureRestore");
+            messageToLog("Decompressed FutureRestore");
             futureRestoreFilePath = futureRestoreExecutable.getAbsolutePath();
-            appendToLog("Set " + futureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
+            messageToLog("Set " + futureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
             //Set name of button to blob file name
             selectFutureRestoreBinaryExecutableButton.setText("✓ " + futureRestoreExecutable.getName());
         });
@@ -1034,14 +1034,14 @@ public class MainMenu {
                 case 0: {
                     //Copy command only
                     clipboard.setContents(stringSelection, null);
-                    appendToLog("Copied \"" + finalCommand + "\" to clipboard.");
+                    messageToLog("Copied \"" + finalCommand + "\" to clipboard.");
                     //Return false, don't continue running
                     return false;
                 }
                 case 1: {
                     //Copy command and run
                     clipboard.setContents(stringSelection, null);
-                    appendToLog("Copied \"" + finalCommand + "\" to clipboard.");
+                    messageToLog("Copied \"" + finalCommand + "\" to clipboard.");
                     //Return true, continue running
                     return true;
                 }
@@ -1087,7 +1087,7 @@ public class MainMenu {
                 //If user is not on latest version
                 if (!newestTag.equals(currentFRGUIVersion)) {
                     System.out.println("A newer version of FutureRestore GUI is available.");
-                    mainMenuInstance.appendToLog("A newer version of FutureRestore GUI is available.");
+                    mainMenuInstance.messageToLog("A newer version of FutureRestore GUI is available.");
 
                     Object[] choices = {"Update now", "Remind me later"};
                     Object defaultChoice = choices[0];
@@ -1103,7 +1103,7 @@ public class MainMenu {
 
                 } else {
                     System.out.println("You're on the latest version of FutureRestore GUI.");
-                    mainMenuInstance.appendToLog("You're on the latest version of FutureRestore GUI.");
+                    mainMenuInstance.messageToLog("You're on the latest version of FutureRestore GUI.");
                 }
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
