@@ -192,14 +192,15 @@ public class FRUtils {
                 System.out.println("Done copying FRGUI to Applications.");
 
                 // Open the app
-                ProcessBuilder openVolumeProcessBuilder = new ProcessBuilder("/usr/bin/open", "/Applications/FutureRestore GUI.app");
+                ProcessBuilder openVolumeProcessBuilder = new ProcessBuilder("/usr/bin/open", "-n", "/Applications/FutureRestore GUI.app");
                 if (openVolumeProcessBuilder.start().waitFor() != 0) {
-//                    TODO: Unable to open new FRGUI
+                    // TODO: Unable to open new FRGUI
                     System.out.println("Unable to open new FRGUI.");
                     return false;
                 }
+                // TODO: I think gatekeeper block still returns 0 as exit code—how do we detect this
 
-                // Eject attatched DMG
+                // Eject attached DMG
                 ProcessBuilder ejectDmgProcessBuilder = new ProcessBuilder("/usr/bin/hdiutil", "eject", attachLocation);
                 Process ejectDmgProcess = ejectDmgProcessBuilder.start();
                 // If exit code is not 0
