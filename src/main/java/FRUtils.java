@@ -59,7 +59,7 @@ public class FRUtils {
             return false;
         } else {
             File downloadedFrgui = downloadFRGUI(mainMenuInstance, frguiDownloadIdentifier, logProgressBar, currentTaskTextField);
-            installFrgui(downloadedFrgui, frguiDownloadIdentifier);
+            installFrgui(downloadedFrgui, frguiDownloadIdentifier, mainMenuInstance, currentTaskTextField);
             System.out.println("All done");
             System.exit(0);
             return true;
@@ -160,7 +160,12 @@ public class FRUtils {
         return downloadedFRGUI;
     }
 
-    public static boolean installFrgui(File downloadedFrgui, String frguiDownloadIdentifier) throws IOException, InterruptedException {
+    public static boolean installFrgui(File downloadedFrgui, String frguiDownloadIdentifier, MainMenu mainMenuInstance, JTextField currentTaskTextField) throws IOException, InterruptedException {
+        SwingUtilities.invokeLater(() -> {
+            mainMenuInstance.messageToLog("Installing newly downloaded FutureRestore GUI at " + downloadedFrgui.getAbsolutePath() + ".");
+            currentTaskTextField.setText("Updating FutureRestore GUI...");
+        });
+
         switch (frguiDownloadIdentifier) {
             case "Mac": {
                 // Mount downloaded DMG
