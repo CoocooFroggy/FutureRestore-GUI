@@ -222,7 +222,7 @@ public class FRUtils {
             }
             case "Windows": {
                 // Run downloaded MSI, prompt for Admin
-                ProcessBuilder runMsiProcessBuilder = new ProcessBuilder("C:\\Windows\\System32\\msiexec.exe", "/passive", downloadedFrgui.getAbsolutePath());
+                ProcessBuilder runMsiProcessBuilder = new ProcessBuilder("C:\\Windows\\System32\\msiexec.exe", "/passive", "/package", downloadedFrgui.getAbsolutePath());
                 Process runMsiProcess = runMsiProcessBuilder.start();
                 // If exit code is not 0
                 if (runMsiProcess.waitFor() != 0) {
