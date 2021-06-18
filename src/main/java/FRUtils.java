@@ -217,21 +217,21 @@ public class FRUtils {
                 break;
             }
             case "Windows": {
-                // Run downloaded MSI, prompt for Admin
-                ProcessBuilder runMsiProcessBuilder = new ProcessBuilder("C:\\Windows\\System32\\msiexec.exe", "/passive", "/package", downloadedFrgui.getAbsolutePath());
+                // Run downloaded MSI, prompt for Admin. Also run the exe to launch the app afterwards
+                ProcessBuilder runMsiProcessBuilder = new ProcessBuilder("C:\\Windows\\System32\\cmd.exe", "/c", "C:\\Windows\\System32\\msiexec.exe /passive /package \"" + downloadedFrgui.getAbsolutePath() + "\"", "C:\\Program Files\\FutureRestore GUI\\FutureRestore GUI.exe");
                 // If exit code is not 0
                 if (runMsiProcessBuilder.start().waitFor() != 0) {
-                    //TODO: Unable to run updater
+                    //TODO: Unable to run updater and then launch app
                     return false;
                 }
 
-                // Open the app (run its exe)
+                /*// Open the app (run its exe)
                 ProcessBuilder runNewFrguiProcessBuilder = new ProcessBuilder("C:\\Program Files\\FutureRestore GUI\\FutureRestore GUI.exe");
                 if (runNewFrguiProcessBuilder.start().waitFor() != 0) {
                     // TODO: Unable to open new FRGUI
                     System.out.println("Unable to open new FRGUI.");
                     return false;
-                }
+                }*/
                 // TODO: MSI installation deletes and closes this FRGUI. Maybe make a temporary jar/bash script to run msiexe and launch the new FRGUI when done?
 
                 break;
