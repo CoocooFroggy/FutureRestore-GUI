@@ -1092,6 +1092,7 @@ public class MainMenu {
                     Object[] choices = {"Update now", "Remind me later"};
                     Object defaultChoice = choices[0];
 
+                    // TODO: Add "What's new in this version" dialogue
                     int response = JOptionPane.showOptionDialog(mainMenuInstance.mainMenuView, "A newer version of FutureRestore GUI is available.\n" +
                             "You're on version " + currentFRGUIVersion + " and the latest version is " + newestTag + ".\n" +
                             "https://github.com/CoocooFroggy/FutureRestore-GUI/releases", "Update FutureRestore GUI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);

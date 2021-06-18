@@ -245,13 +245,8 @@ public class FRUtils {
                     return false;
                 }
 
-                // Open the new app
-                ProcessBuilder runNewFrguiProcessBuilder = new ProcessBuilder("/opt/futurerestore-gui/bin/FutureRestore GUI");
-                if (runNewFrguiProcessBuilder.start().waitFor() != 0) {
-                    // TODO: Unable to open new FRGUI
-                    System.out.println("Unable to open new FRGUI.");
-                    return false;
-                }
+                // Open the new app, don't care about output or anything
+                new ProcessBuilder("/opt/futurerestore-gui/bin/FutureRestore GUI").start();
 
                 break;
             }
@@ -260,10 +255,10 @@ public class FRUtils {
                 return false;
             }
         }
-            // Delete update file
-            FileUtils.deleteQuietly(downloadedFrgui);
-            // Close our app
-            System.exit(0);
-            return true;
+        // Delete update file
+        FileUtils.deleteQuietly(downloadedFrgui);
+        // Close our app
+        System.exit(0);
+        return true;
     }
 }
