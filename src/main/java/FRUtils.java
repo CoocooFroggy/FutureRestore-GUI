@@ -207,36 +207,24 @@ public class FRUtils {
 
                 // Eject attached DMG
                 ProcessBuilder ejectDmgProcessBuilder = new ProcessBuilder("/usr/bin/hdiutil", "eject", attachLocation);
-                Process ejectDmgProcess = ejectDmgProcessBuilder.start();
                 // If exit code is not 0
-                if (ejectDmgProcess.waitFor() != 0) {
+                if (ejectDmgProcessBuilder.start().waitFor() != 0) {
                     //TODO: Unable to eject, please do it manually
                     System.out.println("Unable to eject the DMG, please do it manually");
                     return false;
                 }
 
-                // Delete update DMG
-                FileUtils.deleteQuietly(downloadedFrgui);
-
-                // Open the DMG and bring it to foreground, so it can be installed manually
-                /*ProcessBuilder openVolumeProcessBuilder = new ProcessBuilder("/usr/bin/open", attachLocation);
-                if (openVolumeProcessBuilder.start().waitFor() != 0) {
-//                    TODO: Unable to bring to foreground
-                }*/
-                return true;
+                break;
             }
             case "Windows": {
                 // Run downloaded MSI, prompt for Admin
                 ProcessBuilder runMsiProcessBuilder = new ProcessBuilder("C:\\Windows\\System32\\msiexec.exe", "/passive", "/package", downloadedFrgui.getAbsolutePath());
-                Process runMsiProcess = runMsiProcessBuilder.start();
                 // If exit code is not 0
-                if (runMsiProcess.waitFor() != 0) {
+                if (runMsiProcessBuilder.start().waitFor() != 0) {
                     //TODO: Unable to run updater
                     return false;
                 }
 
-                // Open app
-                // C:\Program Files\FutureRestore GUI\FutureRestore GUI.exe
                 // Open the app (run its exe)
                 ProcessBuilder runNewFrguiProcessBuilder = new ProcessBuilder("C:\\Program Files\\FutureRestore GUI\\FutureRestore GUI.exe");
                 if (runNewFrguiProcessBuilder.start().waitFor() != 0) {
@@ -244,20 +232,38 @@ public class FRUtils {
                     System.out.println("Unable to open new FRGUI.");
                     return false;
                 }
+                // TODO: MSI installation deletes and closes this FRGUI. Maybe make a temporary jar/bash script to run msiexe and launch the new FRGUI when done?
 
-                // Delete update MSI
-                FileUtils.deleteQuietly(downloadedFrgui);
-
-                System.exit(0);
-                return true;
+                break;
             }
             case "Debian": {
-                return true;
+                // dpkg update the app (uninstalls old and installs new automatically)
+                ProcessBuilder installDebProcessBuilder = new ProcessBuilder("/usr/bin/pkexec", "dpkg", "-i", downloadedFrgui.getAbsolutePath());
+                if (installDebProcessBuilder.start().waitFor() != 0) {
+                    // TODO: Unable to install new FRGUI
+                    System.out.println("Unable to install new FRGUI.");
+                    return false;
+                }
+
+                // Open the new app
+                ProcessBuilder runNewFrguiProcessBuilder = new ProcessBuilder("/opt/futurerestore-gui/bin/FutureRestore GUI");
+                if (runNewFrguiProcessBuilder.start().waitFor() != 0) {
+                    // TODO: Unable to open new FRGUI
+                    System.out.println("Unable to open new FRGUI.");
+                    return false;
+                }
+
+                break;
             }
             default: {
                 // TODO: Not supposed to appear
                 return false;
             }
         }
+            // Delete update file
+            FileUtils.deleteQuietly(downloadedFrgui);
+            // Close our app
+            System.exit(0);
+            return true;
     }
 }
