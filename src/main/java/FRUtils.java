@@ -218,10 +218,10 @@ public class FRUtils {
             }
             case "Windows": {
                 // Run downloaded MSI, prompt for Admin. Also run the exe to launch the app afterwards
-                ProcessBuilder runMsiProcessBuilder = new ProcessBuilder("C:\\Windows\\System32\\cmd.exe", "/c", "start /wait C:\\Windows\\System32\\msiexec.exe /passive /package " + downloadedFrgui.getAbsolutePath() + " && C:\\Program Files\\FutureRestore GUI\\FutureRestore GUI.exe");
+                Process updateFrguiScriptProcess = Runtime.getRuntime().exec("C:\\Windows\\System32\\cmd.exe /c start /wait C:\\Windows\\System32\\msiexec.exe /passive /package \"" + downloadedFrgui.getAbsolutePath() + "\" && C:\\Program Files\\FutureRestore GUI\\FutureRestore GUI.exe");
                 System.out.println("frgui path: " + downloadedFrgui.getAbsolutePath());
                 // If exit code is not 0
-                if (runMsiProcessBuilder.start().waitFor() != 0) {
+                if (updateFrguiScriptProcess.waitFor() != 0) {
                     //TODO: Unable to run updater and then launch app
                     return false;
                 }
