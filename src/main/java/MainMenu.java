@@ -72,7 +72,7 @@ public class MainMenu {
         $$$setupUI$$$();
         selectFutureRestoreBinaryExecutableButton.addActionListener(e -> {
             Platform.runLater(() -> {
-                mainMenuFrame.setEnabled(false);
+                FRUtils.setMainMenuEnabled(mainMenuView, false);
                 //Create a file chooser
                 FileChooser futureRestoreFileChooser = new FileChooser();
                 //Open dialogue and set the return file
@@ -85,14 +85,14 @@ public class MainMenu {
                     selectFutureRestoreBinaryExecutableButton.setText("✓ " + file.getName());
                 } else
                     System.out.println("Cancelled");
-                mainMenuFrame.setEnabled(true);
+                FRUtils.setMainMenuEnabled(mainMenuView, true);
                 mainMenuFrame.requestFocus();
             });
         });
         selectBlobFileButton.addActionListener(e -> {
 
             Platform.runLater(() -> {
-                mainMenuFrame.setEnabled(false);
+                FRUtils.setMainMenuEnabled(mainMenuView, false);
                 //Create a file chooser
                 FileChooser blobFileChooser = new FileChooser();
                 //Set filter
@@ -110,7 +110,7 @@ public class MainMenu {
                     selectBlobFileButton.setText("✓ " + file.getName());
                 } else
                     System.out.println("Cancelled");
-                mainMenuFrame.setEnabled(true);
+                FRUtils.setMainMenuEnabled(mainMenuView, true);
                 mainMenuFrame.requestFocus();
             });
 
@@ -118,7 +118,7 @@ public class MainMenu {
         selectTargetIPSWFileButton.addActionListener(e -> {
 
             Platform.runLater(() -> {
-                mainMenuFrame.setEnabled(false);
+                FRUtils.setMainMenuEnabled(mainMenuView, false);
                 //Create a file chooser
                 FileChooser targetIpswFileChooser = new FileChooser();
                 //Set filter
@@ -137,7 +137,7 @@ public class MainMenu {
                     selectTargetIPSWFileButton.setText("✓ " + file.getName());
                 } else
                     System.out.println("Cancelled");
-                mainMenuFrame.setEnabled(true);
+                FRUtils.setMainMenuEnabled(mainMenuView, true);
                 mainMenuFrame.requestFocus();
             });
         });
@@ -145,7 +145,7 @@ public class MainMenu {
         selectBuildManifestButton.addActionListener(e -> {
 
             Platform.runLater(() -> {
-                mainMenuFrame.setEnabled(false);
+                FRUtils.setMainMenuEnabled(mainMenuView, false);
                 //Create a file chooser
                 FileChooser targetIpswFileChooser = new FileChooser();
                 //Set filter
@@ -163,7 +163,7 @@ public class MainMenu {
                     selectBuildManifestButton.setText("✓ " + file.getName());
                 } else
                     System.out.println("Cancelled");
-                mainMenuFrame.setEnabled(true);
+                FRUtils.setMainMenuEnabled(mainMenuView, true);
                 mainMenuFrame.requestFocus();
             });
         });
@@ -293,6 +293,7 @@ public class MainMenu {
                     break;
                 case "Manual Baseband":
                     Platform.runLater(() -> {
+                        FRUtils.setMainMenuEnabled(mainMenuView, false);
                         if (chooseBbfw()) {
                             bbState = "manual";
                             selectBuildManifestButton.setEnabled(true);
@@ -302,6 +303,7 @@ public class MainMenu {
                             if (sepState.equals("latest"))
                                 selectBuildManifestButton.setEnabled(false);
                         }
+                        FRUtils.setMainMenuEnabled(mainMenuView, true);
                     });
                     break;
                 case "No Baseband":
@@ -322,6 +324,7 @@ public class MainMenu {
                     break;
                 case "Manual SEP":
                     Platform.runLater(() -> {
+                        FRUtils.setMainMenuEnabled(mainMenuView, false);
                         if (chooseSep()) {
                             sepState = "manual";
                             selectBuildManifestButton.setEnabled(true);
@@ -331,6 +334,7 @@ public class MainMenu {
                             if (bbState.equals("latest") || bbState.equals("none"))
                                 selectBuildManifestButton.setEnabled(false);
                         }
+                        FRUtils.setMainMenuEnabled(mainMenuView, true);
                     });
                     break;
             }
@@ -673,6 +677,8 @@ public class MainMenu {
                 return;
             }
 
+            /*
+            NGL good idea at first but got kinda annoying every time
             //Ask if they want to check for latest
             if (version == null) {
                 JOptionPane.showMessageDialog(mainMenuView, "Unable to check FutureRestore version from selected executable. Manually ensure you have the latest version.", "Warning", JOptionPane.ERROR_MESSAGE);
@@ -693,6 +699,7 @@ public class MainMenu {
                     }
                 }
             }
+            */
         }
 
         System.out.println("Starting FutureRestore...");
@@ -703,7 +710,6 @@ public class MainMenu {
                 FutureRestoreWorker.runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton, stopFutureRestoreUnsafeButton);
             } catch (IOException | InterruptedException | TimeoutException e) {
                 System.out.println("Unable to run FutureRestore.");
-                mainMenuView.setEnabled(true);
                 startFutureRestoreButton.setEnabled(true);
                 stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
                 e.printStackTrace();
@@ -1099,7 +1105,10 @@ public class MainMenu {
                     if (response == JOptionPane.YES_OPTION) {
 //                        FRUtils.openWebpage("https://github.com/CoocooFroggy/FutureRestore-GUI/releases");
                         boolean didSucceedUpdate = FRUtils.updateFRGUI(mainMenuInstance, mainMenuInstance.mainMenuView, mainMenuInstance.logProgressBar, mainMenuInstance.currentTaskTextField);
-                        // TODO: If update failed
+                        // If update failed fatally, enable everything again
+                        if (!didSucceedUpdate) {
+                            FRUtils.setMainMenuEnabled(mainMenuInstance.mainMenuView, true);
+                        }
                     }
 
                 } else {

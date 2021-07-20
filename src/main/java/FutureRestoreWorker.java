@@ -138,9 +138,9 @@ public class FutureRestoreWorker {
 
                                     int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an iBEC error. This is a common error and easily fixable.\n" +
                                             "A solution for this error is available here:\n" +
-                                            "https://github.com/marijuanARM/futurerestore#restoring-on-windows-10", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+                                            "https://github.com/m1stadev/futurerestore#restoring-on-windows-10", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
                                     if (response == JOptionPane.YES_OPTION) {
-                                        FRUtils.openWebpage("https://github.com/marijuanARM/futurerestore#restoring-on-windows-10");
+                                        FRUtils.openWebpage("https://github.com/m1stadev/futurerestore#restoring-on-windows-10");
                                     }
 
                                     break;
@@ -211,7 +211,6 @@ public class FutureRestoreWorker {
             // Clear text field if there was no real information
             if (currentTaskTextField.getText().contains("Starting FutureRestore"))
                 currentTaskTextField.setText("");
-            mainMenuView.setEnabled(true);
             startFutureRestoreButton.setEnabled(true);
             stopFutureRestoreButton.setText("Stop FutureRestore");
         });

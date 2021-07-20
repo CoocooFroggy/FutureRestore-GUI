@@ -13,6 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FRUtils {
+    private static ArrayList<Component> disabledComponents = new ArrayList<>();
+
     public static boolean openWebpage(String uriString) {
         URI uri = null;
         try {
@@ -34,6 +36,15 @@ public class FRUtils {
     }
 
     public static boolean updateFRGUI(MainMenu mainMenuInstance, JPanel mainMenuView, JProgressBar logProgressBar, JTextField currentTaskTextField) throws IOException, InterruptedException {
+        // If FutureRestore process is running, cancel early
+        if (!(FutureRestoreWorker.futureRestoreProcess == null || !FutureRestoreWorker.futureRestoreProcess.isAlive())) {
+            failUpdate("Can't update when FutureRestore is running!", mainMenuInstance, null);
+            return false;
+        }
+
+        // Disable the whole menu
+        setMainMenuEnabled(mainMenuView, false);
+
         String osName = System.getProperty("os.name").toLowerCase();
         String frguiDownloadIdentifier = null;
         if (osName.contains("mac")) {
@@ -59,9 +70,16 @@ public class FRUtils {
             return false;
         } else {
             File downloadedFrgui = downloadFRGUI(mainMenuInstance, frguiDownloadIdentifier, logProgressBar, currentTaskTextField);
-            installFrgui(downloadedFrgui, frguiDownloadIdentifier, mainMenuInstance, currentTaskTextField);
-            System.out.println("All done");
-            System.exit(0);
+
+            if (downloadedFrgui == null) {
+                // We already notify the user of error in downloadFRGUI()
+                return false;
+            }
+
+            if (installFrgui(downloadedFrgui, frguiDownloadIdentifier, mainMenuInstance, currentTaskTextField)) {
+                System.out.println("All done updating FRGUI. Closing now...");
+                System.exit(0);
+            }
             return true;
         }
     }
@@ -92,13 +110,13 @@ public class FRUtils {
 
         } catch (IOException e) {
             e.printStackTrace();
-            //TODO: Catch errors
+            failUpdate("Unable to update FutureRestore GUI.", mainMenuInstance, currentTaskTextField);
+            return null;
         }
 
         if (frguiDownloadName == null || frguiDownloadUrl == null) {
             // Never found ours O_O
-            //TODO: Unable to find FRGUI for your operating system. Do it manually.
-            System.out.println("No FRGUI found for your OS :(");
+            failUpdate("Unable to find FRGUI for your operating system. Please update manually.", mainMenuInstance, currentTaskTextField);
             return null;
         }
 
@@ -156,7 +174,6 @@ public class FRUtils {
             e.printStackTrace();
             return null;
         }
-        // TODO: Return downloaded file so we can install it
         return downloadedFRGUI;
     }
 
@@ -173,13 +190,13 @@ public class FRUtils {
                 Process attachDmgProcess = attachDmgProcessBuilder.start();
                 // If exit code is not 0
                 if (attachDmgProcess.waitFor() != 0) {
-                    //TODO: Unable to attach
+                    failUpdate("Unable to attach downloaded FutureRestore GUI DMG.", mainMenuInstance, currentTaskTextField);
                     return false;
                 }
 
                 // Get location
                 String attachDmgResponse = IOUtils.toString(attachDmgProcess.getInputStream(), StandardCharsets.UTF_8);
-                Pattern attachLocationPattern = Pattern.compile("\\/Volumes\\/.*");
+                Pattern attachLocationPattern = Pattern.compile("/Volumes/.*");
                 Matcher attachLocationMatcher = attachLocationPattern.matcher(attachDmgResponse);
                 String attachLocation = null;
                 if (attachLocationMatcher.find()) {
@@ -187,7 +204,7 @@ public class FRUtils {
                 }
 
                 if (attachLocation == null) {
-                    // TODO: Unable to find attached location for FRGUI DMG
+                    failUpdate("Unable to find attached location for FutureRestore GUI DMG.", mainMenuInstance, currentTaskTextField);
                     return false;
                 }
 
@@ -199,41 +216,35 @@ public class FRUtils {
                 // Open the app
                 ProcessBuilder openNewFrguiProcessBuilder = new ProcessBuilder("/usr/bin/open", "-n", "/Applications/FutureRestore GUI.app");
                 if (openNewFrguiProcessBuilder.start().waitFor() != 0) {
-                    // TODO: Unable to open new FRGUI
-                    System.out.println("Unable to open new FRGUI.");
-                    return false;
+                    // Non fatal
+                    System.err.println("Unable to open new FutureRestore GUI, please do so manually.");
+                    mainMenuInstance.messageToLog("Unable to open new FutureRestore GUI, please do so manually.");
                 }
-                // TODO: I think gatekeeper block still returns 0 as exit code—how do we detect this
 
                 // Eject attached DMG
                 ProcessBuilder ejectDmgProcessBuilder = new ProcessBuilder("/usr/bin/hdiutil", "eject", attachLocation);
                 // If exit code is not 0
                 if (ejectDmgProcessBuilder.start().waitFor() != 0) {
-                    //TODO: Unable to eject, please do it manually
-                    System.out.println("Unable to eject the DMG, please do it manually");
-                    return false;
+                    // Non fatal
+                    System.err.println("Unable to eject the update DMG, please do it manually.");
+                    mainMenuInstance.messageToLog("Unable to eject the update DMG, please do it manually.");
                 }
 
                 break;
             }
             case "Windows": {
                 // Run downloaded MSI, prompt for Admin. Also run the exe to launch the app afterwards
-                Process updateFrguiScriptProcess = Runtime.getRuntime().exec("C:\\Windows\\System32\\cmd.exe /c start /wait C:\\Windows\\System32\\msiexec.exe /passive /package \"" + downloadedFrgui.getAbsolutePath() + "\" && C:\\Program Files\\FutureRestore GUI\\FutureRestore GUI.exe");
-                System.out.println("frgui path: " + downloadedFrgui.getAbsolutePath());
+                ProcessBuilder updateFrguiScriptProcessBuilder = new ProcessBuilder("C:\\Windows\\System32\\cmd.exe", "/c start /wait C:\\Windows\\System32\\msiexec.exe /passive /package \"" + downloadedFrgui.getAbsolutePath() + "\" && \"C:\\Program Files\\FutureRestore GUI\\FutureRestore GUI.exe\"");
+                // These redirect output to nothing, otherwise the process will die when JVM is killed by msiexec
+                updateFrguiScriptProcessBuilder.redirectOutput(new File("NUL"));
+                updateFrguiScriptProcessBuilder.redirectError(new File("NUL"));
+
+                System.out.println("FRGUI path: " + downloadedFrgui.getAbsolutePath());
                 // If exit code is not 0
-                if (updateFrguiScriptProcess.waitFor() != 0) {
-                    //TODO: Unable to run updater and then launch app
+                if (updateFrguiScriptProcessBuilder.start().waitFor() != 0) {
+                    failUpdate("Unable to run MSI updater.", mainMenuInstance, currentTaskTextField);
                     return false;
                 }
-
-                /*// Open the app (run its exe)
-                ProcessBuilder runNewFrguiProcessBuilder = new ProcessBuilder("C:\\Program Files\\FutureRestore GUI\\FutureRestore GUI.exe");
-                if (runNewFrguiProcessBuilder.start().waitFor() != 0) {
-                    // TODO: Unable to open new FRGUI
-                    System.out.println("Unable to open new FRGUI.");
-                    return false;
-                }*/
-                // TODO: MSI installation deletes and closes this FRGUI. Maybe make a temporary jar/bash script to run msiexe and launch the new FRGUI when done?
 
                 break;
             }
@@ -241,8 +252,7 @@ public class FRUtils {
                 // dpkg update the app (uninstalls old and installs new automatically)
                 ProcessBuilder installDebProcessBuilder = new ProcessBuilder("/usr/bin/pkexec", "dpkg", "-i", downloadedFrgui.getAbsolutePath());
                 if (installDebProcessBuilder.start().waitFor() != 0) {
-                    // TODO: Unable to install new FRGUI
-                    System.out.println("Unable to install new FRGUI.");
+                    failUpdate("Unable to update FutureRestore GUI.", mainMenuInstance, currentTaskTextField);
                     return false;
                 }
 
@@ -252,14 +262,44 @@ public class FRUtils {
                 break;
             }
             default: {
-                // TODO: Not supposed to appear
+                failUpdate("Something's gone horribly wrong, this is never supposed to appear.", mainMenuInstance, currentTaskTextField);
                 return false;
             }
         }
         // Delete update file
         FileUtils.deleteQuietly(downloadedFrgui);
         // Close our app
-        System.exit(0);
         return true;
+    }
+
+    public static void failUpdate(String message, MainMenu mainMenuInstance, JTextField currentTaskTextField) {
+        System.err.println(message);
+        mainMenuInstance.messageToLog(message);
+        SwingUtilities.invokeLater(() -> {
+            // Null means don't touch current task, such as when FR is running
+            if (currentTaskTextField != null)
+                currentTaskTextField.setText("");
+        });
+    }
+
+    public static void setMainMenuEnabled(JPanel mainMenuView, boolean toSet) {
+        // If disabling, clear list before we start adding to list
+        if (!toSet)
+            disabledComponents.clear();
+        for (Component component : mainMenuView.getComponents()) {
+            // If disabling, add the previously disabled to this list
+            if (!toSet) {
+                if (!component.isEnabled())
+                    disabledComponents.add(component);
+            }
+            // Else if enabling, if the component was in the list, don't enable it
+            else {
+                if (disabledComponents.contains(component))
+                    continue;
+            }
+            SwingUtilities.invokeLater(() -> {
+                component.setEnabled(toSet);
+            });
+        }
     }
 }
