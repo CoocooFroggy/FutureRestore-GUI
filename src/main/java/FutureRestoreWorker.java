@@ -140,7 +140,9 @@ public class FutureRestoreWorker {
                                             "A solution for this error is available here:\n" +
                                             "https://github.com/m1stadev/futurerestore#restoring-on-windows-10", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
                                     if (response == JOptionPane.YES_OPTION) {
-                                        FRUtils.openWebpage("https://github.com/m1stadev/futurerestore#restoring-on-windows-10");
+                                        boolean openWebpageResult = FRUtils.openWebpage("https://github.com/m1stadev/futurerestore#restoring-on-windows-10", null);
+                                        if (!openWebpageResult)
+                                            appendToLog(logTextArea, writer, "Unable to open URL in your web browser. URL copied to clipboard, please open it manually.");
                                     }
 
                                     break;
@@ -155,7 +157,9 @@ public class FutureRestoreWorker {
                                                     "https://ios.cfw.guide/futurerestore#getting-started",
                                             "APTicket does not match APNonce", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, choices, choices[0]);
                                     if (response == JOptionPane.YES_OPTION) {
-                                        FRUtils.openWebpage("https://ios.cfw.guide/futurerestore#getting-started");
+                                        boolean openWebpageResult = FRUtils.openWebpage("https://ios.cfw.guide/futurerestore#getting-started", null);
+                                        if (!openWebpageResult)
+                                            appendToLog(logTextArea, writer, "Unable to open URL in your web browser. URL copied to clipboard, please open it manually.");
                                     }
 
                                     break;

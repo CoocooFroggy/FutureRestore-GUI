@@ -4,6 +4,8 @@ import org.apache.commons.io.IOUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -13,9 +15,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FRUtils {
-    private static ArrayList<Component> disabledComponents = new ArrayList<>();
+    private static final ArrayList<Component> disabledComponents = new ArrayList<>();
 
-    public static boolean openWebpage(String uriString) {
+    public static boolean openWebpage(String uriString, MainMenu mainMenuInstance) {
         URI uri = null;
         try {
             uri = new URI(uriString);
@@ -32,13 +34,22 @@ public class FRUtils {
                 e.printStackTrace();
             }
         }
+        // Since it failed to open, copy it to clipboard
+        StringSelection stringSelection = new StringSelection(uriString);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+        // If no MainMenu was passed, just return without logging anything. Let them log it themselves
+        if (mainMenuInstance != null)
+            mainMenuInstance.messageToLog("Unable to open URL \"" + uriString + "\"");
         return false;
     }
 
-    public static boolean updateFRGUI(MainMenu mainMenuInstance, JPanel mainMenuView, JProgressBar logProgressBar, JTextField currentTaskTextField) throws IOException, InterruptedException {
+    public static boolean updateFRGUI(MainMenu mainMenuInstance) throws IOException, InterruptedException {
+        JPanel mainMenuView = mainMenuInstance.getMainMenuView();
+
         // If FutureRestore process is running, cancel early
         if (!(FutureRestoreWorker.futureRestoreProcess == null || !FutureRestoreWorker.futureRestoreProcess.isAlive())) {
-            failUpdate("Can't update when FutureRestore is running!", mainMenuInstance, null);
+            failUpdate("Can't update when FutureRestore is running!", mainMenuInstance, false);
             return false;
         }
 
@@ -65,18 +76,18 @@ public class FRUtils {
             int response = JOptionPane.showOptionDialog(mainMenuView, "Unable to automatically update for this operating system. Please update FutureRestore GUI manually.\n" +
                     "https://github.com/CoocooFroggy/FutureRestore-GUI/releases/latest", "Download FutureRestore GUI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
             if (response == JOptionPane.YES_OPTION) {
-                FRUtils.openWebpage("https://github.com/CoocooFroggy/FutureRestore-GUI/releases/latest");
+                FRUtils.openWebpage("https://github.com/CoocooFroggy/FutureRestore-GUI/releases/latest", mainMenuInstance);
             }
             return false;
         } else {
-            File downloadedFrgui = downloadFRGUI(mainMenuInstance, frguiDownloadIdentifier, logProgressBar, currentTaskTextField);
+            File downloadedFrgui = downloadFRGUI(mainMenuInstance, frguiDownloadIdentifier);
 
             if (downloadedFrgui == null) {
                 // We already notify the user of error in downloadFRGUI()
                 return false;
             }
 
-            if (installFrgui(downloadedFrgui, frguiDownloadIdentifier, mainMenuInstance, currentTaskTextField)) {
+            if (installFrgui(downloadedFrgui, frguiDownloadIdentifier, mainMenuInstance)) {
                 System.out.println("All done updating FRGUI. Closing now...");
                 System.exit(0);
             }
@@ -84,7 +95,10 @@ public class FRUtils {
         }
     }
 
-    public static File downloadFRGUI(MainMenu mainMenuInstance, String frguiDownloadIdentifier, JProgressBar logProgressBar, JTextField currentTaskTextField) {
+    public static File downloadFRGUI(MainMenu mainMenuInstance, String frguiDownloadIdentifier) {
+        JProgressBar logProgressBar = mainMenuInstance.getLogProgressBar();
+        JTextField currentTaskTextField = mainMenuInstance.getCurrentTaskTextField();
+
         //Download synchronously
         String frguiDownloadName = null;
         String frguiDownloadUrl = null;
@@ -110,13 +124,13 @@ public class FRUtils {
 
         } catch (IOException e) {
             e.printStackTrace();
-            failUpdate("Unable to update FutureRestore GUI.", mainMenuInstance, currentTaskTextField);
+            failUpdate("Unable to update FutureRestore GUI.", mainMenuInstance, true);
             return null;
         }
 
         if (frguiDownloadName == null || frguiDownloadUrl == null) {
             // Never found ours O_O
-            failUpdate("Unable to find FRGUI for your operating system. Please update manually.", mainMenuInstance, currentTaskTextField);
+            failUpdate("Unable to find FRGUI for your operating system. Please update manually.", mainMenuInstance, true);
             return null;
         }
 
@@ -136,33 +150,7 @@ public class FRUtils {
             SwingUtilities.invokeLater(() -> {
                 currentTaskTextField.setText("Downloading FutureRestore GUI...");
             });
-            URL url = new URL(frguiDownloadUrl);
-            HttpURLConnection httpConnection = (HttpURLConnection) (url.openConnection());
-            long completeFileSize = httpConnection.getContentLength();
-
-            BufferedInputStream in = new BufferedInputStream(httpConnection.getInputStream());
-            FileOutputStream fos = new FileOutputStream(downloadedFRGUI);
-            BufferedOutputStream bout = new BufferedOutputStream(
-                    fos, 1024);
-            byte[] data = new byte[1024];
-            long downloadedFileSize = 0;
-            int x;
-            while ((x = in.read(data, 0, 1024)) >= 0) {
-                downloadedFileSize += x;
-
-                // calculate progress
-                final int currentProgress = (int) ((((double) downloadedFileSize) / ((double) completeFileSize)) * 100000d);
-
-                // update progress bar
-                SwingUtilities.invokeLater(() -> {
-                    logProgressBar.setMaximum(100000);
-                    logProgressBar.setValue(currentProgress);
-                });
-
-                bout.write(data, 0, x);
-            }
-            bout.close();
-            in.close();
+            downloadFile(frguiDownloadUrl, downloadedFRGUI, mainMenuInstance);
             SwingUtilities.invokeLater(() -> {
                 currentTaskTextField.setText("");
                 logProgressBar.setValue(0);
@@ -177,11 +165,15 @@ public class FRUtils {
         return downloadedFRGUI;
     }
 
-    public static boolean installFrgui(File downloadedFrgui, String frguiDownloadIdentifier, MainMenu mainMenuInstance, JTextField currentTaskTextField) throws IOException, InterruptedException {
+    public static boolean installFrgui(File downloadedFrgui, String frguiDownloadIdentifier, MainMenu mainMenuInstance) throws IOException, InterruptedException {
+        JTextField currentTaskTextField = mainMenuInstance.getCurrentTaskTextField();
+
         SwingUtilities.invokeLater(() -> {
             mainMenuInstance.messageToLog("Installing newly downloaded FutureRestore GUI at " + downloadedFrgui.getAbsolutePath() + ".");
             currentTaskTextField.setText("Updating FutureRestore GUI...");
         });
+
+        JFrame mainMenuFrame = mainMenuInstance.getMainMenuFrame();
 
         switch (frguiDownloadIdentifier) {
             case "Mac": {
@@ -190,7 +182,7 @@ public class FRUtils {
                 Process attachDmgProcess = attachDmgProcessBuilder.start();
                 // If exit code is not 0
                 if (attachDmgProcess.waitFor() != 0) {
-                    failUpdate("Unable to attach downloaded FutureRestore GUI DMG.", mainMenuInstance, currentTaskTextField);
+                    failUpdate("Unable to attach downloaded FutureRestore GUI DMG.", mainMenuInstance, true);
                     return false;
                 }
 
@@ -204,7 +196,7 @@ public class FRUtils {
                 }
 
                 if (attachLocation == null) {
-                    failUpdate("Unable to find attached location for FutureRestore GUI DMG.", mainMenuInstance, currentTaskTextField);
+                    failUpdate("Unable to find attached location for FutureRestore GUI DMG.", mainMenuInstance, true);
                     return false;
                 }
 
@@ -219,6 +211,7 @@ public class FRUtils {
                     // Non fatal
                     System.err.println("Unable to open new FutureRestore GUI, please do so manually.");
                     mainMenuInstance.messageToLog("Unable to open new FutureRestore GUI, please do so manually.");
+                    JOptionPane.showMessageDialog(mainMenuFrame, "Unable to open new FutureRestore GUI, please do so manually.", "Warning", JOptionPane.WARNING_MESSAGE);
                 }
 
                 // Eject attached DMG
@@ -228,6 +221,7 @@ public class FRUtils {
                     // Non fatal
                     System.err.println("Unable to eject the update DMG, please do it manually.");
                     mainMenuInstance.messageToLog("Unable to eject the update DMG, please do it manually.");
+                    JOptionPane.showMessageDialog(mainMenuFrame, "Unable to eject the update DMG, please do it manually.", "Warning", JOptionPane.WARNING_MESSAGE);
                 }
 
                 break;
@@ -242,7 +236,7 @@ public class FRUtils {
                 System.out.println("FRGUI path: " + downloadedFrgui.getAbsolutePath());
                 // If exit code is not 0
                 if (updateFrguiScriptProcessBuilder.start().waitFor() != 0) {
-                    failUpdate("Unable to run MSI updater.", mainMenuInstance, currentTaskTextField);
+                    failUpdate("Unable to run MSI updater.", mainMenuInstance, true);
                     return false;
                 }
 
@@ -252,17 +246,19 @@ public class FRUtils {
                 // dpkg update the app (uninstalls old and installs new automatically)
                 ProcessBuilder installDebProcessBuilder = new ProcessBuilder("/usr/bin/pkexec", "dpkg", "-i", downloadedFrgui.getAbsolutePath());
                 if (installDebProcessBuilder.start().waitFor() != 0) {
-                    failUpdate("Unable to update FutureRestore GUI.", mainMenuInstance, currentTaskTextField);
+                    failUpdate("Unable to update FutureRestore GUI.", mainMenuInstance, true);
                     return false;
                 }
 
                 // Open the new app, don't care about output or anything
-                new ProcessBuilder("/opt/futurerestore-gui/bin/FutureRestore GUI").start();
-
+                new ProcessBuilder("/opt/futurerestore-gui/bin/FutureRestore GUI")
+                        .redirectOutput(new File("/dev/null"))
+                        .redirectError(new File("/dev/null"))
+                        .start();
                 break;
             }
             default: {
-                failUpdate("Something's gone horribly wrong, this is never supposed to appear.", mainMenuInstance, currentTaskTextField);
+                failUpdate("Something's gone horribly wrong, this is never supposed to appear. Please update FutureRestore GUI manually.", mainMenuInstance, true);
                 return false;
             }
         }
@@ -272,12 +268,14 @@ public class FRUtils {
         return true;
     }
 
-    public static void failUpdate(String message, MainMenu mainMenuInstance, JTextField currentTaskTextField) {
+    public static void failUpdate(String message, MainMenu mainMenuInstance, boolean resetCurrentTaskTextField) {
+        JTextField currentTaskTextField = mainMenuInstance.getCurrentTaskTextField();
+
         System.err.println(message);
         mainMenuInstance.messageToLog(message);
         SwingUtilities.invokeLater(() -> {
-            // Null means don't touch current task, such as when FR is running
-            if (currentTaskTextField != null)
+            // Third parameter means currentTaskTextField blank
+            if (resetCurrentTaskTextField)
                 currentTaskTextField.setText("");
         });
     }
@@ -301,5 +299,37 @@ public class FRUtils {
                 component.setEnabled(toSet);
             });
         }
+    }
+
+    public static void downloadFile(String urlString, File downloadLocation, MainMenu mainMenuInstance) throws IOException {
+        JProgressBar logProgressBar = mainMenuInstance.getLogProgressBar();
+
+        URL url = new URL(urlString);
+        HttpURLConnection httpConnection = (HttpURLConnection) (url.openConnection());
+        long completeFileSize = httpConnection.getContentLength();
+
+        BufferedInputStream in = new BufferedInputStream(httpConnection.getInputStream());
+        FileOutputStream fos = new FileOutputStream(downloadLocation);
+        BufferedOutputStream bout = new BufferedOutputStream(
+                fos, 1024);
+        byte[] data = new byte[1024];
+        long downloadedFileSize = 0;
+        int x;
+        while ((x = in.read(data, 0, 1024)) >= 0) {
+            downloadedFileSize += x;
+
+            // calculate progress
+            final int currentProgress = (int) ((((double) downloadedFileSize) / ((double) completeFileSize)) * 100000d);
+
+            // update progress bar
+            SwingUtilities.invokeLater(() -> {
+                logProgressBar.setMaximum(100000);
+                logProgressBar.setValue(currentProgress);
+            });
+
+            bout.write(data, 0, x);
+        }
+        bout.close();
+        in.close();
     }
 }

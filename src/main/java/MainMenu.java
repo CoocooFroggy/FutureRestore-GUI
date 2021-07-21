@@ -15,7 +15,6 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -203,7 +202,7 @@ public class MainMenu {
             }
 
             //If blob name has a build number in it
-            Pattern blobPattern = Pattern.compile("(?<=_|-)[A-Z0-9]{5,10}[a-z]?(?=_|-)");
+            Pattern blobPattern = Pattern.compile("(?<=[_-])[A-Z0-9]{5,10}[a-z]?(?=[_-])");
             Matcher blobMatcher = blobPattern.matcher(blobName);
             String blobBuild = null;
             if (blobMatcher.find()) {
@@ -212,7 +211,7 @@ public class MainMenu {
             }
 
             //If IPSW has a build name in it
-            Pattern ipswPattern = Pattern.compile("(?<=_|-)[A-Z0-9]{5,10}[a-z]?(?=_|-)");
+            Pattern ipswPattern = Pattern.compile("(?<=[_-])[A-Z0-9]{5,10}[a-z]?(?=[_-])");
             Matcher ipswMatcher = ipswPattern.matcher(targetIpswName);
             String targetIpswBuild = null;
             if (ipswMatcher.find()) {
@@ -400,7 +399,7 @@ public class MainMenu {
                 int response = JOptionPane.showOptionDialog(mainMenuView, "Unknown operating system detected. Please download FutureRestore manually for your operating system.\n" +
                         "https://github.com/m1stadev/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
                 if (response == JOptionPane.YES_OPTION) {
-                    FRUtils.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/");
+                    FRUtils.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/", this);
                 }
             }
 
@@ -417,11 +416,8 @@ public class MainMenu {
 
         });
 
-        settingsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                settingsMenuFrame.setVisible(true);
-            }
+        settingsButton.addActionListener(e -> {
+            settingsMenuFrame.setVisible(true);
         });
     }
 
@@ -652,6 +648,8 @@ public class MainMenu {
             startFutureRestoreButton.setEnabled(false);
             stopFutureRestoreUnsafeButton.setText("Stop FutureRestore (Unsafe)");
 
+            /*
+            Not necessary if we don't check GitHub for version as well
             //Check FutureRestore version
             Runtime runtime = Runtime.getRuntime();
             String version = null;
@@ -677,9 +675,9 @@ public class MainMenu {
                 return;
             }
 
-            /*
-            NGL good idea at first but got kinda annoying every time
-            //Ask if they want to check for latest
+            // NGL good idea at first but got kinda annoying every time
+
+            // Ask if they want to check for latest
             if (version == null) {
                 JOptionPane.showMessageDialog(mainMenuView, "Unable to check FutureRestore version from selected executable. Manually ensure you have the latest version.", "Warning", JOptionPane.ERROR_MESSAGE);
             } else {
@@ -719,6 +717,7 @@ public class MainMenu {
     }
 
     int lineNumber = 1;
+
     void messageToLog(String string) {
         SwingUtilities.invokeLater(() -> {
             logTextArea.append("[" + lineNumber + "] " + string + "\n");
@@ -726,26 +725,9 @@ public class MainMenu {
         });
     }
 
-    String getLatestFutureRestore() throws IOException {
+    String getLatestFrTag() throws IOException {
         //Vars
-        URL url = new URL("https://api.github.com/repos/m1stadev/futurerestore/releases");
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        Gson gson = new Gson();
-
-        con.setRequestMethod("GET");
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder content = new StringBuilder();
-        while ((inputLine = in.readLine()) != null) {
-            content.append(inputLine);
-        }
-        in.close();
-        con.disconnect();
-
-        ArrayList<Map<String, Object>> result = gson.fromJson(content.toString(), ArrayList.class);
-        Map<String, Object> newestRelease = result.get(0);
+        Map<String, Object> newestRelease = getLatestFrGithub();
         String newestTag = (String) newestRelease.get("tag_name");
         System.out.println("Newest version: " + newestTag);
 
@@ -757,24 +739,7 @@ public class MainMenu {
 
         Map<String, String> linkNameMap = new HashMap<>();
 
-        URL url = new URL("https://api.github.com/repos/m1stadev/futurerestore/releases");
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        Gson gson = new Gson();
-
-        con.setRequestMethod("GET");
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder content = new StringBuilder();
-        while ((inputLine = in.readLine()) != null) {
-            content.append(inputLine);
-        }
-        in.close();
-        con.disconnect();
-        ArrayList<Map<String, Object>> result = gson.fromJson(content.toString(), ArrayList.class);
-
-        Map<String, Object> newestRelease = result.get(0);
+        Map<String, Object> newestRelease = getLatestFrGithub();
         ArrayList<Map<String, Object>> assets = (ArrayList<Map<String, Object>>) newestRelease.get("assets");
         //Get asset for our operating system
         for (Map<String, Object> asset : assets) {
@@ -792,9 +757,31 @@ public class MainMenu {
         int response = JOptionPane.showOptionDialog(mainMenuView, "No FutureRestore asset found for your operating system. Check releases to see if there's one available.\n" +
                 "https://github.com/m1stadev/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
         if (response == JOptionPane.YES_OPTION) {
-            FRUtils.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/");
+            FRUtils.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/", this);
         }
         return linkNameMap;
+    }
+
+    private Map<String, Object> getLatestFrGithub() throws IOException {
+        URL url = new URL("https://api.github.com/repos/m1stadev/futurerestore/releases");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        Gson gson = new Gson();
+
+        con.setRequestMethod("GET");
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder content = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+        in.close();
+        con.disconnect();
+
+        ArrayList<Map<String, Object>> result = gson.fromJson(content.toString(), ArrayList.class);
+        Map<String, Object> newestRelease = result.get(0);
+        return newestRelease;
     }
 
     void downloadFutureRestore(String urlString, String downloadName, String operatingSystem) {
@@ -803,14 +790,16 @@ public class MainMenu {
             String homeDirectory = System.getProperty("user.home");
             File frGuiDir = new File(homeDirectory + "/FutureRestoreGUI/");
 
-            /*//Wipe the directory
+            /*
+            //Wipe the directory
             try {
                 Process process = Runtime.getRuntime().exec("rm -r " + frGuiDir);
                 process.waitFor();
             } catch (IOException | InterruptedException e) {
                 System.out.println("Unable to wipe FutureRestoreGUI directory.");
                 e.printStackTrace();
-            }*/
+            }
+            */
 
             //Make directory to store files
             if (!frGuiDir.exists()) {
@@ -820,40 +809,14 @@ public class MainMenu {
             String finalFrPath = homeDirectory + "/FutureRestoreGUI/";
             String zipPath = finalFrPath + downloadName;
             try {
-                URL url = new URL(urlString);
-                HttpURLConnection httpConnection = (HttpURLConnection) (url.openConnection());
-                long completeFileSize = httpConnection.getContentLength();
-
-                BufferedInputStream in = new BufferedInputStream(httpConnection.getInputStream());
-                FileOutputStream fos = new FileOutputStream(zipPath);
-                BufferedOutputStream bout = new BufferedOutputStream(
-                        fos, 1024);
-                byte[] data = new byte[1024];
-                long downloadedFileSize = 0;
-                int x;
-                while ((x = in.read(data, 0, 1024)) >= 0) {
-                    downloadedFileSize += x;
-
-                    // calculate progress
-                    final int currentProgress = (int) ((((double) downloadedFileSize) / ((double) completeFileSize)) * 100000d);
-
-                    // update progress bar
-                    SwingUtilities.invokeLater(() -> {
-                        logProgressBar.setMaximum(100000);
-                        logProgressBar.setValue(currentProgress);
-                    });
-
-                    bout.write(data, 0, x);
-                }
-                bout.close();
-                in.close();
+                FRUtils.downloadFile(urlString, new File(zipPath), this);
                 SwingUtilities.invokeLater(() -> {
                     currentTaskTextField.setText("");
                     logProgressBar.setValue(0);
                     messageToLog("FutureRestore finished downloading.");
                 });
             } catch (IOException e) {
-                System.out.println("Unable to download FutureRestore.");
+                System.err.println("Unable to download FutureRestore.");
                 messageToLog("Unable to download FutureRestore.");
                 e.printStackTrace();
                 return;
@@ -988,9 +951,9 @@ public class MainMenu {
         String homeDirectory = System.getProperty("user.home");
         File prefsFile = new File(homeDirectory + "/FutureRestoreGUI/preferences.properties");
 
-        FileOutputStream outputStrem;
+        FileOutputStream outputStream;
         try {
-            outputStrem = new FileOutputStream(prefsFile);
+            outputStream = new FileOutputStream(prefsFile);
         } catch (FileNotFoundException e) {
             System.out.println("Unable to create output stream for preferences.");
             e.printStackTrace();
@@ -998,7 +961,7 @@ public class MainMenu {
         }
 
         try {
-            properties.store(outputStrem, "Preferences for FutureRestore GUI");
+            properties.store(outputStream, "Preferences for FutureRestore GUI");
         } catch (IOException e) {
             System.out.println("Unable to save preferences.");
             e.printStackTrace();
@@ -1104,7 +1067,7 @@ public class MainMenu {
                             "https://github.com/CoocooFroggy/FutureRestore-GUI/releases", "Update FutureRestore GUI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
                     if (response == JOptionPane.YES_OPTION) {
 //                        FRUtils.openWebpage("https://github.com/CoocooFroggy/FutureRestore-GUI/releases");
-                        boolean didSucceedUpdate = FRUtils.updateFRGUI(mainMenuInstance, mainMenuInstance.mainMenuView, mainMenuInstance.logProgressBar, mainMenuInstance.currentTaskTextField);
+                        boolean didSucceedUpdate = FRUtils.updateFRGUI(mainMenuInstance);
                         // If update failed fatally, enable everything again
                         if (!didSucceedUpdate) {
                             FRUtils.setMainMenuEnabled(mainMenuInstance.mainMenuView, true);
@@ -1119,6 +1082,20 @@ public class MainMenu {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    /* Private vars */
+    public JFrame getMainMenuFrame() {
+        return mainMenuFrame;
+    }
+    public JPanel getMainMenuView() {
+        return mainMenuView;
+    }
+    public JProgressBar getLogProgressBar() {
+        return logProgressBar;
+    }
+    public JTextField getCurrentTaskTextField() {
+        return currentTaskTextField;
     }
 
     /**
@@ -1543,5 +1520,4 @@ public class MainMenu {
     public JComponent $$$getRootComponent$$$() {
         return mainMenuView;
     }
-
 }
