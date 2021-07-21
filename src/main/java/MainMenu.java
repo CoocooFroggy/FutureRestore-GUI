@@ -648,15 +648,14 @@ public class MainMenu {
             startFutureRestoreButton.setEnabled(false);
             stopFutureRestoreUnsafeButton.setText("Stop FutureRestore (Unsafe)");
 
-            /*
-            Not necessary if we don't check GitHub for version as well
-            //Check FutureRestore version
+            // Not necessary if we don't check GitHub for version as well
+            // Check FutureRestore version
             Runtime runtime = Runtime.getRuntime();
             String version = null;
             try {
                 Process process = runtime.exec(futureRestoreFilePath);
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                Pattern pattern = Pattern.compile("Version: [0-9a-z]+ - ([0-9]+)");
+                Pattern pattern = Pattern.compile("Version: (.*)");
                 String s;
                 //Only check the first 5 lines
                 for (int i = 0; i < 5; i++) {
@@ -675,7 +674,9 @@ public class MainMenu {
                 return;
             }
 
-            // NGL good idea at first but got kinda annoying every time
+
+            /*
+            // Good idea at first but got kinda annoying every time
 
             // Ask if they want to check for latest
             if (version == null) {

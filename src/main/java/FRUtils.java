@@ -104,7 +104,7 @@ public class FRUtils {
         String frguiDownloadUrl = null;
         try {
             System.out.println("Finding download...");
-            // TODO: Debug
+            // DEBUG: Debug
             URL releasesApiUrl = new URL("https://api.github.com/repos/Forge-Nius-Trio/FutureRestore-GUI-CI-Test/releases/latest");
 //            URL releasesApiUrl = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases/latest");
             String releasesApiResponse = IOUtils.toString(releasesApiUrl.openConnection().getInputStream(), StandardCharsets.UTF_8);
