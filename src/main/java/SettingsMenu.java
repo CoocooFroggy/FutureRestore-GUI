@@ -18,23 +18,21 @@ public class SettingsMenu {
     private JRadioButton autoRadioButton;
     private JRadioButton lightRadioButton;
     private JRadioButton darkRadioButton;
+    private JCheckBox futureRestoreBetaCheckBox;
 
     public SettingsMenu() {
-        shareLogsCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Set prefs to true or false depending on what they check / uncheck
-                if (shareLogsCheckBox.isSelected()) {
-                    MainMenu.properties.setProperty("upload_logs", "true");
-                    discordTextArea.setEnabled(true);
-                } else {
-                    MainMenu.properties.setProperty("upload_logs", "false");
-                    discordTextArea.setEnabled(false);
-                }
-
-                MainMenu.savePreferences();
-
+        shareLogsCheckBox.addActionListener(e -> {
+            // Set prefs to true or false depending on what they check / uncheck
+            if (shareLogsCheckBox.isSelected()) {
+                MainMenu.properties.setProperty("upload_logs", "true");
+                discordTextArea.setEnabled(true);
+            } else {
+                MainMenu.properties.setProperty("upload_logs", "false");
+                discordTextArea.setEnabled(false);
             }
+
+            MainMenu.savePreferences();
+
         });
 
         discordTextArea.getDocument().addDocumentListener(new DocumentListener() {
@@ -56,29 +54,33 @@ public class SettingsMenu {
             }
         });
 
-        previewCommandCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (previewCommandCheckBox.isSelected()) {
-                    MainMenu.properties.setProperty("preview_command", "true");
-                    MainMenu.savePreferences();
-                } else {
-                    MainMenu.properties.setProperty("preview_command", "false");
-                    MainMenu.savePreferences();
-                }
+        previewCommandCheckBox.addActionListener(e -> {
+            if (previewCommandCheckBox.isSelected()) {
+                MainMenu.properties.setProperty("preview_command", "true");
+                MainMenu.savePreferences();
+            } else {
+                MainMenu.properties.setProperty("preview_command", "false");
+                MainMenu.savePreferences();
             }
         });
 
-        GUIUpdatesCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (GUIUpdatesCheckBox.isSelected()) {
-                    MainMenu.properties.setProperty("check_updates", "true");
-                    MainMenu.savePreferences();
-                } else {
-                    MainMenu.properties.setProperty("check_updates", "false");
-                    MainMenu.savePreferences();
-                }
+        GUIUpdatesCheckBox.addActionListener(e -> {
+            if (GUIUpdatesCheckBox.isSelected()) {
+                MainMenu.properties.setProperty("check_updates", "true");
+                MainMenu.savePreferences();
+            } else {
+                MainMenu.properties.setProperty("check_updates", "false");
+                MainMenu.savePreferences();
+            }
+        });
+
+        futureRestoreBetaCheckBox.addActionListener(e -> {
+            if (futureRestoreBetaCheckBox.isSelected()) {
+                MainMenu.properties.setProperty("futurerestore_beta", "true");
+                MainMenu.savePreferences();
+            } else {
+                MainMenu.properties.setProperty("futurerestore_beta", "false");
+                MainMenu.savePreferences();
             }
         });
 
@@ -132,11 +134,23 @@ public class SettingsMenu {
         else
             settingsMenuInstance.GUIUpdatesCheckBox.setSelected(false);
 
+        // FR beta update check box
+        if (MainMenu.properties.getProperty("futurerestore_beta").equals("true"))
+            settingsMenuInstance.futureRestoreBetaCheckBox.setSelected(true);
+        else
+            settingsMenuInstance.futureRestoreBetaCheckBox.setSelected(false);
+
         //Theme prefs radio buttons
         switch (MainMenu.properties.getProperty("theme_preference")) {
-            case "auto": settingsMenuInstance.autoRadioButton.setSelected(true); break;
-            case "light": settingsMenuInstance.lightRadioButton.setSelected(true); break;
-            case "dark": settingsMenuInstance.darkRadioButton.setSelected(true); break;
+            case "auto":
+                settingsMenuInstance.autoRadioButton.setSelected(true);
+                break;
+            case "light":
+                settingsMenuInstance.lightRadioButton.setSelected(true);
+                break;
+            case "dark":
+                settingsMenuInstance.darkRadioButton.setSelected(true);
+                break;
         }
     }
 
@@ -183,7 +197,7 @@ public class SettingsMenu {
         gbc.fill = GridBagConstraints.VERTICAL;
         settingsMenuView.add(spacer1, gbc);
         final JLabel label1 = new JLabel();
-        label1.setText("(Optional) Let us contact you about your logs by providing your Discord");
+        label1.setText("(Optional) Let us contact you about your logs by providing your Discord.");
         gbc = new GridBagConstraints();
         gbc.gridx = 4;
         gbc.gridy = 3;
@@ -193,7 +207,7 @@ public class SettingsMenu {
         final JPanel spacer2 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 10;
+        gbc.gridy = 12;
         gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.VERTICAL;
         settingsMenuView.add(spacer2, gbc);
@@ -207,7 +221,7 @@ public class SettingsMenu {
         gbc.insets = new Insets(0, 10, 0, 0);
         settingsMenuView.add(previewCommandCheckBox, gbc);
         final JLabel label2 = new JLabel();
-        label2.setText("See a preview of the final command before it runs");
+        label2.setText("See a preview of the final command before it runs.");
         gbc = new GridBagConstraints();
         gbc.gridx = 4;
         gbc.gridy = 5;
@@ -226,7 +240,7 @@ public class SettingsMenu {
         gbc.insets = new Insets(0, 10, 0, 0);
         settingsMenuView.add(discordTextArea, gbc);
         final JLabel label3 = new JLabel();
-        label3.setText("Automatically share logs to help make FutureRestore better");
+        label3.setText("Automatically share logs to help make FutureRestore better.");
         gbc = new GridBagConstraints();
         gbc.gridx = 4;
         gbc.gridy = 2;
@@ -277,7 +291,7 @@ public class SettingsMenu {
         gbc.insets = new Insets(0, 10, 0, 0);
         settingsMenuView.add(GUIUpdatesCheckBox, gbc);
         final JLabel label5 = new JLabel();
-        label5.setText("Automatically check for updates for FutureRestore GUI");
+        label5.setText("Automatically check for updates for FutureRestore GUI.");
         gbc = new GridBagConstraints();
         gbc.gridx = 4;
         gbc.gridy = 7;
@@ -295,7 +309,7 @@ public class SettingsMenu {
         autoRadioButton.setText("Auto");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 9;
+        gbc.gridy = 11;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         settingsMenuView.add(autoRadioButton, gbc);
@@ -303,20 +317,20 @@ public class SettingsMenu {
         lightRadioButton.setText("Light");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 9;
+        gbc.gridy = 11;
         gbc.anchor = GridBagConstraints.WEST;
         settingsMenuView.add(lightRadioButton, gbc);
         darkRadioButton = new JRadioButton();
         darkRadioButton.setText("Dark");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
-        gbc.gridy = 9;
+        gbc.gridy = 11;
         gbc.anchor = GridBagConstraints.WEST;
         settingsMenuView.add(darkRadioButton, gbc);
         final JSeparator separator6 = new JSeparator();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 8;
+        gbc.gridy = 10;
         gbc.gridwidth = 5;
         gbc.fill = GridBagConstraints.BOTH;
         settingsMenuView.add(separator6, gbc);
@@ -324,17 +338,48 @@ public class SettingsMenu {
         separator7.setOrientation(1);
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
-        gbc.gridy = 9;
+        gbc.gridy = 11;
         gbc.fill = GridBagConstraints.BOTH;
         settingsMenuView.add(separator7, gbc);
         final JLabel label6 = new JLabel();
         label6.setText("Set the theme of the GUI. Requires a restart to take effect.");
         gbc = new GridBagConstraints();
         gbc.gridx = 4;
-        gbc.gridy = 9;
+        gbc.gridy = 11;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 0, 0, 10);
         settingsMenuView.add(label6, gbc);
+        futureRestoreBetaCheckBox = new JCheckBox();
+        futureRestoreBetaCheckBox.setText("FutureRestore Beta");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 9;
+        gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 10, 0, 0);
+        settingsMenuView.add(futureRestoreBetaCheckBox, gbc);
+        final JSeparator separator8 = new JSeparator();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        gbc.gridwidth = 5;
+        gbc.fill = GridBagConstraints.BOTH;
+        settingsMenuView.add(separator8, gbc);
+        final JLabel label7 = new JLabel();
+        label7.setText("\"Download FutureRestore\" will use the latest beta of FutureRestore.");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 4;
+        gbc.gridy = 9;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 0, 0, 10);
+        settingsMenuView.add(label7, gbc);
+        final JSeparator separator9 = new JSeparator();
+        separator9.setOrientation(1);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 9;
+        gbc.fill = GridBagConstraints.BOTH;
+        settingsMenuView.add(separator9, gbc);
         ButtonGroup buttonGroup;
         buttonGroup = new ButtonGroup();
         buttonGroup.add(autoRadioButton);

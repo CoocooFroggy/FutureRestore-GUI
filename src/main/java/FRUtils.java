@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -143,14 +144,15 @@ public class FRUtils {
         }
 
         String finalFrPath = homeDirectory + "/FutureRestoreGUI/";
-        String downloadedFRGUIPath = finalFrPath + frguiDownloadName;
-        File downloadedFRGUI = new File(downloadedFRGUIPath);
+//        String downloadedFRGUIPath = finalFrPath + frguiDownloadName;
+//        File downloadedFRGUI = new File(downloadedFRGUIPath);
+        File downloadedFrgui;
         try {
             System.out.println("Downloading...");
             SwingUtilities.invokeLater(() -> {
                 currentTaskTextField.setText("Downloading FutureRestore GUI...");
             });
-            downloadFile(frguiDownloadUrl, downloadedFRGUI, mainMenuInstance);
+            downloadedFrgui = downloadFile(frguiDownloadUrl, finalFrPath, mainMenuInstance);
             SwingUtilities.invokeLater(() -> {
                 currentTaskTextField.setText("");
                 logProgressBar.setValue(0);
@@ -162,7 +164,7 @@ public class FRUtils {
             e.printStackTrace();
             return null;
         }
-        return downloadedFRGUI;
+        return downloadedFrgui;
     }
 
     public static boolean installFrgui(File downloadedFrgui, String frguiDownloadIdentifier, MainMenu mainMenuInstance) throws IOException, InterruptedException {
@@ -301,14 +303,30 @@ public class FRUtils {
         }
     }
 
-    public static void downloadFile(String urlString, File downloadLocation, MainMenu mainMenuInstance) throws IOException {
+    public static File downloadFile(String urlString, String frguiHomeDir, MainMenu mainMenuInstance) throws IOException {
         JProgressBar logProgressBar = mainMenuInstance.getLogProgressBar();
 
-        URL url = new URL(urlString);
-        HttpURLConnection httpConnection = (HttpURLConnection) (url.openConnection());
-        long completeFileSize = httpConnection.getContentLength();
 
-        BufferedInputStream in = new BufferedInputStream(httpConnection.getInputStream());
+        URL url = new URL(urlString);
+        HttpURLConnection con = (HttpURLConnection) (url.openConnection());
+        String auth = "FutureRestore-GUI" + ":" + "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";
+        byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
+        String authHeaderValue = "Basic " + new String(encodedAuth);
+        con.setRequestProperty("Authorization", authHeaderValue);
+        long completeFileSize = con.getContentLength();
+
+        String contentDisposition = con.getHeaderField("content-disposition");
+        Pattern filenamePattern = Pattern.compile("(?<=filename=).*?(?=;|$)");
+        Matcher filenameMatcher = filenamePattern.matcher(contentDisposition);
+        // Get first result
+        String filename = "futurerestore-download";
+        if (filenameMatcher.find()) {
+            filename = filenameMatcher.group(0);
+        }
+
+        File downloadLocation = new File(frguiHomeDir + filename);
+
+        BufferedInputStream in = new BufferedInputStream(con.getInputStream());
         FileOutputStream fos = new FileOutputStream(downloadLocation);
         BufferedOutputStream bout = new BufferedOutputStream(
                 fos, 1024);
@@ -331,5 +349,7 @@ public class FRUtils {
         }
         bout.close();
         in.close();
+
+        return downloadLocation;
     }
 }
