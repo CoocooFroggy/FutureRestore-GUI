@@ -1,5 +1,6 @@
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.github.rjeschke.txtmark.Processor;
 import com.google.gson.Gson;
 import com.jthemedetecor.OsThemeDetector;
 import javafx.application.Platform;
@@ -10,6 +11,7 @@ import org.rauschig.jarchivelib.ArchiverFactory;
 import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
@@ -18,6 +20,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
@@ -996,7 +999,7 @@ public class MainMenu {
             scrollPane.setPreferredSize(new Dimension(300, 125));
 
             Object[] choices = {"Copy command only", "Copy command and run", "Only run"};
-            int response = JOptionPane.showOptionDialog(mainMenuView, scrollPane, "Command preview", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
+            int response = JOptionPane.showOptionDialog(mainMenuView, scrollPane, "Command Preview", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, choices, choices[1]);
 
             StringSelection stringSelection = new StringSelection(finalCommand);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -1059,13 +1062,52 @@ public class MainMenu {
                     System.out.println("A newer version of FutureRestore GUI is available.");
                     mainMenuInstance.messageToLog("A newer version of FutureRestore GUI is available.");
 
+                    // TODO: Add "What's new in this version" dialogue
+
+                    // Label on top of release notes
+                    JLabel label = new JLabel("A newer version of FutureRestore GUI is available.\n" +
+                            "You're on version " + currentFRGUIVersion + " and the latest version is " + newestTag + ".");
+                    Border padding = BorderFactory.createEmptyBorder(0, 0, 10, 10);
+                    label.setBorder(padding);
+
+                    // Fetch release notes
+                    String mdReleaseBody = getLatestFrguiReleaseBody();
+                    String htmlReleaseBody = "<html>" +
+                            "<head>" +
+                            "<style type=\"text/css\">" +
+                            HTMLPresets.css +
+                            "</style>" +
+                            "</head>" +
+                            "<class=\"markdown-body\">"
+                            + Processor.process(mdReleaseBody).replaceAll("\\n", "") +
+                            "</class>" +
+                            "</html>";
+                    System.out.println(htmlReleaseBody);
+
+                    // Build the text area
+                    JTextPane whatsNewTextPane = new JTextPane();
+                    whatsNewTextPane.setEditable(false);
+                    whatsNewTextPane.setContentType("text/html");
+                    whatsNewTextPane.setText(htmlReleaseBody);
+                    JScrollPane scrollPane = new JScrollPane(whatsNewTextPane);
+                    scrollPane.setBorder(null);
+                    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+                    scrollPane.setPreferredSize(new Dimension(150, 300));
+
+                    JPanel panel = new JPanel();
+                    BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS); // Top to bottom
+                    panel.setBorder(null);
+                    panel.setLayout(boxlayout);
+                    panel.add(label);
+                    panel.add(scrollPane);
+
                     Object[] choices = {"Update now", "Remind me later"};
                     Object defaultChoice = choices[0];
+                    int response = JOptionPane.showOptionDialog(mainMenuFrame, panel, "Update FutureRestore GUI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
 
-                    // TODO: Add "What's new in this version" dialogue
-                    int response = JOptionPane.showOptionDialog(mainMenuInstance.mainMenuView, "A newer version of FutureRestore GUI is available.\n" +
+                    /*int response = JOptionPane.showOptionDialog(mainMenuInstance.mainMenuView, "A newer version of FutureRestore GUI is available.\n" +
                             "You're on version " + currentFRGUIVersion + " and the latest version is " + newestTag + ".\n" +
-                            "https://github.com/CoocooFroggy/FutureRestore-GUI/releases", "Update FutureRestore GUI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
+                            "https://github.com/CoocooFroggy/FutureRestore-GUI/releases", "Update FutureRestore GUI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);*/
                     if (response == JOptionPane.YES_OPTION) {
 //                        FRUtils.openWebpage("https://github.com/CoocooFroggy/FutureRestore-GUI/releases");
                         boolean didSucceedUpdate = FRUtils.updateFRGUI(mainMenuInstance);
@@ -1083,6 +1125,28 @@ public class MainMenu {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    public static String getLatestFrguiReleaseBody() throws IOException {
+        URL url = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        Gson gson = new Gson();
+
+        con.setRequestMethod("GET");
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder content = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+        in.close();
+        con.disconnect();
+
+        ArrayList<Map<String, Object>> result = gson.fromJson(content.toString(), ArrayList.class);
+        Map<String, Object> newestRelease = result.get(0);
+        return (String) newestRelease.get("body");
     }
 
     /* Private vars */
