@@ -379,7 +379,7 @@
               <component id="958c5" class="javax.swing.JButton" binding="exitRecoveryButton" default-binding="true">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                  <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="1.0"/>
+                  <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <text value="Exit Recovery"/>
@@ -390,7 +390,7 @@
               <component id="abc0b" class="javax.swing.JButton" binding="startFutureRestoreButton" default-binding="true">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                  <gridbag top="10" left="0" bottom="0" right="0" weightx="1.0" weighty="1.0"/>
+                  <gridbag top="10" left="0" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <font size="16" style="1"/>
@@ -400,7 +400,7 @@
               <component id="df6ff" class="javax.swing.JButton" binding="stopFutureRestoreUnsafeButton" default-binding="true">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                  <gridbag top="10" left="0" bottom="0" right="10" weightx="0.0" weighty="1.0"/>
+                  <gridbag top="10" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <text value="Stop FutureRestore"/>
@@ -421,7 +421,7 @@
                   <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
-                  <gridbag top="0" left="0" bottom="10" right="10" weightx="1.0" weighty="1.0"/>
+                  <gridbag top="0" left="0" bottom="10" right="10" weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <editable value="false"/>

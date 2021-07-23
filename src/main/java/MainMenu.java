@@ -1265,21 +1265,27 @@ public class MainMenu {
     public JFrame getMainMenuFrame() {
         return mainMenuFrame;
     }
+
     public JPanel getMainMenuView() {
         return mainMenuView;
     }
+
     public JProgressBar getLogProgressBar() {
         return logProgressBar;
     }
+
     public JTextField getCurrentTaskTextField() {
         return currentTaskTextField;
     }
+
     public JButton getStartFutureRestoreButton() {
         return startFutureRestoreButton;
     }
+
     public JButton getNextButtonFiles() {
         return nextButtonFiles;
     }
+
     public JButton getNextButtonOptions() {
         return nextButtonOptions;
     }
@@ -1648,7 +1654,6 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(10, 0, 0, 0);
         panel3.add(exitRecoveryButton, gbc);
@@ -1660,7 +1665,6 @@ public class MainMenu {
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(10, 0, 0, 0);
         panel3.add(startFutureRestoreButton, gbc);
@@ -1669,7 +1673,6 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
-        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(10, 0, 0, 10);
         panel3.add(stopFutureRestoreUnsafeButton, gbc);
@@ -1693,7 +1696,6 @@ public class MainMenu {
         gbc.gridy = 1;
         gbc.gridwidth = 3;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(0, 0, 10, 10);
