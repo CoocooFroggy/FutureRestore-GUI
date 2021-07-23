@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="SettingsMenu">
   <grid id="27dc6" binding="settingsMenuView" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="169" y="171" width="1123" height="234"/>
+      <xy x="169" y="171" width="1123" height="244"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -34,15 +34,15 @@
       <component id="31395" class="javax.swing.JLabel">
         <constraints>
           <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="5" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="(Optional) Let us contact you about your logs by providing your Discord"/>
+          <text value="(Optional) Let us contact you about your logs by providing your Discord."/>
         </properties>
       </component>
       <vspacer id="92e3c">
         <constraints>
-          <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="0" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
       </vspacer>
@@ -58,10 +58,10 @@
       <component id="fd766" class="javax.swing.JLabel">
         <constraints>
           <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="5" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="See a preview of the final command before it runs"/>
+          <text value="See a preview of the final command before it runs."/>
         </properties>
       </component>
       <component id="97ae" class="javax.swing.JTextArea" binding="discordTextArea">
@@ -80,10 +80,10 @@
       <component id="6b4b5" class="javax.swing.JLabel">
         <constraints>
           <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="5" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Automatically share logs to help make FutureRestore better"/>
+          <text value="Automatically share logs to help make FutureRestore better."/>
         </properties>
       </component>
       <component id="6a94d" class="javax.swing.JLabel">
@@ -133,10 +133,10 @@
       <component id="15bb7" class="javax.swing.JLabel">
         <constraints>
           <grid row="7" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="5" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Automatically check for updates for FutureRestore GUI"/>
+          <text value="Automatically check for updates for FutureRestore GUI."/>
         </properties>
       </component>
       <component id="93e05" class="javax.swing.JSeparator">
@@ -150,7 +150,7 @@
       </component>
       <component id="c42a1" class="javax.swing.JRadioButton" binding="autoRadioButton" default-binding="true">
         <constraints>
-          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -159,7 +159,7 @@
       </component>
       <component id="dd8ef" class="javax.swing.JRadioButton" binding="lightRadioButton" default-binding="true">
         <constraints>
-          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -168,7 +168,7 @@
       </component>
       <component id="10c49" class="javax.swing.JRadioButton" binding="darkRadioButton" default-binding="true">
         <constraints>
-          <grid row="9" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -177,14 +177,14 @@
       </component>
       <component id="33de3" class="javax.swing.JSeparator">
         <constraints>
-          <grid row="8" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="10" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
       </component>
       <component id="11d31" class="javax.swing.JSeparator">
         <constraints>
-          <grid row="9" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -193,11 +193,45 @@
       </component>
       <component id="562dc" class="javax.swing.JLabel">
         <constraints>
-          <grid row="9" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <grid row="11" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="5" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="Set the theme of the GUI. Requires a restart to take effect."/>
+        </properties>
+      </component>
+      <component id="93f1f" class="javax.swing.JCheckBox" binding="futureRestoreBetaCheckBox" default-binding="true">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="FutureRestore Beta"/>
+        </properties>
+      </component>
+      <component id="7d322" class="javax.swing.JSeparator">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="2f648" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="9" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="5" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="&quot;Download FutureRestore&quot; will use the latest beta of FutureRestore."/>
+        </properties>
+      </component>
+      <component id="3582c" class="javax.swing.JSeparator">
+        <constraints>
+          <grid row="9" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <orientation value="1"/>
         </properties>
       </component>
     </children>
