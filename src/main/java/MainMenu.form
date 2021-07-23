@@ -19,7 +19,7 @@
       </component>
       <component id="bfc3f" class="javax.swing.JButton" binding="selectTargetIPSWFileButton" default-binding="true">
         <constraints>
-          <grid row="5" column="1" row-span="1" col-span="7" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="1" row-span="1" col-span="6" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -86,14 +86,14 @@
       </component>
       <component id="35159" class="javax.swing.JSeparator">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="8" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="7" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0" ipady="1"/>
         </constraints>
         <properties/>
       </component>
       <scrollpane id="2e35b" binding="logScrollPane">
         <constraints>
-          <grid row="17" column="0" row-span="1" col-span="8" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="16" column="0" row-span="1" col-span="7" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="1.0"/>
         </constraints>
         <properties/>
@@ -115,7 +115,7 @@
       </scrollpane>
       <component id="87ade" class="javax.swing.JButton" binding="selectBlobFileButton" default-binding="true">
         <constraints>
-          <grid row="4" column="1" row-span="1" col-span="7" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="1" row-span="1" col-span="6" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -141,10 +141,10 @@
       </component>
       <component id="afbbf" class="javax.swing.JTextField" binding="basebandTextField">
         <constraints>
-          <grid row="10" column="2" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="10" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <editable value="false"/>
@@ -165,10 +165,10 @@
       </component>
       <component id="8dd04" class="javax.swing.JTextField" binding="sepTextField">
         <constraints>
-          <grid row="11" column="2" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="11" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <editable value="false"/>
@@ -177,14 +177,14 @@
       </component>
       <component id="c11df" class="javax.swing.JSeparator">
         <constraints>
-          <grid row="12" column="0" row-span="1" col-span="6" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="0" row-span="1" col-span="7" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.01" ipady="1"/>
         </constraints>
         <properties/>
       </component>
       <component id="9c129" class="javax.swing.JSeparator">
         <constraints>
-          <grid row="6" column="0" row-span="1" col-span="8" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="0" row-span="1" col-span="7" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.01" ipady="1"/>
         </constraints>
         <properties/>
@@ -219,16 +219,9 @@
           <verticalTextPosition value="0"/>
         </properties>
       </component>
-      <component id="49b65" class="javax.swing.JSeparator">
-        <constraints>
-          <grid row="14" column="7" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.01"/>
-        </constraints>
-        <properties/>
-      </component>
       <component id="2fce7" class="javax.swing.JLabel">
         <constraints>
-          <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="15" left="10" bottom="15" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -238,14 +231,14 @@
       </component>
       <component id="e0dd6" class="javax.swing.JProgressBar" binding="logProgressBar">
         <constraints>
-          <grid row="16" column="0" row-span="1" col-span="8" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="15" column="0" row-span="1" col-span="7" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
       </component>
       <component id="e5e5f" class="javax.swing.JButton" binding="settingsButton" default-binding="true">
         <constraints>
-          <grid row="0" column="4" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="4" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -254,7 +247,7 @@
       </component>
       <component id="12b05" class="javax.swing.JButton" binding="downloadFutureRestoreButton" default-binding="true">
         <constraints>
-          <grid row="3" column="5" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -282,7 +275,7 @@
       </component>
       <component id="7091a" class="javax.swing.JCheckBox" binding="waitWCheckBox" default-binding="true">
         <constraints>
-          <grid row="7" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -291,7 +284,7 @@
       </component>
       <component id="16606" class="javax.swing.JLabel">
         <constraints>
-          <grid row="8" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="8" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="0" left="25" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -301,7 +294,7 @@
       </component>
       <component id="f54ee" class="javax.swing.JSeparator">
         <constraints>
-          <grid row="9" column="1" row-span="1" col-span="7" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="9" column="1" row-span="1" col-span="6" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="7" left="0" bottom="0" right="0" weightx="0.0" weighty="0.01" ipady="1"/>
         </constraints>
         <properties/>
@@ -345,45 +338,17 @@
           <text value="(--use-pwndfu)"/>
         </properties>
       </component>
-      <component id="df6ff" class="javax.swing.JButton" binding="stopFutureRestoreUnsafeButton" default-binding="true">
-        <constraints>
-          <grid row="15" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <text value="Stop FutureRestore"/>
-        </properties>
-      </component>
-      <component id="74301" class="javax.swing.JButton" binding="selectBuildManifestButton" default-binding="true">
-        <constraints>
-          <grid row="13" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <enabled value="false"/>
-          <text value="Select BuildManifest..."/>
-        </properties>
-      </component>
       <component id="77c97" class="javax.swing.JTextField" binding="currentTaskTextField">
         <constraints>
-          <grid row="15" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
+          <grid row="14" column="1" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <editable value="false"/>
           <font size="18"/>
           <horizontalAlignment value="0"/>
-        </properties>
-      </component>
-      <component id="9cb72" class="javax.swing.JSeparator">
-        <constraints>
-          <grid row="13" column="6" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.01" weighty="0.0" ipadx="1"/>
-        </constraints>
-        <properties>
-          <orientation value="1"/>
         </properties>
       </component>
       <component id="2e9e7" class="javax.swing.JLabel">
@@ -393,6 +358,35 @@
         </constraints>
         <properties>
           <text value="OR"/>
+        </properties>
+      </component>
+      <component id="74301" class="javax.swing.JButton" binding="selectBuildManifestButton" default-binding="true">
+        <constraints>
+          <grid row="10" column="6" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <enabled value="false"/>
+          <text value="Select BuildManifest..."/>
+        </properties>
+      </component>
+      <component id="df6ff" class="javax.swing.JButton" binding="stopFutureRestoreUnsafeButton" default-binding="true">
+        <constraints>
+          <grid row="13" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Stop FutureRestore"/>
+        </properties>
+      </component>
+      <component id="35e41" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <font style="1"/>
+          <text value="Controls"/>
         </properties>
       </component>
     </children>

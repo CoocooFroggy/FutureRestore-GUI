@@ -457,18 +457,18 @@ public class MainMenu {
                 if (isDarkThemeUsed) {
                     FlatDarculaLaf.install();
                 } else {
-                    //Only set if not Mac
-                    if (!System.getProperty("os.name").toLowerCase().contains("mac"))
-                        FlatIntelliJLaf.install();
+//                    //Only set if not Mac
+//                    if (!System.getProperty("os.name").toLowerCase().contains("mac"))
+                    FlatIntelliJLaf.install();
                 }
                 break;
             }
             case "light": {
                 //Good practice
                 isDarkThemeUsed = false;
-                //Only set if not Mac
-                if (!System.getProperty("os.name").toLowerCase().contains("mac"))
-                    FlatIntelliJLaf.install();
+//                //Only set if not Mac
+//                if (!System.getProperty("os.name").toLowerCase().contains("mac"))
+                FlatIntelliJLaf.install();
                 break;
             }
             case "dark": {
@@ -1287,7 +1287,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 5;
-        gbc.gridwidth = 7;
+        gbc.gridwidth = 6;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 0, 10);
@@ -1354,15 +1354,15 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 8;
+        gbc.gridwidth = 7;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipady = 1;
         mainMenuView.add(separator1, gbc);
         logScrollPane = new JScrollPane();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 17;
-        gbc.gridwidth = 8;
+        gbc.gridy = 16;
+        gbc.gridwidth = 7;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(logScrollPane, gbc);
@@ -1385,7 +1385,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 4;
-        gbc.gridwidth = 7;
+        gbc.gridwidth = 6;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 0, 10);
@@ -1408,10 +1408,9 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 10;
-        gbc.gridwidth = 6;
+        gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(basebandTextField, gbc);
         sepComboBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
@@ -1430,16 +1429,15 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 11;
-        gbc.gridwidth = 6;
+        gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(sepTextField, gbc);
         final JSeparator separator2 = new JSeparator();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 12;
-        gbc.gridwidth = 6;
+        gbc.gridwidth = 7;
         gbc.weighty = 0.01;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipady = 1;
@@ -1448,7 +1446,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 6;
-        gbc.gridwidth = 8;
+        gbc.gridwidth = 7;
         gbc.weighty = 0.01;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipady = 1;
@@ -1479,28 +1477,21 @@ public class MainMenu {
         gbc.gridy = 13;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(exitRecoveryButton, gbc);
-        final JSeparator separator4 = new JSeparator();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 7;
-        gbc.gridy = 14;
-        gbc.weighty = 0.01;
-        gbc.fill = GridBagConstraints.BOTH;
-        mainMenuView.add(separator4, gbc);
         final JLabel label7 = new JLabel();
         Font label7Font = this.$$$getFont$$$(null, Font.BOLD, -1, label7.getFont());
         if (label7Font != null) label7.setFont(label7Font);
         label7.setText("Current Task");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 15;
+        gbc.gridy = 14;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(15, 10, 15, 10);
         mainMenuView.add(label7, gbc);
         logProgressBar = new JProgressBar();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 16;
-        gbc.gridwidth = 8;
+        gbc.gridy = 15;
+        gbc.gridwidth = 7;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(logProgressBar, gbc);
         settingsButton = new JButton();
@@ -1508,7 +1499,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 4;
         gbc.gridy = 0;
-        gbc.gridwidth = 4;
+        gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(settingsButton, gbc);
@@ -1517,7 +1508,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 5;
         gbc.gridy = 3;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(downloadFutureRestoreButton, gbc);
@@ -1542,7 +1533,7 @@ public class MainMenu {
         waitWCheckBox = new JCheckBox();
         waitWCheckBox.setText("AP Nonce Collision");
         gbc = new GridBagConstraints();
-        gbc.gridx = 7;
+        gbc.gridx = 6;
         gbc.gridy = 7;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
@@ -1553,21 +1544,21 @@ public class MainMenu {
         if (label9Font != null) label9.setFont(label9Font);
         label9.setText("(--wait)");
         gbc = new GridBagConstraints();
-        gbc.gridx = 7;
+        gbc.gridx = 6;
         gbc.gridy = 8;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(0, 25, 0, 0);
         mainMenuView.add(label9, gbc);
-        final JSeparator separator5 = new JSeparator();
+        final JSeparator separator4 = new JSeparator();
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 9;
-        gbc.gridwidth = 7;
+        gbc.gridwidth = 6;
         gbc.weighty = 0.01;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipady = 1;
         gbc.insets = new Insets(7, 0, 0, 0);
-        mainMenuView.add(separator5, gbc);
+        mainMenuView.add(separator4, gbc);
         final JLabel label10 = new JLabel();
         Font label10Font = this.$$$getFont$$$("Menlo", -1, 10, label10.getFont());
         if (label10Font != null) label10.setFont(label10Font);
@@ -1607,23 +1598,6 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(0, 25, 0, 0);
         mainMenuView.add(label11, gbc);
-        stopFutureRestoreUnsafeButton = new JButton();
-        stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 7;
-        gbc.gridy = 15;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 0, 0, 10);
-        mainMenuView.add(stopFutureRestoreUnsafeButton, gbc);
-        selectBuildManifestButton = new JButton();
-        selectBuildManifestButton.setEnabled(false);
-        selectBuildManifestButton.setText("Select BuildManifest...");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 7;
-        gbc.gridy = 13;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(0, 0, 0, 10);
-        mainMenuView.add(selectBuildManifestButton, gbc);
         currentTaskTextField = new JTextField();
         currentTaskTextField.setEditable(false);
         Font currentTaskTextFieldFont = this.$$$getFont$$$(null, -1, 18, currentTaskTextField.getFont());
@@ -1631,20 +1605,12 @@ public class MainMenu {
         currentTaskTextField.setHorizontalAlignment(0);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 15;
-        gbc.gridwidth = 5;
+        gbc.gridy = 14;
+        gbc.gridwidth = 6;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 0, 0, 10);
         mainMenuView.add(currentTaskTextField, gbc);
-        final JSeparator separator6 = new JSeparator();
-        separator6.setOrientation(1);
-        gbc = new GridBagConstraints();
-        gbc.gridx = 6;
-        gbc.gridy = 13;
-        gbc.weightx = 0.01;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.ipadx = 1;
-        mainMenuView.add(separator6, gbc);
         final JLabel label12 = new JLabel();
         label12.setText("OR");
         gbc = new GridBagConstraints();
@@ -1653,6 +1619,34 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 5, 0, 5);
         mainMenuView.add(label12, gbc);
+        selectBuildManifestButton = new JButton();
+        selectBuildManifestButton.setEnabled(false);
+        selectBuildManifestButton.setText("Select BuildManifest...");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 6;
+        gbc.gridy = 10;
+        gbc.gridheight = 2;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 0, 0, 10);
+        mainMenuView.add(selectBuildManifestButton, gbc);
+        stopFutureRestoreUnsafeButton = new JButton();
+        stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 6;
+        gbc.gridy = 13;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 0, 10);
+        mainMenuView.add(stopFutureRestoreUnsafeButton, gbc);
+        final JLabel label13 = new JLabel();
+        Font label13Font = this.$$$getFont$$$(null, Font.BOLD, -1, label13.getFont());
+        if (label13Font != null) label13.setFont(label13Font);
+        label13.setText("Controls");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 13;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 10, 0, 10);
+        mainMenuView.add(label13, gbc);
     }
 
     /**
@@ -1683,4 +1677,5 @@ public class MainMenu {
     public JComponent $$$getRootComponent$$$() {
         return mainMenuView;
     }
+
 }
