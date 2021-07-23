@@ -18,6 +18,7 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -55,6 +56,8 @@ public class MainMenu {
     private JLabel authorAndVersionLabel;
     private JCheckBox pwnedRestoreCheckBox;
     private JTabbedPane tabbedPane;
+    private JButton nextButtonFiles;
+    private JButton nextButtonOptions;
 
     private String futureRestoreFilePath;
     private String blobName;
@@ -435,6 +438,12 @@ public class MainMenu {
         settingsButton.addActionListener(e -> {
             settingsMenuFrame.setVisible(true);
         });
+
+        ActionListener nextButtonListener = e -> {
+            tabbedPane.setSelectedIndex(tabbedPane.getSelectedIndex() + 1);
+        };
+        nextButtonFiles.addActionListener(nextButtonListener);
+        nextButtonOptions.addActionListener(nextButtonListener);
     }
 
     public static Properties properties = new Properties();
@@ -515,7 +524,9 @@ public class MainMenu {
                 turnDark(mainMenuInstance);
             else {
                 //Custom light UI setup
-                mainMenuInstance.startFutureRestoreButton.setBackground(new Color(135, 180, 255));
+                mainMenuInstance.startFutureRestoreButton.setBackground(new Color(150, 200, 255));
+                mainMenuInstance.nextButtonFiles.setBackground(new Color(150, 200, 255));
+                mainMenuInstance.nextButtonOptions.setBackground(new Color(150, 200, 255));
             }
 
 
@@ -563,11 +574,11 @@ public class MainMenu {
 
     /*UTILITIES*/
 
-    static void turnDark(MainMenu mainMenu) {
-        JPanel mainMenuView = mainMenu.mainMenuView;
-        JTextArea logTextArea = mainMenu.logTextArea;
-        JScrollPane logScrollPane = mainMenu.logScrollPane;
-        JButton startFutureRestoreButton = mainMenu.startFutureRestoreButton;
+    static void turnDark(MainMenu mainMenuInstance) {
+        JPanel mainMenuView = mainMenuInstance.mainMenuView;
+        JTextArea logTextArea = mainMenuInstance.logTextArea;
+        JScrollPane logScrollPane = mainMenuInstance.logScrollPane;
+        JButton startFutureRestoreButton = mainMenuInstance.startFutureRestoreButton;
 
 
         mainMenuView.setBackground(new Color(40, 40, 40));
@@ -575,34 +586,49 @@ public class MainMenu {
         logTextArea.setForeground(new Color(200, 200, 200));
         logScrollPane.setBorder(null);
 
-        //Loop through all components to make this faster
-        for (Component c : mainMenuView.getComponents()) {
-            if (c instanceof JLabel) {
-                c.setForeground(new Color(200, 200, 200));
-                continue;
-            }
+        makeComponentsDark(mainMenuView, mainMenuInstance);
+    }
 
-            if (c instanceof JButton) {
-                c.setBackground(new Color(60, 60, 60));
-                c.setForeground(new Color(200, 200, 200));
-                if (c == startFutureRestoreButton)
-                    c.setBackground(new Color(38, 85, 163));
-                continue;
-            }
+    public static void makeComponentsDark(Component c, MainMenu mainMenuInstance) {
 
-            if (c instanceof JTextField) {
-                c.setBackground(new Color(60, 60, 60));
-                c.setForeground(new Color(200, 200, 200));
-            }
+        if (c instanceof JLabel) {
+            c.setForeground(new Color(200, 200, 200));
+        }
 
-            if (c instanceof JCheckBox) {
-                c.setBackground(new Color(40, 40, 40));
-                c.setForeground(new Color(200, 200, 200));
+        if (c instanceof JButton) {
+            c.setBackground(new Color(60, 60, 60));
+            c.setForeground(new Color(200, 200, 200));
+            if (c == mainMenuInstance.getStartFutureRestoreButton())
+                // Make start button blue
+                c.setBackground(new Color(38, 85, 163));
+            else if (c == mainMenuInstance.getNextButtonFiles() || c == mainMenuInstance.getNextButtonOptions()) {
+                // Make next buttons blue
+                c.setBackground(new Color(38, 85, 163));
             }
+        }
 
-            if (c instanceof JComboBox) {
-                c.setBackground(new Color(60, 60, 60));
-                c.setForeground(new Color(200, 200, 200));
+        if (c instanceof JTextField) {
+            c.setBackground(new Color(60, 60, 60));
+            c.setForeground(new Color(200, 200, 200));
+        }
+
+        if (c instanceof JCheckBox) {
+            c.setBackground(new Color(40, 40, 40));
+            c.setForeground(new Color(200, 200, 200));
+        }
+
+        if (c instanceof JComboBox) {
+            c.setBackground(new Color(60, 60, 60));
+            c.setForeground(new Color(200, 200, 200));
+        }
+
+        if (c instanceof JPanel) {
+            c.setBackground(new Color(40, 40, 40));
+        }
+
+        if (c instanceof Container) {
+            for (Component child : ((Container) c).getComponents()) {
+                makeComponentsDark(child, mainMenuInstance);
             }
         }
     }
@@ -1239,17 +1265,23 @@ public class MainMenu {
     public JFrame getMainMenuFrame() {
         return mainMenuFrame;
     }
-
     public JPanel getMainMenuView() {
         return mainMenuView;
     }
-
     public JProgressBar getLogProgressBar() {
         return logProgressBar;
     }
-
     public JTextField getCurrentTaskTextField() {
         return currentTaskTextField;
+    }
+    public JButton getStartFutureRestoreButton() {
+        return startFutureRestoreButton;
+    }
+    public JButton getNextButtonFiles() {
+        return nextButtonFiles;
+    }
+    public JButton getNextButtonOptions() {
+        return nextButtonOptions;
     }
 
     /**
@@ -1413,13 +1445,21 @@ public class MainMenu {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 0, 10);
         panel1.add(selectTargetIPSWFileButton, gbc);
+        nextButtonFiles = new JButton();
+        nextButtonFiles.setText("Next");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.NORTHEAST;
+        gbc.insets = new Insets(0, 0, 5, 10);
+        panel1.add(nextButtonFiles, gbc);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridBagLayout());
         tabbedPane.addTab("Options", panel2);
         final JLabel label6 = new JLabel();
         Font label6Font = this.$$$getFont$$$(null, Font.BOLD, -1, label6.getFont());
         if (label6Font != null) label6.setFont(label6Font);
-        label6.setText("Options");
+        label6.setText("Arguments");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -1504,6 +1544,26 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(0, 25, 10, 0);
         panel2.add(label10, gbc);
+        final JSeparator separator2 = new JSeparator();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 5;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel2.add(separator2, gbc);
+        final JLabel label11 = new JLabel();
+        Font label11Font = this.$$$getFont$$$(null, Font.BOLD, -1, label11.getFont());
+        if (label11Font != null) label11.setFont(label11Font);
+        label11.setText("Baseband  SEP");
+        label11.setDisplayedMnemonic(' ');
+        label11.setDisplayedMnemonicIndex(9);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridheight = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 10, 0, 10);
+        panel2.add(label11, gbc);
         basebandComboBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Latest Baseband");
@@ -1518,16 +1578,6 @@ public class MainMenu {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 0, 0, 0);
         panel2.add(basebandComboBox, gbc);
-        selectBuildManifestButton = new JButton();
-        selectBuildManifestButton.setEnabled(false);
-        selectBuildManifestButton.setText("Select BuildManifest...");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 5;
-        gbc.gridy = 3;
-        gbc.gridheight = 2;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(10, 0, 10, 10);
-        panel2.add(selectBuildManifestButton, gbc);
         sepComboBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
         defaultComboBoxModel2.addElement("Latest SEP");
@@ -1538,7 +1588,6 @@ public class MainMenu {
         gbc.gridy = 4;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 0, 10, 0);
         panel2.add(sepComboBox, gbc);
         basebandTextField = new JTextField();
         basebandTextField.setEditable(false);
@@ -1560,24 +1609,25 @@ public class MainMenu {
         gbc.gridwidth = 3;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 0, 10, 0);
         panel2.add(sepTextField, gbc);
-        final JLabel label11 = new JLabel();
-        label11.setText("Arguments");
+        selectBuildManifestButton = new JButton();
+        selectBuildManifestButton.setEnabled(false);
+        selectBuildManifestButton.setText("Select BuildManifest...");
         gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
+        gbc.gridx = 5;
+        gbc.gridy = 3;
         gbc.gridheight = 2;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(0, 10, 0, 10);
-        panel2.add(label11, gbc);
-        final JSeparator separator2 = new JSeparator();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 5;
         gbc.fill = GridBagConstraints.BOTH;
-        panel2.add(separator2, gbc);
+        gbc.insets = new Insets(10, 0, 0, 10);
+        panel2.add(selectBuildManifestButton, gbc);
+        nextButtonOptions = new JButton();
+        nextButtonOptions.setText("Next");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 5;
+        gbc.gridy = 5;
+        gbc.anchor = GridBagConstraints.NORTHEAST;
+        gbc.insets = new Insets(0, 0, 5, 10);
+        panel2.add(nextButtonOptions, gbc);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridBagLayout());
         tabbedPane.addTab("Controls", panel3);

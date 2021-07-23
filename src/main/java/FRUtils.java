@@ -318,7 +318,6 @@ public class FRUtils {
         if (rootRun) {
             if (toSet)
                 disabledComponents.clear();
-            System.out.println("Done");
         }
     }
 

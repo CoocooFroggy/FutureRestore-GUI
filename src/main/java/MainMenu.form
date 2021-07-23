@@ -167,6 +167,15 @@
                   <text value="Select Target iPSW File..."/>
                 </properties>
               </component>
+              <component id="6e81e" class="javax.swing.JButton" binding="nextButtonFiles">
+                <constraints>
+                  <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="5" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="0" left="0" bottom="5" right="10" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Next"/>
+                </properties>
+              </component>
             </children>
           </grid>
           <grid id="327cd" layout-manager="GridBagLayout">
@@ -183,7 +192,7 @@
                 </constraints>
                 <properties>
                   <font style="1"/>
-                  <text value="Options"/>
+                  <text value="Arguments"/>
                 </properties>
               </component>
               <component id="427a4" class="javax.swing.JCheckBox" binding="debugDCheckBox" default-binding="true">
@@ -263,6 +272,23 @@
                   <text value="(--wait)"/>
                 </properties>
               </component>
+              <component id="b2d6d" class="javax.swing.JSeparator">
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="5" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="2677" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="3" column="0" row-span="2" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <font style="1"/>
+                  <text value="Baseband &amp; SEP"/>
+                </properties>
+              </component>
               <component id="ac048" class="javax.swing.JComboBox" binding="basebandComboBox">
                 <constraints>
                   <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
@@ -276,20 +302,10 @@
                   </model>
                 </properties>
               </component>
-              <component id="74301" class="javax.swing.JButton" binding="selectBuildManifestButton" default-binding="true">
-                <constraints>
-                  <grid row="3" column="5" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                  <gridbag top="10" left="0" bottom="10" right="10" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <enabled value="false"/>
-                  <text value="Select BuildManifest..."/>
-                </properties>
-              </component>
               <component id="b3f1d" class="javax.swing.JComboBox" binding="sepComboBox">
                 <constraints>
                   <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="0" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <model>
@@ -315,28 +331,31 @@
                   <grid row="4" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
-                  <gridbag top="0" left="0" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <editable value="false"/>
                   <text value="✓ (No file)"/>
                 </properties>
               </component>
-              <component id="167c" class="javax.swing.JLabel">
+              <component id="74301" class="javax.swing.JButton" binding="selectBuildManifestButton" default-binding="true">
                 <constraints>
-                  <grid row="0" column="1" row-span="2" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+                  <grid row="3" column="5" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <gridbag top="10" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
-                  <text value="Arguments"/>
+                  <enabled value="false"/>
+                  <text value="Select BuildManifest..."/>
                 </properties>
               </component>
-              <component id="b2d6d" class="javax.swing.JSeparator">
+              <component id="4b39a" class="javax.swing.JButton" binding="nextButtonOptions">
                 <constraints>
-                  <grid row="2" column="1" row-span="1" col-span="5" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="0.0"/>
+                  <grid row="5" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="5" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag top="0" left="0" bottom="5" right="10" weightx="0.0" weighty="0.0"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <text value="Next"/>
+                </properties>
               </component>
             </children>
           </grid>
