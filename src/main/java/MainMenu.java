@@ -893,9 +893,19 @@ public class MainMenu {
                 }
             }
 
-            File zipPath;
+            File downloadedFr;
             try {
-                zipPath = FRUtils.downloadFile(urlString, finalFrPath, this);
+                downloadedFr = FRUtils.downloadFile(urlString, finalFrPath, this);
+                if (downloadedFr == null) {
+                    System.err.println("Unable to download FutureRestore. Aborting.");
+                    messageToLog("Unable to download FutureRestore. Aborting.");
+                    SwingUtilities.invokeLater(() -> {
+                        currentTaskTextField.setText("");
+                        logProgressBar.setValue(0);
+                    });
+                    return;
+                }
+
                 SwingUtilities.invokeLater(() -> {
                     currentTaskTextField.setText("");
                     logProgressBar.setValue(0);
@@ -910,10 +920,10 @@ public class MainMenu {
             //Now unzip the file
             boolean result = false;
             try {
-                result = extractFutureRestore(zipPath, finalFrPath, operatingSystem);
+                result = extractFutureRestore(downloadedFr, finalFrPath, operatingSystem);
             } catch (IOException exception) {
-                System.out.println("Unable to decompress " + zipPath);
-                messageToLog("Unable to decompress " + zipPath);
+                System.out.println("Unable to decompress " + downloadedFr);
+                messageToLog("Unable to decompress " + downloadedFr);
                 exception.printStackTrace();
             }
             // If fail, set the current task to nothing
@@ -938,17 +948,6 @@ public class MainMenu {
             case "zip": {
                 Archiver archiver = ArchiverFactory.createArchiver("zip");
                 archiver.extract(fileToExtract, destinationDir);
-                // Actions artifacts are in a .zip then in a .tar.xz. Extract again if we need to
-                File unzippedFile = destinationDir.listFiles()[0];
-                if (FilenameUtils.getExtension(unzippedFile.getName()).equals("xz")) {
-                    FileUtils.moveFileToDirectory(unzippedFile, new File(finalFrPath), false);
-                    File xzFile = new File(finalFrPath + unzippedFile.getName());
-                    unzippedFile.delete();
-                    boolean result = extractFutureRestore(xzFile, finalFrPath, operatingSystem);
-                    xzFile.delete();
-                    fileToExtract.delete();
-                    return result;
-                }
                 break;
             }
             case "xz": {
@@ -969,6 +968,22 @@ public class MainMenu {
         }
 
         fileToExtract.delete();
+
+        // Actions artifacts are in a .zip then in a .tar.xz. Extract again if we need to
+        File unzippedFile = destinationDir.listFiles()[0];
+        String unzippedExtension = FilenameUtils.getExtension(unzippedFile.getName());
+        if (unzippedExtension.equals("xz") || unzippedExtension.equals("zip")) {
+            // Move the archive from /FRGUI/extracted to /FRGUI
+            FileUtils.moveFileToDirectory(unzippedFile, new File(finalFrPath), false);
+            // Declare this file
+            File xzFile = new File(finalFrPath + unzippedFile.getName());
+            // Extract it and select it (run this method with it)
+            boolean result = extractFutureRestore(xzFile, finalFrPath, operatingSystem);
+            // Delete the archive at /FRGUI
+            xzFile.delete();
+            // Return
+            return result;
+        }
 
         File futureRestoreExecutable = destinationDir.listFiles()[0];
 

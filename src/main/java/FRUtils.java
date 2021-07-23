@@ -11,6 +11,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -309,12 +310,23 @@ public class FRUtils {
 
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) (url.openConnection());
-        String auth = "FutureRestore-GUI" + ":" + "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";
+
+        // For github actions downloads (for FR beta switch)
+        byte[] decoded = Base64.getDecoder().decode("Z2hwX1YySDBXOThEa3BZUWNaSkxsYUtrOTJocThYMGZCaTBsa1dTMg==");
+        String auth = "FutureRestore-GUI" + ":" + new String(decoded);
         byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
         String authHeaderValue = "Basic " + new String(encodedAuth);
         con.setRequestProperty("Authorization", authHeaderValue);
+
         long completeFileSize = con.getContentLength();
 
+        String responseCode = String.valueOf(con.getResponseCode());
+        if (!responseCode.startsWith("3") && !responseCode.startsWith("2")) {
+            return null;
+        }
+
+        // DEBUG
+        Map<String, List<String>> debug = con.getHeaderFields();
         String contentDisposition = con.getHeaderField("content-disposition");
         Pattern filenamePattern = Pattern.compile("(?<=filename=).*?(?=;|$)");
         Matcher filenameMatcher = filenamePattern.matcher(contentDisposition);
