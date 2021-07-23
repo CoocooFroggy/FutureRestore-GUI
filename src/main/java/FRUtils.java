@@ -58,7 +58,7 @@ public class FRUtils {
         }
 
         // Disable the whole menu
-        setMainMenuEnabled(mainMenuView, false);
+        setEnabled(mainMenuView, false, true);
 
         String osName = System.getProperty("os.name").toLowerCase();
         String frguiDownloadIdentifier = null;
@@ -94,6 +94,9 @@ public class FRUtils {
             if (installFrgui(downloadedFrgui, frguiDownloadIdentifier, mainMenuInstance)) {
                 System.out.println("All done updating FRGUI. Closing now...");
                 System.exit(0);
+            } else {
+                System.err.println("Failed to update FutureRestore GUI. Try again, or try installing the update manually.");
+                setEnabled(mainMenuView, true, true);
             }
             return true;
         }
@@ -108,9 +111,7 @@ public class FRUtils {
         String frguiDownloadUrl = null;
         try {
             System.out.println("Finding download...");
-            // DEBUG
-            URL releasesApiUrl = new URL("https://api.github.com/repos/Forge-Nius-Trio/FutureRestore-GUI-CI-Test/releases/latest");
-//            URL releasesApiUrl = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases/latest");
+            URL releasesApiUrl = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases/latest");
             String releasesApiResponse = IOUtils.toString(releasesApiUrl.openConnection().getInputStream(), StandardCharsets.UTF_8);
             Gson gson = new Gson();
             Map<String, Object> latestReleaseApi = gson.fromJson(releasesApiResponse, Map.class);
@@ -283,26 +284,63 @@ public class FRUtils {
         });
     }
 
-    public static void setMainMenuEnabled(JPanel mainMenuView, boolean toSet) {
-        // If disabling, clear list before we start adding to list
-        if (!toSet)
-            disabledComponents.clear();
-        for (Component component : mainMenuView.getComponents()) {
-            // If disabling, add the previously disabled to this list
-            if (!toSet) {
-                if (!component.isEnabled())
-                    disabledComponents.add(component);
-            }
-            // Else if enabling, if the component was in the list, don't enable it
-            else {
-                if (disabledComponents.contains(component))
+    public static void setEnabled(Component component, boolean toSet, boolean rootRun) {
+        // If disabling, add the previously disabled to this list
+        if (!toSet) {
+            if (!component.isEnabled())
+                disabledComponents.add(component);
+        }
+
+        // Else if enabling, if the component was in the list, don't enable it
+        else if (disabledComponents.contains(component)) {
+            return;
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            component.setEnabled(toSet);
+        });
+
+        if (component instanceof Container) {
+            for (Component child : ((Container) component).getComponents()) {
+                // If disabling, add the previously disabled to this list
+                /*if (!toSet) {
+                    if (!child.isEnabled())
+                        disabledComponents.add(child);
+                }*/
+                // Else if enabling, if the component was in the list, don't enable it
+                if (disabledComponents.contains(child)) {
                     continue;
+                }
+                setEnabled(child, toSet, false);
             }
-            SwingUtilities.invokeLater(() -> {
-                component.setEnabled(toSet);
-            });
+        }
+        // If enabling and this is the first run, clear list for next time
+        if (rootRun) {
+            if (toSet)
+                disabledComponents.clear();
+            System.out.println("Done");
         }
     }
+
+//    public static void setMainMenuEnabled(JPanel mainMenuView, boolean toSet) {
+//        // If disabling, clear list before we start adding to list
+//        if (!toSet)
+//            disabledComponents.clear();
+//        for (Component component : mainMenuView.getComponents()) {
+//            // If disabling, add the previously disabled to this list
+//            if (!toSet) {
+//                if (!component.isEnabled())
+//                    disabledComponents.add(component);
+//            }
+//            // Else if enabling, if the component was in the list, don't enable it
+//            else if (disabledComponents.contains(component)) {
+//                continue;
+//            }
+//            SwingUtilities.invokeLater(() -> {
+//                component.setEnabled(toSet);
+//            });
+//        }
+//    }
 
     public static File downloadFile(String urlString, String frguiHomeDir, MainMenu mainMenuInstance) throws IOException {
         JProgressBar logProgressBar = mainMenuInstance.getLogProgressBar();
