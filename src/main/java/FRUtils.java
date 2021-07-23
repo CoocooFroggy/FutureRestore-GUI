@@ -7,11 +7,13 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.*;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,7 +108,7 @@ public class FRUtils {
         String frguiDownloadUrl = null;
         try {
             System.out.println("Finding download...");
-            // DEBUG: Debug
+            // DEBUG
             URL releasesApiUrl = new URL("https://api.github.com/repos/Forge-Nius-Trio/FutureRestore-GUI-CI-Test/releases/latest");
 //            URL releasesApiUrl = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases/latest");
             String releasesApiResponse = IOUtils.toString(releasesApiUrl.openConnection().getInputStream(), StandardCharsets.UTF_8);
@@ -145,8 +147,6 @@ public class FRUtils {
         }
 
         String finalFrPath = homeDirectory + "/FutureRestoreGUI/";
-//        String downloadedFRGUIPath = finalFrPath + frguiDownloadName;
-//        File downloadedFRGUI = new File(downloadedFRGUIPath);
         File downloadedFrgui;
         try {
             System.out.println("Downloading...");
@@ -325,8 +325,6 @@ public class FRUtils {
             return null;
         }
 
-        // DEBUG
-        Map<String, List<String>> debug = con.getHeaderFields();
         String contentDisposition = con.getHeaderField("content-disposition");
         Pattern filenamePattern = Pattern.compile("(?<=filename=).*?(?=;|$)");
         Matcher filenameMatcher = filenamePattern.matcher(contentDisposition);

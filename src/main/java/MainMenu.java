@@ -21,6 +21,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
@@ -92,7 +93,6 @@ public class MainMenu {
             });
         });
         selectBlobFileButton.addActionListener(e -> {
-
             Platform.runLater(() -> {
                 FRUtils.setMainMenuEnabled(mainMenuView, false);
                 //Create a file chooser
@@ -115,10 +115,8 @@ public class MainMenu {
                 FRUtils.setMainMenuEnabled(mainMenuView, true);
                 mainMenuFrame.requestFocus();
             });
-
         });
         selectTargetIPSWFileButton.addActionListener(e -> {
-
             Platform.runLater(() -> {
                 FRUtils.setMainMenuEnabled(mainMenuView, false);
                 //Create a file chooser
@@ -145,7 +143,6 @@ public class MainMenu {
         });
 
         selectBuildManifestButton.addActionListener(e -> {
-
             Platform.runLater(() -> {
                 FRUtils.setMainMenuEnabled(mainMenuView, false);
                 //Create a file chooser
@@ -773,14 +770,7 @@ public class MainMenu {
             }
         }
         //Pop-up saying "no binaries for your OS available"
-        Object[] choices = {"Open link", "Ok"};
-        Object defaultChoice = choices[0];
-
-        int response = JOptionPane.showOptionDialog(mainMenuView, "No FutureRestore asset found for your operating system. Check releases to see if there's one available.\n" +
-                "https://github.com/m1stadev/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
-        if (response == JOptionPane.YES_OPTION) {
-            FRUtils.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/", this);
-        }
+        noFrForOSPopup();
         return linkNameMap;
     }
 
@@ -789,23 +779,10 @@ public class MainMenu {
 
         Map<String, String> linkNameMap = new HashMap<>();
 
-        URL url = new URL("https://api.github.com/repos/m1stadev/futurerestore/actions/artifacts");
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        String content = getRequestUrl("https://api.github.com/repos/m1stadev/futurerestore/actions/artifacts");
+
         Gson gson = new Gson();
-
-        con.setRequestMethod("GET");
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder content = new StringBuilder();
-        while ((inputLine = in.readLine()) != null) {
-            content.append(inputLine);
-        }
-        in.close();
-        con.disconnect();
-
-        Map<String, Object> result = gson.fromJson(content.toString(), Map.class);
+        Map<String, Object> result = gson.fromJson(content, Map.class);
         ArrayList<Map<String, Object>> artifacts = (ArrayList<Map<String, Object>>) result.get("artifacts");
 
         //Get asset for our operating system
@@ -819,6 +796,11 @@ public class MainMenu {
         }
 
         //Pop-up saying "no binaries for your OS available"
+        noFrForOSPopup();
+        return linkNameMap;
+    }
+
+    private void noFrForOSPopup() {
         Object[] choices = {"Open link", "Ok"};
         Object defaultChoice = choices[0];
 
@@ -827,13 +809,11 @@ public class MainMenu {
         if (response == JOptionPane.YES_OPTION) {
             FRUtils.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/", this);
         }
-        return linkNameMap;
     }
 
-    private Map<String, Object> getLatestFrGithub() throws IOException {
-        URL url = new URL("https://api.github.com/repos/m1stadev/futurerestore/releases");
+    public static String getRequestUrl(String urlString) throws IOException {
+        URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        Gson gson = new Gson();
 
         con.setRequestMethod("GET");
 
@@ -847,7 +827,14 @@ public class MainMenu {
         in.close();
         con.disconnect();
 
-        ArrayList<Map<String, Object>> result = gson.fromJson(content.toString(), ArrayList.class);
+        return content.toString();
+    }
+
+    private Map<String, Object> getLatestFrGithub() throws IOException {
+        String content = getRequestUrl("https://api.github.com/repos/m1stadev/futurerestore/releases");
+
+        Gson gson = new Gson();
+        ArrayList<Map<String, Object>> result = gson.fromJson(content, ArrayList.class);
         Map<String, Object> newestRelease = result.get(0);
         return newestRelease;
     }
@@ -967,7 +954,7 @@ public class MainMenu {
             }
         }
 
-        fileToExtract.delete();
+        deleteFile(fileToExtract);
 
         // Actions artifacts are in a .zip then in a .tar.xz. Extract again if we need to
         File unzippedFile = destinationDir.listFiles()[0];
@@ -980,7 +967,7 @@ public class MainMenu {
             // Extract it and select it (run this method with it)
             boolean result = extractFutureRestore(xzFile, finalFrPath, operatingSystem);
             // Delete the archive at /FRGUI
-            xzFile.delete();
+            deleteFile(xzFile);
             // Return
             return result;
         }
@@ -1146,23 +1133,10 @@ public class MainMenu {
     static void alertIfNewerFRGUIAvailable(MainMenu mainMenuInstance, String currentFRGUIVersion) {
         new Thread(() -> {
             try {
-                URL url = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                String content = getRequestUrl("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
+
                 Gson gson = new Gson();
-
-                con.setRequestMethod("GET");
-
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(con.getInputStream()));
-                String inputLine;
-                StringBuilder content = new StringBuilder();
-                while ((inputLine = in.readLine()) != null) {
-                    content.append(inputLine);
-                }
-                in.close();
-                con.disconnect();
-
-                ArrayList<Map<String, Object>> result = gson.fromJson(content.toString(), ArrayList.class);
+                ArrayList<Map<String, Object>> result = gson.fromJson(content, ArrayList.class);
                 Map<String, Object> newestRelease = result.get(0);
                 String newestTag = (String) newestRelease.get("tag_name");
                 System.out.println("Newest FRGUI version: " + newestTag);
@@ -1171,8 +1145,6 @@ public class MainMenu {
                 if (!newestTag.equals(currentFRGUIVersion)) {
                     System.out.println("A newer version of FutureRestore GUI is available.");
                     mainMenuInstance.messageToLog("A newer version of FutureRestore GUI is available.");
-
-                    // TODO: Add "What's new in this version" dialogue
 
                     // Label on top of release notes
                     JLabel label = new JLabel("A newer version of FutureRestore GUI is available.\n" +
@@ -1215,9 +1187,6 @@ public class MainMenu {
                     Object defaultChoice = choices[0];
                     int response = JOptionPane.showOptionDialog(mainMenuFrame, panel, "Update FutureRestore GUI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
 
-                    /*int response = JOptionPane.showOptionDialog(mainMenuInstance.mainMenuView, "A newer version of FutureRestore GUI is available.\n" +
-                            "You're on version " + currentFRGUIVersion + " and the latest version is " + newestTag + ".\n" +
-                            "https://github.com/CoocooFroggy/FutureRestore-GUI/releases", "Update FutureRestore GUI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);*/
                     if (response == JOptionPane.YES_OPTION) {
 //                        FRUtils.openWebpage("https://github.com/CoocooFroggy/FutureRestore-GUI/releases");
                         boolean didSucceedUpdate = FRUtils.updateFRGUI(mainMenuInstance);
@@ -1238,25 +1207,23 @@ public class MainMenu {
     }
 
     public static String getLatestFrguiReleaseBody() throws IOException {
-        URL url = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        String content = getRequestUrl("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
+
         Gson gson = new Gson();
-
-        con.setRequestMethod("GET");
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder content = new StringBuilder();
-        while ((inputLine = in.readLine()) != null) {
-            content.append(inputLine);
-        }
-        in.close();
-        con.disconnect();
-
-        ArrayList<Map<String, Object>> result = gson.fromJson(content.toString(), ArrayList.class);
+        ArrayList<Map<String, Object>> result = gson.fromJson(content, ArrayList.class);
         Map<String, Object> newestRelease = result.get(0);
         return (String) newestRelease.get("body");
+    }
+
+    public static void deleteFile(File fileToDelete) {
+        if (!fileToDelete.delete()) {
+            try {
+                FileUtils.forceDelete(fileToDelete);
+            } catch (IOException exception) {
+                System.err.println("Unable to delete " + fileToDelete.getAbsolutePath() + ".");
+                exception.printStackTrace();
+            }
+        }
     }
 
     /* Private vars */
