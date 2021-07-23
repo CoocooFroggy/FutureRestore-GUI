@@ -770,7 +770,7 @@ public class MainMenu {
             }
         }
         //Pop-up saying "no binaries for your OS available"
-        noFrForOSPopup();
+        noFrForOSPopup("No FutureRestore asset found for your operating system. Check releases to see if there's one available.\n", "https://github.com/m1stadev/futurerestore/releases/latest/");
         return linkNameMap;
     }
 
@@ -796,18 +796,19 @@ public class MainMenu {
         }
 
         //Pop-up saying "no binaries for your OS available"
-        noFrForOSPopup();
+        noFrForOSPopup("No FutureRestore beta asset found for your operating system.\n" +
+                "Try a release version instead, or manually download a beta for your OS.\n", "https://github.com/m1stadev/futurerestore/actions");
         return linkNameMap;
     }
 
-    private void noFrForOSPopup() {
+    private void noFrForOSPopup(String message, String urlString) {
         Object[] choices = {"Open link", "Ok"};
         Object defaultChoice = choices[0];
 
-        int response = JOptionPane.showOptionDialog(mainMenuView, "No FutureRestore asset found for your operating system. Check releases to see if there's one available.\n" +
-                "https://github.com/m1stadev/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
+        int response = JOptionPane.showOptionDialog(mainMenuView, message +
+                urlString, "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
         if (response == JOptionPane.YES_OPTION) {
-            FRUtils.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/", this);
+            FRUtils.openWebpage(urlString, this);
         }
     }
 
@@ -1160,9 +1161,9 @@ public class MainMenu {
                             HTMLPresets.css +
                             "</style>" +
                             "</head>" +
-                            "<class=\"markdown-body\">"
+                            "<div class=\"markdown-body\">"
                             + Processor.process(mdReleaseBody).replaceAll("\\n", "") +
-                            "</class>" +
+                            "</div>" +
                             "</html>";
                     System.out.println(htmlReleaseBody);
 
