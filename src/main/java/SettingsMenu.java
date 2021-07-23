@@ -202,7 +202,7 @@ public class SettingsMenu {
         gbc.gridx = 4;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(0, 0, 0, 10);
+        gbc.insets = new Insets(0, 5, 0, 10);
         settingsMenuView.add(label1, gbc);
         final JPanel spacer2 = new JPanel();
         gbc = new GridBagConstraints();
@@ -226,7 +226,7 @@ public class SettingsMenu {
         gbc.gridx = 4;
         gbc.gridy = 5;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(0, 0, 0, 10);
+        gbc.insets = new Insets(0, 5, 0, 10);
         settingsMenuView.add(label2, gbc);
         discordTextArea = new JTextArea();
         discordTextArea.setLineWrap(true);
@@ -245,7 +245,7 @@ public class SettingsMenu {
         gbc.gridx = 4;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(0, 0, 0, 10);
+        gbc.insets = new Insets(0, 5, 0, 10);
         settingsMenuView.add(label3, gbc);
         final JLabel label4 = new JLabel();
         Font label4Font = this.$$$getFont$$$(null, -1, 20, label4.getFont());
@@ -296,7 +296,7 @@ public class SettingsMenu {
         gbc.gridx = 4;
         gbc.gridy = 7;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(0, 0, 0, 10);
+        gbc.insets = new Insets(0, 5, 0, 10);
         settingsMenuView.add(label5, gbc);
         final JSeparator separator5 = new JSeparator();
         separator5.setOrientation(1);
@@ -347,7 +347,7 @@ public class SettingsMenu {
         gbc.gridx = 4;
         gbc.gridy = 11;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(0, 0, 0, 10);
+        gbc.insets = new Insets(0, 5, 0, 10);
         settingsMenuView.add(label6, gbc);
         futureRestoreBetaCheckBox = new JCheckBox();
         futureRestoreBetaCheckBox.setText("FutureRestore Beta");
@@ -371,7 +371,7 @@ public class SettingsMenu {
         gbc.gridx = 4;
         gbc.gridy = 9;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(0, 0, 0, 10);
+        gbc.insets = new Insets(0, 5, 0, 10);
         settingsMenuView.add(label7, gbc);
         final JSeparator separator9 = new JSeparator();
         separator9.setOrientation(1);

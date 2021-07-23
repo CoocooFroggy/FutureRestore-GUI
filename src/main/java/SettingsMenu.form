@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="SettingsMenu">
   <grid id="27dc6" binding="settingsMenuView" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="169" y="171" width="1123" height="234"/>
+      <xy x="169" y="171" width="1123" height="244"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -34,7 +34,7 @@
       <component id="31395" class="javax.swing.JLabel">
         <constraints>
           <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="5" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="(Optional) Let us contact you about your logs by providing your Discord."/>
@@ -58,7 +58,7 @@
       <component id="fd766" class="javax.swing.JLabel">
         <constraints>
           <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="5" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="See a preview of the final command before it runs."/>
@@ -80,7 +80,7 @@
       <component id="6b4b5" class="javax.swing.JLabel">
         <constraints>
           <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="5" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="Automatically share logs to help make FutureRestore better."/>
@@ -133,7 +133,7 @@
       <component id="15bb7" class="javax.swing.JLabel">
         <constraints>
           <grid row="7" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="5" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="Automatically check for updates for FutureRestore GUI."/>
@@ -194,7 +194,7 @@
       <component id="562dc" class="javax.swing.JLabel">
         <constraints>
           <grid row="11" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="5" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="Set the theme of the GUI. Requires a restart to take effect."/>
@@ -219,7 +219,7 @@
       <component id="2f648" class="javax.swing.JLabel">
         <constraints>
           <grid row="9" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+          <gridbag top="0" left="5" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="&quot;Download FutureRestore&quot; will use the latest beta of FutureRestore."/>
