@@ -302,13 +302,8 @@ public class FRUtils {
 
         if (component instanceof Container) {
             for (Component child : ((Container) component).getComponents()) {
-                // If disabling, add the previously disabled to this list
-                /*if (!toSet) {
-                    if (!child.isEnabled())
-                        disabledComponents.add(child);
-                }*/
                 // Else if enabling, if the component was in the list, don't enable it
-                if (disabledComponents.contains(child)) {
+                if (toSet && disabledComponents.contains(child)) {
                     continue;
                 }
                 setEnabled(child, toSet, false);

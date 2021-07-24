@@ -1,14 +1,14 @@
 public class Main {
     public static void main(String[] args) {
-        MainMenu.futureRestoreGUIVersion = "1.90";
+        MainMenu.futureRestoreGUIVersion = "1.91";
         MainMenu.main();
         /*
 
 
-                      ⟍    ⟋
-                         ×
-                      ⟋    ⟍
-          "I can do a cartwheel."
+                       |
+                    —  +  —
+                       |
+          "Are you confined like me?"
 
 
          */

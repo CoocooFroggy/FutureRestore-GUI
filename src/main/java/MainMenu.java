@@ -395,7 +395,6 @@ public class MainMenu {
         downloadFutureRestoreButton.addActionListener(event -> {
             String osName = System.getProperty("os.name").toLowerCase();
             String urlString = null;
-            String downloadName = null;
 
             if (osName.contains("mac")) {
                 try {
@@ -406,7 +405,6 @@ public class MainMenu {
                         result = getLatestFrBetaDownload("mac");
                     }
                     urlString = result.get("link");
-                    downloadName = result.get("name");
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -421,7 +419,6 @@ public class MainMenu {
                         result = getLatestFrBetaDownload("win");
                     }
                     urlString = result.get("link");
-                    downloadName = result.get("name");
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -437,7 +434,6 @@ public class MainMenu {
                         result = getLatestFrBetaDownload("ubuntu");
                     }
                     urlString = result.get("link");
-                    downloadName = result.get("name");
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -464,7 +460,7 @@ public class MainMenu {
             });
 
             // Actually download the file
-            downloadFutureRestore(urlString, downloadName, osName);
+            downloadFutureRestore(urlString, osName);
         });
 
         settingsButton.addActionListener(e -> {
@@ -610,8 +606,6 @@ public class MainMenu {
         JPanel mainMenuView = mainMenuInstance.mainMenuView;
         JTextArea logTextArea = mainMenuInstance.logTextArea;
         JScrollPane logScrollPane = mainMenuInstance.logScrollPane;
-        JButton startFutureRestoreButton = mainMenuInstance.startFutureRestoreButton;
-
 
         mainMenuView.setBackground(new Color(40, 40, 40));
         logTextArea.setBackground(new Color(20, 20, 20));
@@ -750,7 +744,6 @@ public class MainMenu {
                 stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
                 return;
             }
-
 
             /*
             // Good idea at first but got kinda annoying every time
@@ -906,7 +899,7 @@ public class MainMenu {
         return newestRelease;
     }
 
-    void downloadFutureRestore(String urlString, String downloadName, String operatingSystem) {
+    void downloadFutureRestore(String urlString, String operatingSystem) {
         //Download asynchronously
         new Thread(() -> {
             String homeDirectory = System.getProperty("user.home");
@@ -1209,7 +1202,8 @@ public class MainMenu {
                 System.out.println("Newest FRGUI version: " + newestTag);
 
                 //If user is not on latest version
-                if (!newestTag.equals(currentFRGUIVersion)) {
+                String currentFRGUITag = "v" + currentFRGUIVersion;
+                if (!newestTag.equals(currentFRGUITag)) {
                     System.out.println("A newer version of FutureRestore GUI is available.");
                     mainMenuInstance.messageToLog("A newer version of FutureRestore GUI is available.");
 
