@@ -277,15 +277,20 @@ public class MainMenu {
             }
 
             switch (sepState) {
-                case "latest":
+                case "latest": {
                     allArgs.add("--latest-sep");
                     break;
-                case "manual":
+                }
+                case "manual": {
                     allArgs.add("--sep");
                     allArgs.add(sepFilePath);
                     allArgs.add("--sep-manifest");
                     allArgs.add(buildManifestPath);
                     break;
+                }
+//                // No SEP is just no arg
+//                case "none":
+//                    break;
             }
 
             switch (bbState) {
@@ -320,13 +325,14 @@ public class MainMenu {
 
         basebandComboBox.addActionListener(e -> {
             switch (basebandComboBox.getSelectedItem().toString()) {
-                case "Latest Baseband":
+                case "Latest Baseband": {
                     bbState = "latest";
                     basebandTextField.setText("✓ (No file)");
-                    if (sepState.equals("latest"))
+                    if (sepState.equals("latest") || sepState.equals("none"))
                         selectBuildManifestButton.setEnabled(false);
                     break;
-                case "Manual Baseband":
+                }
+                case "Manual Baseband": {
                     Platform.runLater(() -> {
                         FRUtils.setEnabled(mainMenuView, false, true);
                         if (chooseBbfw()) {
@@ -335,29 +341,32 @@ public class MainMenu {
                         } else {
                             bbState = "latest";
                             basebandComboBox.setSelectedItem("Latest Baseband");
-                            if (sepState.equals("latest"))
+                            if (sepState.equals("latest") || sepState.equals("none"))
                                 selectBuildManifestButton.setEnabled(false);
                         }
                         FRUtils.setEnabled(mainMenuView, true, true);
                     });
                     break;
-                case "No Baseband":
+                }
+                case "No Baseband": {
                     bbState = "none";
                     basebandTextField.setText("✓ (No file)");
-                    if (sepState.equals("latest"))
+                    if (sepState.equals("latest") || sepState.equals("none"))
                         selectBuildManifestButton.setEnabled(false);
                     break;
+                }
             }
         });
         sepComboBox.addActionListener(e -> {
             switch (sepComboBox.getSelectedItem().toString()) {
-                case "Latest SEP":
+                case "Latest SEP": {
                     sepState = "latest";
                     sepTextField.setText("✓ (No file)");
                     if (bbState.equals("latest") || bbState.equals("none"))
                         selectBuildManifestButton.setEnabled(false);
                     break;
-                case "Manual SEP":
+                }
+                case "Manual SEP": {
                     Platform.runLater(() -> {
                         FRUtils.setEnabled(mainMenuView, false, true);
                         if (chooseSep()) {
@@ -372,6 +381,14 @@ public class MainMenu {
                         FRUtils.setEnabled(mainMenuView, true, true);
                     });
                     break;
+                }
+                case "No SEP": {
+                    sepState = "none";
+                    sepTextField.setText("✓ (No file)");
+                    if (bbState.equals("latest") || bbState.equals("none"))
+                        selectBuildManifestButton.setEnabled(false);
+                    break;
+                }
             }
         });
         stopFutureRestoreUnsafeButton.addActionListener(e -> {
@@ -1560,6 +1577,7 @@ public class MainMenu {
         final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
         defaultComboBoxModel2.addElement("Latest SEP");
         defaultComboBoxModel2.addElement("Manual SEP");
+        defaultComboBoxModel2.addElement("No SEP");
         sepComboBox.setModel(defaultComboBoxModel2);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;

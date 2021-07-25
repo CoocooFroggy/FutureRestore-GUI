@@ -251,6 +251,7 @@
                   <model>
                     <item value="Latest SEP"/>
                     <item value="Manual SEP"/>
+                    <item value="No SEP"/>
                   </model>
                 </properties>
               </component>
