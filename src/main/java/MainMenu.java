@@ -272,8 +272,7 @@ public class MainMenu {
             if (optionNoIbssState)
                 allArgs.add("--no-ibss");
             if (optionJustBootState) {
-                allArgs.add("--just-boot");
-                allArgs.add("'-v'");
+                allArgs.add("--just-boot=\"-v\"");
             }
 
             switch (sepState) {
@@ -1738,7 +1737,7 @@ public class MainMenu {
         justBootLabel.setEnabled(false);
         Font justBootLabelFont = this.$$$getFont$$$("Menlo", -1, 10, justBootLabel.getFont());
         if (justBootLabelFont != null) justBootLabel.setFont(justBootLabelFont);
-        justBootLabel.setText("(--just-boot \"-v\")");
+        justBootLabel.setText("(--just-boot=\"-v\")");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 3;
