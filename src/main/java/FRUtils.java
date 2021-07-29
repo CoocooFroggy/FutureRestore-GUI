@@ -52,7 +52,7 @@ public class FRUtils {
         JPanel mainMenuView = mainMenuInstance.getMainMenuView();
 
         // If FutureRestore process is running, cancel early
-        if (!(FutureRestoreWorker.futureRestoreProcess == null || !FutureRestoreWorker.futureRestoreProcess.isAlive())) {
+        if (FutureRestoreWorker.futureRestoreProcess != null && FutureRestoreWorker.futureRestoreProcess.isAlive()) {
             failUpdate("Can't update when FutureRestore is running!", mainMenuInstance, false);
             return false;
         }

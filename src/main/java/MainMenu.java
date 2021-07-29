@@ -198,6 +198,10 @@ public class MainMenu {
                 justBootCheckBox.setSelected(false);
                 justBootCheckBox.setEnabled(false);
                 justBootLabel.setEnabled(false);
+
+                // Since we turn off the switches for pwndfu required items, also turn them off internally
+                optionNoIbssState = false;
+                optionJustBootState = false;
             }
         };
         debugDCheckBox.addActionListener(optionsListener);
@@ -209,13 +213,22 @@ public class MainMenu {
         justBootCheckBox.addActionListener(optionsListener);
 
         startFutureRestoreButton.addActionListener(e -> {
-            //Ensure they have FutureRestore selected
+            // If FutureRestore is already running, just disable ourselves
+            if (FutureRestoreWorker.futureRestoreProcess != null && FutureRestoreWorker.futureRestoreProcess.isAlive()) {
+                SwingUtilities.invokeLater(() -> {
+                    startFutureRestoreButton.setEnabled(false);
+                    // Potentially make the button say unsafe again
+                });
+                return;
+            }
+
+            // Ensure they have FutureRestore selected
             if (futureRestoreFilePath == null) {
                 JOptionPane.showMessageDialog(mainMenuView, "Please select a FutureRestore executable.", "No FutureRestore Selected", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            //Ensure they actually selected a blob, IPSW, and buildmanifest if needed
+            // Ensure they actually selected a blob, IPSW, and buildmanifest if needed
             if (blobFilePath == null) {
                 JOptionPane.showMessageDialog(mainMenuView, "Select a blob file.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -393,19 +406,25 @@ public class MainMenu {
         stopFutureRestoreUnsafeButton.addActionListener(e -> {
             Process futureRestoreProcess = FutureRestoreWorker.futureRestoreProcess;
 
-            if (futureRestoreProcess != null) {
-                if (futureRestoreProcess.isAlive()) {
-                    int response = JOptionPane.showConfirmDialog(mainMenuView, "Are you sure you want to stop FutureRestore? This is considered unsafe if the device is currently restoring.", "Stop FutureRestore?", JOptionPane.YES_NO_OPTION);
-                    if (response == JOptionPane.YES_OPTION) {
-                        futureRestoreProcess.destroy();
-                        messageToLog("FutureRestore process killed.");
-                    }
+            boolean killed = false;
+            if (FutureRestoreWorker.futureRestoreProcess != null && FutureRestoreWorker.futureRestoreProcess.isAlive()) {
+                int response = JOptionPane.showConfirmDialog(mainMenuView, "Are you sure you want to stop FutureRestore? This is considered unsafe if the device is currently restoring.", "Stop FutureRestore?", JOptionPane.YES_NO_OPTION);
+                if (response == JOptionPane.YES_OPTION) {
+                    futureRestoreProcess.destroy();
+                    messageToLog("FutureRestore process killed.");
+                    killed = true;
                 }
+            } else {
+                killed = true;
             }
 
-            startFutureRestoreButton.setEnabled(true);
-            stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
-            currentTaskTextField.setText("");
+            if (killed) {
+                SwingUtilities.invokeLater(() -> {
+                    startFutureRestoreButton.setEnabled(true);
+                    stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
+                    currentTaskTextField.setText("");
+                });
+            }
         });
 
         downloadFutureRestoreButton.addActionListener(event -> {
