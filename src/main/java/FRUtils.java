@@ -52,13 +52,16 @@ public class FRUtils {
         JPanel mainMenuView = mainMenuInstance.getMainMenuView();
 
         // If FutureRestore process is running, cancel early
-        if (!(FutureRestoreWorker.futureRestoreProcess == null || !FutureRestoreWorker.futureRestoreProcess.isAlive())) {
+        if (FutureRestoreWorker.futureRestoreProcess != null && FutureRestoreWorker.futureRestoreProcess.isAlive()) {
             failUpdate("Can't update when FutureRestore is running!", mainMenuInstance, false);
             return false;
         }
 
         // Disable the whole menu
         setEnabled(mainMenuView, false, true);
+
+        // Switch to "Controls" tab
+        mainMenuInstance.getTabbedPane().setSelectedIndex(2);
 
         String osName = System.getProperty("os.name").toLowerCase();
         String frguiDownloadIdentifier = null;
@@ -84,6 +87,7 @@ public class FRUtils {
             }
             return false;
         } else {
+            mainMenuInstance.messageToLog("Downloading FutureRestore GUI...");
             File downloadedFrgui = downloadFRGUI(mainMenuInstance, frguiDownloadIdentifier);
 
             if (downloadedFrgui == null) {
@@ -91,6 +95,7 @@ public class FRUtils {
                 return false;
             }
 
+            mainMenuInstance.messageToLog("Installing FutureRestore GUI...");
             if (installFrgui(downloadedFrgui, frguiDownloadIdentifier, mainMenuInstance)) {
                 System.out.println("All done updating FRGUI. Closing now...");
                 System.exit(0);
@@ -302,13 +307,8 @@ public class FRUtils {
 
         if (component instanceof Container) {
             for (Component child : ((Container) component).getComponents()) {
-                // If disabling, add the previously disabled to this list
-                /*if (!toSet) {
-                    if (!child.isEnabled())
-                        disabledComponents.add(child);
-                }*/
                 // Else if enabling, if the component was in the list, don't enable it
-                if (disabledComponents.contains(child)) {
+                if (toSet && disabledComponents.contains(child)) {
                     continue;
                 }
                 setEnabled(child, toSet, false);

@@ -117,7 +117,7 @@ public class FutureRestoreWorker {
                                     if (!hasRecoveryRestarted) {
                                         hasRecoveryRestarted = true;
                                         //Ensure current process is killed
-                                        if (futureRestoreProcess.isAlive())
+                                        if (FutureRestoreWorker.futureRestoreProcess != null && FutureRestoreWorker.futureRestoreProcess.isAlive())
                                             futureRestoreProcess.destroy();
                                         //Restart
                                         new Thread(() -> {

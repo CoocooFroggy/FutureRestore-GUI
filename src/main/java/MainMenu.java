@@ -198,6 +198,10 @@ public class MainMenu {
                 justBootCheckBox.setSelected(false);
                 justBootCheckBox.setEnabled(false);
                 justBootLabel.setEnabled(false);
+
+                // Since we turn off the switches for pwndfu required items, also turn them off internally
+                optionNoIbssState = false;
+                optionJustBootState = false;
             }
         };
         debugDCheckBox.addActionListener(optionsListener);
@@ -209,13 +213,22 @@ public class MainMenu {
         justBootCheckBox.addActionListener(optionsListener);
 
         startFutureRestoreButton.addActionListener(e -> {
-            //Ensure they have FutureRestore selected
+            // If FutureRestore is already running, just disable ourselves
+            if (FutureRestoreWorker.futureRestoreProcess != null && FutureRestoreWorker.futureRestoreProcess.isAlive()) {
+                SwingUtilities.invokeLater(() -> {
+                    startFutureRestoreButton.setEnabled(false);
+                    // Potentially make the button say unsafe again
+                });
+                return;
+            }
+
+            // Ensure they have FutureRestore selected
             if (futureRestoreFilePath == null) {
                 JOptionPane.showMessageDialog(mainMenuView, "Please select a FutureRestore executable.", "No FutureRestore Selected", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            //Ensure they actually selected a blob, IPSW, and buildmanifest if needed
+            // Ensure they actually selected a blob, IPSW, and buildmanifest if needed
             if (blobFilePath == null) {
                 JOptionPane.showMessageDialog(mainMenuView, "Select a blob file.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -272,20 +285,24 @@ public class MainMenu {
             if (optionNoIbssState)
                 allArgs.add("--no-ibss");
             if (optionJustBootState) {
-                allArgs.add("--just-boot");
-                allArgs.add("'-v'");
+                allArgs.add("--just-boot=\"-v\"");
             }
 
             switch (sepState) {
-                case "latest":
+                case "latest": {
                     allArgs.add("--latest-sep");
                     break;
-                case "manual":
+                }
+                case "manual": {
                     allArgs.add("--sep");
                     allArgs.add(sepFilePath);
                     allArgs.add("--sep-manifest");
                     allArgs.add(buildManifestPath);
                     break;
+                }
+//                // No SEP is just no arg
+//                case "none":
+//                    break;
             }
 
             switch (bbState) {
@@ -320,13 +337,14 @@ public class MainMenu {
 
         basebandComboBox.addActionListener(e -> {
             switch (basebandComboBox.getSelectedItem().toString()) {
-                case "Latest Baseband":
+                case "Latest Baseband": {
                     bbState = "latest";
                     basebandTextField.setText("✓ (No file)");
-                    if (sepState.equals("latest"))
+                    if (sepState.equals("latest") || sepState.equals("none"))
                         selectBuildManifestButton.setEnabled(false);
                     break;
-                case "Manual Baseband":
+                }
+                case "Manual Baseband": {
                     Platform.runLater(() -> {
                         FRUtils.setEnabled(mainMenuView, false, true);
                         if (chooseBbfw()) {
@@ -335,29 +353,32 @@ public class MainMenu {
                         } else {
                             bbState = "latest";
                             basebandComboBox.setSelectedItem("Latest Baseband");
-                            if (sepState.equals("latest"))
+                            if (sepState.equals("latest") || sepState.equals("none"))
                                 selectBuildManifestButton.setEnabled(false);
                         }
                         FRUtils.setEnabled(mainMenuView, true, true);
                     });
                     break;
-                case "No Baseband":
+                }
+                case "No Baseband": {
                     bbState = "none";
                     basebandTextField.setText("✓ (No file)");
-                    if (sepState.equals("latest"))
+                    if (sepState.equals("latest") || sepState.equals("none"))
                         selectBuildManifestButton.setEnabled(false);
                     break;
+                }
             }
         });
         sepComboBox.addActionListener(e -> {
             switch (sepComboBox.getSelectedItem().toString()) {
-                case "Latest SEP":
+                case "Latest SEP": {
                     sepState = "latest";
                     sepTextField.setText("✓ (No file)");
                     if (bbState.equals("latest") || bbState.equals("none"))
                         selectBuildManifestButton.setEnabled(false);
                     break;
-                case "Manual SEP":
+                }
+                case "Manual SEP": {
                     Platform.runLater(() -> {
                         FRUtils.setEnabled(mainMenuView, false, true);
                         if (chooseSep()) {
@@ -372,30 +393,43 @@ public class MainMenu {
                         FRUtils.setEnabled(mainMenuView, true, true);
                     });
                     break;
+                }
+                case "No SEP": {
+                    sepState = "none";
+                    sepTextField.setText("✓ (No file)");
+                    if (bbState.equals("latest") || bbState.equals("none"))
+                        selectBuildManifestButton.setEnabled(false);
+                    break;
+                }
             }
         });
         stopFutureRestoreUnsafeButton.addActionListener(e -> {
             Process futureRestoreProcess = FutureRestoreWorker.futureRestoreProcess;
 
-            if (futureRestoreProcess != null) {
-                if (futureRestoreProcess.isAlive()) {
-                    int response = JOptionPane.showConfirmDialog(mainMenuView, "Are you sure you want to stop FutureRestore? This is considered unsafe if the device is currently restoring.", "Stop FutureRestore?", JOptionPane.YES_NO_OPTION);
-                    if (response == JOptionPane.YES_OPTION) {
-                        futureRestoreProcess.destroy();
-                        messageToLog("FutureRestore process killed.");
-                    }
+            boolean killed = false;
+            if (FutureRestoreWorker.futureRestoreProcess != null && FutureRestoreWorker.futureRestoreProcess.isAlive()) {
+                int response = JOptionPane.showConfirmDialog(mainMenuView, "Are you sure you want to stop FutureRestore? This is considered unsafe if the device is currently restoring.", "Stop FutureRestore?", JOptionPane.YES_NO_OPTION);
+                if (response == JOptionPane.YES_OPTION) {
+                    futureRestoreProcess.destroy();
+                    messageToLog("FutureRestore process killed.");
+                    killed = true;
                 }
+            } else {
+                killed = true;
             }
 
-            startFutureRestoreButton.setEnabled(true);
-            stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
-            currentTaskTextField.setText("");
+            if (killed) {
+                SwingUtilities.invokeLater(() -> {
+                    startFutureRestoreButton.setEnabled(true);
+                    stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
+                    currentTaskTextField.setText("");
+                });
+            }
         });
 
         downloadFutureRestoreButton.addActionListener(event -> {
             String osName = System.getProperty("os.name").toLowerCase();
             String urlString = null;
-            String downloadName = null;
 
             if (osName.contains("mac")) {
                 try {
@@ -406,7 +440,6 @@ public class MainMenu {
                         result = getLatestFrBetaDownload("mac");
                     }
                     urlString = result.get("link");
-                    downloadName = result.get("name");
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -421,7 +454,6 @@ public class MainMenu {
                         result = getLatestFrBetaDownload("win");
                     }
                     urlString = result.get("link");
-                    downloadName = result.get("name");
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -437,7 +469,6 @@ public class MainMenu {
                         result = getLatestFrBetaDownload("ubuntu");
                     }
                     urlString = result.get("link");
-                    downloadName = result.get("name");
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -464,7 +495,7 @@ public class MainMenu {
             });
 
             // Actually download the file
-            downloadFutureRestore(urlString, downloadName, osName);
+            downloadFutureRestore(urlString, osName);
         });
 
         settingsButton.addActionListener(e -> {
@@ -610,8 +641,6 @@ public class MainMenu {
         JPanel mainMenuView = mainMenuInstance.mainMenuView;
         JTextArea logTextArea = mainMenuInstance.logTextArea;
         JScrollPane logScrollPane = mainMenuInstance.logScrollPane;
-        JButton startFutureRestoreButton = mainMenuInstance.startFutureRestoreButton;
-
 
         mainMenuView.setBackground(new Color(40, 40, 40));
         logTextArea.setBackground(new Color(20, 20, 20));
@@ -750,7 +779,6 @@ public class MainMenu {
                 stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
                 return;
             }
-
 
             /*
             // Good idea at first but got kinda annoying every time
@@ -906,7 +934,7 @@ public class MainMenu {
         return newestRelease;
     }
 
-    void downloadFutureRestore(String urlString, String downloadName, String operatingSystem) {
+    void downloadFutureRestore(String urlString, String operatingSystem) {
         //Download asynchronously
         new Thread(() -> {
             String homeDirectory = System.getProperty("user.home");
@@ -1209,7 +1237,8 @@ public class MainMenu {
                 System.out.println("Newest FRGUI version: " + newestTag);
 
                 //If user is not on latest version
-                if (!newestTag.equals(currentFRGUIVersion)) {
+                String currentFRGUITag = "v" + currentFRGUIVersion;
+                if (!newestTag.equals(currentFRGUITag)) {
                     System.out.println("A newer version of FutureRestore GUI is available.");
                     mainMenuInstance.messageToLog("A newer version of FutureRestore GUI is available.");
 
@@ -1320,6 +1349,10 @@ public class MainMenu {
 
     public JButton getNextButtonOptions() {
         return nextButtonOptions;
+    }
+
+    public JTabbedPane getTabbedPane() {
+        return tabbedPane;
     }
 
     /**
@@ -1566,6 +1599,7 @@ public class MainMenu {
         final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
         defaultComboBoxModel2.addElement("Latest SEP");
         defaultComboBoxModel2.addElement("Manual SEP");
+        defaultComboBoxModel2.addElement("No SEP");
         sepComboBox.setModel(defaultComboBoxModel2);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
@@ -1726,7 +1760,7 @@ public class MainMenu {
         justBootLabel.setEnabled(false);
         Font justBootLabelFont = this.$$$getFont$$$("Menlo", -1, 10, justBootLabel.getFont());
         if (justBootLabelFont != null) justBootLabel.setFont(justBootLabelFont);
-        justBootLabel.setText("(--just-boot \"-v\")");
+        justBootLabel.setText("(--just-boot=\"-v\")");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 3;
