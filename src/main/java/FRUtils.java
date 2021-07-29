@@ -60,6 +60,9 @@ public class FRUtils {
         // Disable the whole menu
         setEnabled(mainMenuView, false, true);
 
+        // Switch to "Controls" tab
+        mainMenuInstance.getTabbedPane().setSelectedIndex(2);
+
         String osName = System.getProperty("os.name").toLowerCase();
         String frguiDownloadIdentifier = null;
         if (osName.contains("mac")) {
@@ -84,6 +87,7 @@ public class FRUtils {
             }
             return false;
         } else {
+            mainMenuInstance.messageToLog("Downloading FutureRestore GUI...");
             File downloadedFrgui = downloadFRGUI(mainMenuInstance, frguiDownloadIdentifier);
 
             if (downloadedFrgui == null) {
@@ -91,6 +95,7 @@ public class FRUtils {
                 return false;
             }
 
+            mainMenuInstance.messageToLog("Installing FutureRestore GUI...");
             if (installFrgui(downloadedFrgui, frguiDownloadIdentifier, mainMenuInstance)) {
                 System.out.println("All done updating FRGUI. Closing now...");
                 System.exit(0);
