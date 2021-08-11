@@ -19,7 +19,7 @@ Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/relea
 - Windows: Double click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.  
 - Linux (64 bit, amd64/x86_64):  
   - On Debian based Linux systems, such as Ubuntu and Mint, double click the DEB to install it. Launch it from your application library.  
-  - On other Linux systems, download the Linux-Universal build, and run the run the FRGUI.sh script in terminal to launch the GUI.
+  - On other Linux systems, download the Linux-Universal build, and run the runFRGUI.sh script in terminal to launch the GUI.
 
 #### Quicker Install
 - Mac: `brew install futurerestore-gui`
