@@ -2,9 +2,11 @@
 ![Github CI](https://img.shields.io/github/workflow/status/CoocooFroggy/FutureRestore-GUI/Java%20CI%20with%20Gradle.svg)
 ![Github releases](https://img.shields.io/github/v/release/CoocooFroggy/FutureRestore-GUI?include_prereleases.svg)
 ![Github issues](https://img.shields.io/github/issues/CoocooFroggy/FutureRestore-GUI.svg)
-![Github repo size](https://img.shields.io/github/repo-size/CoocooFroggy/FutureRestore-GUI.svg)
+![GitHub all releases](https://img.shields.io/github/downloads/CoocooFroggy/FutureRestore-GUI/total)
 
-A GUI implementation for FutureRestore written in Java.
+A GUI wrapper for a hacked up wrapper for a full reimplementation of the restore of a firmware to a device, which allows manually specifying SEP and Baseband for restoring, written in Java with Swing.
+
+*AKA a modern GUI for FutureRestore, with added features to make the process easier.*
 
 ![Screenshot of FutureRestore GUI in Light Theme](.github/Light.png?raw=true "FutureRestore GUI Light")
 ![Screenshot of FutureRestore GUI in Dark Theme](.github/Dark.png?raw=true "FutureRestore GUI Dark")
@@ -13,15 +15,19 @@ A GUI implementation for FutureRestore written in Java.
 
 Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/releases). No Java download required (it's bundled).
 
-On Mac, right click the Mac app and click "Open" to open.
+- Mac: Right click the Mac app and click "Open" to open.  
+- Windows: Double click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.  
+- Linux (64 bit, amd64/x86_64):  
+  - On Debian based Linux systems, such as Ubuntu and Mint, double click the DEB to install it. Launch it from your application library.  
+  - On other Linux systems, download the Linux-Universal build, and run the runFRGUI.sh script in terminal to launch the GUI.
 
-On Windows, double click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.
-
-Linux (64 bit, amd64 + x86_64):  
-- On Debian based Linux systems, such as Ubuntu and Mint, double click the DEB to install it. Launch it from your application library.  
-  - You can also run this one-liner to add the repository and install FutureRestore GUI: ```u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"KEY.gpg" | sudo apt-key add - && sudo curl -s --compressed -o /etc/apt/sources.list.d/coocoofroggyppa.list $u"coocoofroggyppa.list" && sudo apt update && sudo apt install futurerestore-gui```
-- On RPM based Linux systems, such as Red Hat, Fedora, and CentOS, double click the file to install it. Launch it from your application library.  
-- On Linux systems which support none of these, download the Linux-Universal build, and run the runFRGUI.sh script in terminal to launch the GUI.
+#### Quicker Install
+- Mac: `brew install futurerestore-gui`
+- Windows: `winget install futurerestore-gui`
+- Debian Linux:
+```
+u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"KEY.gpg" | sudo apt-key add - && sudo curl -s --compressed -o /etc/apt/sources.list.d/coocoofroggyppa.list $u"coocoofroggyppa.list" && sudo apt update && sudo apt install futurerestore-gui
+```
 
 ## Features
 - Fancy, user-friendly interface for selecting files for FutureRestore. No more huge commands such as:
@@ -50,16 +56,17 @@ Linux (64 bit, amd64 + x86_64):
 ## Settings
 - **Share logs**: Shares logs automatically to help develop FutureRestore.
 - **Preview command**: Preview the final FutureRestore command. You can then choose to copy and/or run the command.
-- **GUI update**: Automatically checks for updates for this program on launch.
+- **GUI updates**: Automatically checks for updates for this program on launch.
+- **GUI themes**: Choose between system theme, force light, or force dark theme.
 
 ## Usage
 
-See [how to use FutureRestore](https://github.com/marijuanARM/futurerestore#how-to-use).
+See [how to use FutureRestore](https://ios.cfw.guide/futurerestore).
 
-1. Download FutureRestore automatically through the **Download FutureRestore** button, or manually from [marijuanARM's fork](https://github.com/marijuanARM/futurerestore/releases).
+1. Download FutureRestore automatically through the **Download FutureRestore** button, or manually from [m1stadev's fork](https://github.com/m1stadev/futurerestore/releases).
 2. Select your **blob** (SHSH2) file.
 3. Select your **target firmware** (iPSW) file.
-4. Choose your desired arguments. See [this table](https://github.com/marijuanARM/futurerestore#help) for an explanation of arguments.
+4. Choose your desired arguments. See [this table](https://github.com/m1stadev/futurerestore#help) for an explanation of arguments.
 5. Baseband and SEP (choose 1 each):
     1. If the latest Baseband and/or SEP firmware is compatible with your target version, select **Latest Baseband**/**Latest SEP**.
     2. Choose **Manual Baseband**/**Manual SEP**, and select your desired **Baseband** and **SEP** (BBFW and IM4P), along with a BuildManifest (.PList).
@@ -71,7 +78,7 @@ See [how to use FutureRestore](https://github.com/marijuanARM/futurerestore#how-
 
 ## Third-Party Assets
 
-Download FutureRestore using the button included in the GUI, or manually from [here](https://github.com/marijuanARM/futurerestore/releases). Download target iPSW from [iPSW.me](https://ipsw.me) or [iPSW.dev](https://ipsw.dev).
+Download FutureRestore using the button included in the GUI, or manually from [here](https://github.com/m1stadev/futurerestore/releases). Download target iPSW from [iPSW.me](https://ipsw.me) or [iPSW.dev](https://ipsw.dev).
 
 ## Troubleshooting
 
