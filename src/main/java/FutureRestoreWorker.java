@@ -31,11 +31,13 @@ public class FutureRestoreWorker {
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(allArgsArray);
+        // Merge error stream into the OutputStream
         processBuilder.redirectErrorStream(true);
         processBuilder.directory(frGuiDirectory);
 
         futureRestoreProcess = processBuilder.start();
 
+        // Remember that OutputStream is our input into FutureRestore — which needs none
         futureRestoreProcess.getOutputStream().close();
 //        futureRestoreProcess.getErrorStream().close();
 
@@ -89,7 +91,7 @@ public class FutureRestoreWorker {
                 put("Connecting to FDR", "Connecting to FDR client...");
                 put("About to send NOR", "About to send NOR data...");
                 put("Connecting to ASR", "Connecting to ASR...");
-                put("waiting for message", "Waiting for message from FDR...");
+//                put("waiting for message", "Waiting for message from FDR...");
 
                 //Special messages
                 put("Status: Restore Finished", "Restore Finished!");
