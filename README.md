@@ -19,7 +19,7 @@ Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/relea
 - Windows: Double click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.  
 - Linux (64 bit, amd64/x86_64):  
   - On Debian based Linux systems, such as Ubuntu and Mint, double click the DEB to install it. Launch it from your application library.  
-  - On other Linux systems, download the Linux-Universal build, and run the runFRGUI.sh script in terminal to launch the GUI.
+  - On other Linux systems, download the Linux-Universal build, and run the run the FRGUI.sh script in terminal to launch the GUI.
 
 #### Quicker Install
 - Mac: `brew install futurerestore-gui`
@@ -38,7 +38,7 @@ u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"
 - Ensures you don't select incorrect files: The program will ensure you have a working FutureRestore build. You can only select .iPSW files for target firmware, .BBFW files for baseband, etc.
 - Option to connect to GitHub and check if your version of FutureRestore is the latest version.
 - **Download FutureRestore** will automatically fetch the latest FutureRestore for your operating system, extract it, and select it.
-- **Exit Recovery** button to run `futurerestore --exit recovery`
+- **Exit Recovery** button to run `futurerestore --exit-recovery`
 - **Stop FutureRestore** to kill the FutureRestore process. Button dynamically changes to "Stop FutureRestore (Unsafe)" while the process is running. Pop-up to confirm killing the process if it's currently running.
 - Automatically launch with **Dark or Light mode theme** (not supported on Linux).
 - **Error parsing** such as iBEC, APTicket-APNonce mismatch, unable to place device in recovery mode. Will show a pop-up with some help and a link on where to get help. 
@@ -50,7 +50,7 @@ u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"
 - Log **smart autoscroll** when scrolled to the bottom.
 - Optionally share logs automatically to help improve FutureRestore
 - If you like terminal, you can use this to simply **generate the command and copy it** with one click
-- **Automatic dark mode** supported for MacOS, Windows 10, and some Linux distros
+- **Automatic dark mode** supported for macOS, Windows 10, and some Linux distros
 - **Pwndfu** restore and **onboard** blobs (with a supported FutureRestore build)
 
 ## Settings
