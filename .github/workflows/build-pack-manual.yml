@@ -90,8 +90,10 @@ jobs:
           VERSION: ${{ steps.output-version.outputs.version }}
         run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --module-path ./.github/workflows/ubuntu/javafx-jmods-11.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
 
-      - name: Zip app-image and run script
-        run: zip -r FutureRestore-GUI-Linux-Universal.zip "FutureRestore GUI" ./.github/workflows/ubuntu/"Run FutureRestore GUI.sh"
+      - name: Zip app-image and script
+        run: |
+          cp ./.github/workflows/ubuntu/"Run FutureRestore GUI.sh" ./
+          zip -r FutureRestore-GUI-Linux-Universal.zip "FutureRestore GUI" "Run FutureRestore GUI.sh"
 
       - name: Upload deb
         uses: actions/upload-artifact@v2
