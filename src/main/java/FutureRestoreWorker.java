@@ -19,12 +19,15 @@ import java.util.regex.Pattern;
 public class FutureRestoreWorker {
 
     public static Process futureRestoreProcess;
-    static boolean hasRecoveryRestarted = false;
+    private static String[] allArgsArray;
+    private static String logName;
+    private static String logPath;
+    private static boolean hasRecoveryRestarted = false;
 
-    static void runFutureRestore(String futureRestoreFilePath, ArrayList<String> allArgs, JPanel mainMenuView, JTextArea logTextArea, JProgressBar logProgressBar, JTextField currentTaskTextField, JButton startFutureRestoreButton, JButton stopFutureRestoreButton) throws IOException, InterruptedException, TimeoutException {
+    public static void runFutureRestore(String futureRestoreFilePath, ArrayList<String> allArgs, JPanel mainMenuView, JTextArea logTextArea, JProgressBar logProgressBar, JTextField currentTaskTextField, JButton startFutureRestoreButton, JButton stopFutureRestoreButton) throws IOException, InterruptedException, TimeoutException {
         ArrayList<String> argsAndFR = (ArrayList<String>) allArgs.clone();
         argsAndFR.add(0, futureRestoreFilePath);
-        String[] allArgsArray = Arrays.copyOf(argsAndFR.toArray(), argsAndFR.toArray().length, String[].class);
+        allArgsArray = Arrays.copyOf(argsAndFR.toArray(), argsAndFR.toArray().length, String[].class);
 
         String homeDirectory = System.getProperty("user.home");
         File frGuiDirectory = new File(homeDirectory + "/FutureRestoreGUI");
@@ -52,9 +55,12 @@ public class FutureRestoreWorker {
         String dateTimeString = dateTime.toString().replaceAll(":", ".");
         System.out.println("Date and time is " + dateTimeString);
 
-        String logName = "FRLog_" + dateTimeString + ".txt";
-        String logPath = frGuiLogsDirectory + "/" + logName;
+        logName = "FRLog_" + dateTimeString + ".txt";
+        logPath = frGuiLogsDirectory + "/" + logName;
         FileWriter writer = new FileWriter(logPath);
+
+        // Count the number of FDR timeouts
+        int fdrTimeouts = 0;
 
         String line;
         while ((line = reader.readLine()) != null) {
@@ -98,6 +104,7 @@ public class FutureRestoreWorker {
                 put("what=", null);
                 put("code=", null);
                 put("unknown option -- use-pwndfu", null);
+                put("timeout waiting for command", null);
             }};
 
             for (Map.Entry<String, String> entrySet : parseableMessages.entrySet()) {
@@ -178,6 +185,25 @@ public class FutureRestoreWorker {
                                     "Ensure you're using a FutureRestore version which supports this argument, or turn off \"Pwned Restore.\"",
                                     "FutureRestore PWNDFU Unknown", JOptionPane.ERROR_MESSAGE);
                         }
+                        if (futureRestorePossibleMatch.equals("timeout waiting for command")) {
+                            fdrTimeouts++;
+                            if (fdrTimeouts > 50) {
+                                logTextArea.append("Stopping FutureRestore—FDR looped over 50 times\n");
+                                futureRestoreProcess.destroy();
+                                logTextArea.append("FutureRestore process killed.\n");
+                                reader.close();
+                                writer.close();
+
+                                uploadLogsIfNecessary();
+
+                                SwingUtilities.invokeLater(() -> {
+                                    currentTaskTextField.setText("FDR looped over 50 times");
+                                    startFutureRestoreButton.setEnabled(true);
+                                    stopFutureRestoreButton.setText("Stop FutureRestore");
+                                });
+                                return;
+                            }
+                        }
                     }
                 }
             }
@@ -203,15 +229,7 @@ public class FutureRestoreWorker {
         System.out.println("FutureRestore process ended.");
         logTextArea.append("FutureRestore process ended.\n");
 
-        if (MainMenu.properties.getProperty("upload_logs").equals("true")) {
-            //Make all args into a String
-            StringBuilder builder = new StringBuilder();
-            for (String value : allArgsArray) {
-                builder.append(value + " ");
-            }
-            String fullCommand = builder.toString();
-            uploadLog(logPath, logName, fullCommand);
-        }
+        uploadLogsIfNecessary();
 
         SwingUtilities.invokeLater(() -> {
             // Clear text field if there was no real information
@@ -221,6 +239,22 @@ public class FutureRestoreWorker {
             stopFutureRestoreButton.setText("Stop FutureRestore");
         });
 
+    }
+
+    public static void uploadLogsIfNecessary() throws IOException {
+        if (allArgsArray == null) {
+            allArgsArray = new String[]{"No FutureRestore args"};
+        }
+
+        if (MainMenu.properties.getProperty("upload_logs").equals("true")) {
+            //Make all args into a String
+            StringBuilder builder = new StringBuilder();
+            for (String value : allArgsArray) {
+                builder.append(value).append(" ");
+            }
+            String fullCommand = builder.toString();
+            uploadLog(logPath, logName, fullCommand);
+        }
     }
 
     /*

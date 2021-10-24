@@ -383,7 +383,7 @@
                 <properties>
                   <enabled value="false"/>
                   <selected value="false"/>
-                  <text value="64 Bit Checkm8"/>
+                  <text value="Don't Send iBSS"/>
                 </properties>
               </component>
               <component id="44cab" class="javax.swing.JLabel" binding="noIbssLabel">
@@ -397,7 +397,7 @@
                   <text value="(--no-ibss)"/>
                 </properties>
               </component>
-              <component id="9d335" class="javax.swing.JCheckBox" binding="justBootCheckBox">
+              <component id="9d335" class="javax.swing.JCheckBox" binding="setNonceCheckBox">
                 <constraints>
                   <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag top="10" left="0" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
@@ -405,10 +405,10 @@
                 <properties>
                   <enabled value="false"/>
                   <selected value="false"/>
-                  <text value="Boot from Pwned DFU"/>
+                  <text value="Set Nonce to Blob's"/>
                 </properties>
               </component>
-              <component id="32739" class="javax.swing.JLabel" binding="justBootLabel">
+              <component id="32739" class="javax.swing.JLabel" binding="setNonceLabel">
                 <constraints>
                   <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
@@ -416,7 +416,7 @@
                 <properties>
                   <enabled value="false"/>
                   <font name="Menlo" size="10"/>
-                  <text value="(--just-boot=&quot;-v&quot;)"/>
+                  <text value="(--set-nonce)"/>
                 </properties>
               </component>
               <component id="816a9" class="javax.swing.JLabel">

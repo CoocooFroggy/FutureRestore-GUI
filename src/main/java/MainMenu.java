@@ -58,9 +58,9 @@ public class MainMenu {
     private JButton nextButtonFiles;
     private JButton nextButtonOptions;
     private JCheckBox noIbssCheckBox;
-    private JCheckBox justBootCheckBox;
+    private JCheckBox setNonceCheckBox;
     private JLabel noIbssLabel;
-    private JLabel justBootLabel;
+    private JLabel setNonceLabel;
 
     private String futureRestoreFilePath;
     private String blobName;
@@ -78,7 +78,7 @@ public class MainMenu {
     private boolean optionWaitState = false;
     private boolean optionPwndfuState = false;
     private boolean optionNoIbssState = false;
-    private boolean optionJustBootState = false;
+    private boolean optionSetNonceState = false;
 
     public MainMenu() {
         $$$setupUI$$$();
@@ -184,24 +184,24 @@ public class MainMenu {
             optionWaitState = waitWCheckBox.isSelected();
             optionPwndfuState = pwndfuCheckBox.isSelected();
             optionNoIbssState = noIbssCheckBox.isSelected();
-            optionJustBootState = justBootCheckBox.isSelected();
+            optionSetNonceState = setNonceCheckBox.isSelected();
 
             if (optionPwndfuState) {
                 noIbssCheckBox.setEnabled(true);
                 noIbssLabel.setEnabled(true);
-                justBootCheckBox.setEnabled(true);
-                justBootLabel.setEnabled(true);
+                setNonceCheckBox.setEnabled(true);
+                setNonceLabel.setEnabled(true);
             } else {
                 noIbssCheckBox.setSelected(false);
                 noIbssCheckBox.setEnabled(false);
                 noIbssLabel.setEnabled(false);
-                justBootCheckBox.setSelected(false);
-                justBootCheckBox.setEnabled(false);
-                justBootLabel.setEnabled(false);
+                setNonceCheckBox.setSelected(false);
+                setNonceCheckBox.setEnabled(false);
+                setNonceLabel.setEnabled(false);
 
                 // Since we turn off the switches for pwndfu required items, also turn them off internally
                 optionNoIbssState = false;
-                optionJustBootState = false;
+                optionSetNonceState = false;
             }
         };
         debugDCheckBox.addActionListener(optionsListener);
@@ -210,7 +210,7 @@ public class MainMenu {
 
         pwndfuCheckBox.addActionListener(optionsListener);
         noIbssCheckBox.addActionListener(optionsListener);
-        justBootCheckBox.addActionListener(optionsListener);
+        setNonceCheckBox.addActionListener(optionsListener);
 
         startFutureRestoreButton.addActionListener(e -> {
             // If FutureRestore is already running, just disable ourselves
@@ -284,8 +284,8 @@ public class MainMenu {
                 allArgs.add("--use-pwndfu");
             if (optionNoIbssState)
                 allArgs.add("--no-ibss");
-            if (optionJustBootState) {
-                allArgs.add("--just-boot=\"-v\"");
+            if (optionSetNonceState) {
+                allArgs.add("--set-nonce");
             }
 
             switch (sepState) {
@@ -412,6 +412,12 @@ public class MainMenu {
                 if (response == JOptionPane.YES_OPTION) {
                     futureRestoreProcess.destroy();
                     messageToLog("FutureRestore process killed.");
+                    try {
+                        FutureRestoreWorker.uploadLogsIfNecessary();
+                    } catch (IOException ex) {
+                        messageToLog("Unable to upload logs :(");
+                        ex.printStackTrace();
+                    }
                     killed = true;
                 }
             } else {
@@ -461,12 +467,12 @@ public class MainMenu {
                 }
             } else if (osName.contains("linux")) {
                 try {
-                    JOptionPane.showMessageDialog(mainMenuView, "Linux OS detected. Ubuntu is the only OS with a working compiled FutureRestore build. Ensure you are running Ubuntu.", "Ubuntu Only", JOptionPane.INFORMATION_MESSAGE);
+//                    JOptionPane.showMessageDialog(mainMenuView, "Linux OS detected. Ubuntu is the only OS with a working compiled FutureRestore build. Ensure you are running Ubuntu.", "Ubuntu Only", JOptionPane.INFORMATION_MESSAGE);
                     Map<String, String> result;
                     if (properties.getProperty("futurerestore_beta").equals("false")) {
-                        result = getLatestFrDownload("ubuntu");
+                        result = getLatestFrDownload("linux");
                     } else {
-                        result = getLatestFrBetaDownload("ubuntu");
+                        result = getLatestFrBetaDownload("linux");
                     }
                     urlString = result.get("link");
                 } catch (IOException e) {
@@ -525,25 +531,25 @@ public class MainMenu {
                 isDarkThemeUsed = detector.isDark();
                 //Must set L&F before we create instance of MainMenu
                 if (isDarkThemeUsed) {
-                    FlatDarculaLaf.install();
+                    FlatDarculaLaf.setup();
                 } else {
 //                    //Only set if not Mac
 //                    if (!System.getProperty("os.name").toLowerCase().contains("mac"))
-                    FlatIntelliJLaf.install();
+                    FlatIntelliJLaf.setup();
                 }
                 break;
             }
             case "light": {
-                //Good practice
+                // Good practice
                 isDarkThemeUsed = false;
-//                //Only set if not Mac
-//                if (!System.getProperty("os.name").toLowerCase().contains("mac"))
-                FlatIntelliJLaf.install();
+                /*// Only set if not Mac
+                if (!System.getProperty("os.name").toLowerCase().contains("mac"))*/
+                FlatIntelliJLaf.setup();
                 break;
             }
             case "dark": {
                 isDarkThemeUsed = true;
-                FlatDarculaLaf.install();
+                FlatDarculaLaf.setup();
                 break;
             }
 
@@ -635,7 +641,7 @@ public class MainMenu {
         });
     }
 
-    /*UTILITIES*/
+    /* UTILITIES */
 
     static void turnDark(MainMenu mainMenuInstance) {
         JPanel mainMenuView = mainMenuInstance.mainMenuView;
@@ -760,16 +766,16 @@ public class MainMenu {
             String version = null;
             try {
                 Process process = runtime.exec(futureRestoreFilePath);
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                /*BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 Pattern pattern = Pattern.compile("Version: (.*)");
                 String s;
-                //Only check the first 5 lines
+                Only check the first 5 lines
                 for (int i = 0; i < 5; i++) {
                     s = bufferedReader.readLine();
                     Matcher matcher = pattern.matcher(s);
-                    if (matcher.find())
+                    if (matcher.find());
                         version = matcher.group(1);
-                }
+                }*/
             } catch (IOException ioException) {
                 System.out.println("Unable to check FutureRestore version.");
                 JOptionPane.showMessageDialog(mainMenuView, "Unable to run FutureRestore. Ensure you selected the correct FutureRestore executable.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -841,7 +847,7 @@ public class MainMenu {
     }
 
     Map<String, String> getLatestFrDownload(String operatingSystem) throws IOException {
-        // operatingSystem = "mac", "windows", "ubuntu"
+        // operatingSystem = "mac", "windows", "linux"
 
         Map<String, String> linkNameMap = new HashMap<>();
 
@@ -850,7 +856,16 @@ public class MainMenu {
         //Get asset for our operating system
         for (Map<String, Object> asset : assets) {
             String assetName = ((String) asset.get("name"));
-            if (assetName.toLowerCase().contains(operatingSystem)) {
+            // Linux can be linux or ubuntu in filename
+            if (operatingSystem.equals("linux")) {
+                if (assetName.toLowerCase().contains("linux") || assetName.toLowerCase().contains("ubuntu")) {
+                    linkNameMap.put("link", (String) asset.get("browser_download_url"));
+                    linkNameMap.put("name", assetName);
+                    return linkNameMap;
+                }
+            }
+            // All other operating systems
+            else if (assetName.toLowerCase().contains(operatingSystem)) {
                 linkNameMap.put("link", (String) asset.get("browser_download_url"));
                 linkNameMap.put("name", assetName);
                 return linkNameMap;
@@ -862,7 +877,7 @@ public class MainMenu {
     }
 
     Map<String, String> getLatestFrBetaDownload(String operatingSystem) throws IOException {
-        // operatingSystem = "mac", "windows", "ubuntu"
+        // operatingSystem = "mac", "windows", "linux"
 
         Map<String, String> linkNameMap = new HashMap<>();
 
@@ -875,7 +890,14 @@ public class MainMenu {
         //Get asset for our operating system
         for (Map<String, Object> artifact : artifacts) {
             String assetName = ((String) artifact.get("name"));
-            if (assetName.toLowerCase().contains(operatingSystem)) {
+            // Linux can be linux or ubuntu in filename
+            if (operatingSystem.equals("linux")) {
+                if (assetName.toLowerCase().contains("linux") || assetName.toLowerCase().contains("ubuntu")) {
+                    linkNameMap.put("link", (String) artifact.get("archive_download_url"));
+                    linkNameMap.put("name", assetName);
+                    return linkNameMap;
+                }
+            } else if (assetName.toLowerCase().contains(operatingSystem)) {
                 linkNameMap.put("link", (String) artifact.get("archive_download_url"));
                 linkNameMap.put("name", assetName);
                 return linkNameMap;
@@ -961,7 +983,7 @@ public class MainMenu {
             // Clean the area first
             File destinationDir = new File(finalFrPath + "extracted/");
             if (destinationDir.exists()) {
-                if (destinationDir.listFiles().length > 0) {
+                if (destinationDir.listFiles() != null && Objects.requireNonNull(destinationDir.listFiles()).length > 0) {
                     System.out.println("More than 0 files in dir. Cleaning");
                     try {
                         FileUtils.cleanDirectory(destinationDir);
@@ -1170,14 +1192,14 @@ public class MainMenu {
         if (properties.getProperty("preview_command").equals("true")) {
             StringBuilder commandStringBuilder = new StringBuilder();
             // Surround FutureRestore's path in quotes
-            commandStringBuilder.append("\"" + futureRestoreFilePath + "\" ");
+            commandStringBuilder.append("\"").append(futureRestoreFilePath).append("\" ");
             for (String arg : allArgs) {
                 if (!arg.startsWith("-")) {
                     // If it's an argument that doesn't start with -, (so a file), surround it in quotes.
-                    commandStringBuilder.append("\"" + arg + "\" ");
+                    commandStringBuilder.append("\"").append(arg).append("\" ");
                     continue;
                 }
-                commandStringBuilder.append(arg + " ");
+                commandStringBuilder.append(arg).append(" ");
             }
 
             //Build the preview area
@@ -1726,7 +1748,7 @@ public class MainMenu {
         noIbssCheckBox = new JCheckBox();
         noIbssCheckBox.setEnabled(false);
         noIbssCheckBox.setSelected(false);
-        noIbssCheckBox.setText("64 Bit Checkm8");
+        noIbssCheckBox.setText("Don't Send iBSS");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 2;
@@ -1745,28 +1767,28 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(0, 25, 10, 0);
         panel2.add(noIbssLabel, gbc);
-        justBootCheckBox = new JCheckBox();
-        justBootCheckBox.setEnabled(false);
-        justBootCheckBox.setSelected(false);
-        justBootCheckBox.setText("Boot from Pwned DFU");
+        setNonceCheckBox = new JCheckBox();
+        setNonceCheckBox.setEnabled(false);
+        setNonceCheckBox.setSelected(false);
+        setNonceCheckBox.setText("Set Nonce to Blob's");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 2;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 0, 0);
-        panel2.add(justBootCheckBox, gbc);
-        justBootLabel = new JLabel();
-        justBootLabel.setEnabled(false);
-        Font justBootLabelFont = this.$$$getFont$$$("Menlo", -1, 10, justBootLabel.getFont());
-        if (justBootLabelFont != null) justBootLabel.setFont(justBootLabelFont);
-        justBootLabel.setText("(--just-boot=\"-v\")");
+        panel2.add(setNonceCheckBox, gbc);
+        setNonceLabel = new JLabel();
+        setNonceLabel.setEnabled(false);
+        Font setNonceLabelFont = this.$$$getFont$$$("Menlo", -1, 10, setNonceLabel.getFont());
+        if (setNonceLabelFont != null) setNonceLabel.setFont(setNonceLabelFont);
+        setNonceLabel.setText("(--set-nonce)");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(0, 25, 10, 0);
-        panel2.add(justBootLabel, gbc);
+        panel2.add(setNonceLabel, gbc);
         final JLabel label12 = new JLabel();
         Font label12Font = this.$$$getFont$$$(null, -1, -1, label12.getFont());
         if (label12Font != null) label12.setFont(label12Font);
