@@ -71,9 +71,13 @@ public class FRUtils {
             frguiDownloadIdentifier = "Windows";
         } else if (osName.contains("linux")) {
             // Debs only work on debian
-            int exitCode = Runtime.getRuntime().exec("dpkg --version").waitFor();
-            if (exitCode == 0)
+            try {
+                Runtime.getRuntime().exec("dpkg --version").waitFor();
                 frguiDownloadIdentifier = "Debian";
+            } catch (IOException ignored) {
+                // Not debian
+            }
+
         }
 
         if (frguiDownloadIdentifier == null) {
