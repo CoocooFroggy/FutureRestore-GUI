@@ -62,51 +62,51 @@ public class FutureRestoreWorker {
         // Count the number of FDR timeouts
         int fdrTimeouts = 0;
 
-        String line;
-        while ((line = reader.readLine()) != null) {
-            //Parse messages
-            Pattern progressBarPattern = Pattern.compile("\u001B\\[A\u001B\\[J([0-9]{3})");
-            HashMap<String, String> parseableMessages = new HashMap<>() {{
-                //Normal status messages during restore
-                put("[DOWN] downloading file", "Downloading firmwares.json...");
-                put("downloading SEP", "Downloading SEP...");
-                put("downloading SE firmware", "Downloading SE firmware...");
-                put("downloading Baseband", "Downloading Baseband...");
-                put("downloading Rose firmware", "Downloading Rose firmware...");
-                put("Checking BuildIdentity", "Checking BuildIdentity...");
-                put("downloading Savage", "Downloading Savage...");
-                put("downloading Veridian DigestMap", "Downloading Veridian DigestMap...");
-                put("downloading Veridian FirmwareMap", "Downloading Veridian FirmwareMap...");
-                put("Entering recovery mode", "Entering recovery mode...");
-                put("Extracting BuildManifest from iPSW", "Extracting BuildManifest from iPSW...");
-                put("[IMG4TOOL] checking hash for", "Checking hashes...");
-                put("Extracting filesystem from iPSW", "Extracting filesystem from iPSW...");
-                put("Sending iBEC", "Sending iBEC...");
-                put("Sending NORData", "Sending NORData...");
-                put("Unmounting filesystems", "Unmounting filesystems...");
-                put("Sending FDR Trust data now", "Sending FDR trust data...");
-                put("Sending filesystem now", "Sending filesystem...");
-                put("Verifying restore", "Verifying restore...");
-                put("Checking filesystems", "Checking filesystems...");
-                put("Mounting filesystems", "Mounting filesystems...");
-                put("Flashing firmware", "Flashing firmware...");
-                put("Requesting FUD data", "Requesting FUD data...");
-                put("Updating baseband", "Updating Baseband...");
-                put("Sending SystemImageRootHash now", "Sending SystemImageRootHash...");
-                put("Waiting for device to disconnect", "Waiting for device to disconnect...");
-                put("Connecting to FDR", "Connecting to FDR client...");
-                put("About to send NOR", "About to send NOR data...");
-                put("Connecting to ASR", "Connecting to ASR...");
+        final Pattern progressBarPattern = Pattern.compile("\u001B\\[A\u001B\\[J([0-9]{3})");
+        final HashMap<String, String> parseableMessages = new HashMap<>() {{
+            //Normal status messages during restore
+            put("[DOWN] downloading file", "Downloading firmwares.json...");
+            put("downloading SEP", "Downloading SEP...");
+            put("downloading SE firmware", "Downloading SE firmware...");
+            put("downloading Baseband", "Downloading Baseband...");
+            put("downloading Rose firmware", "Downloading Rose firmware...");
+            put("Checking BuildIdentity", "Checking BuildIdentity...");
+            put("downloading Savage", "Downloading Savage...");
+            put("downloading Veridian DigestMap", "Downloading Veridian DigestMap...");
+            put("downloading Veridian FirmwareMap", "Downloading Veridian FirmwareMap...");
+            put("Entering recovery mode", "Entering recovery mode...");
+            put("Extracting BuildManifest from iPSW", "Extracting BuildManifest from iPSW...");
+            put("[IMG4TOOL] checking hash for", "Checking hashes...");
+            put("Extracting filesystem from iPSW", "Extracting filesystem from iPSW...");
+            put("Sending iBEC", "Sending iBEC...");
+            put("Sending NORData", "Sending NORData...");
+            put("Unmounting filesystems", "Unmounting filesystems...");
+            put("Sending FDR Trust data now", "Sending FDR trust data...");
+            put("Sending filesystem now", "Sending filesystem...");
+            put("Verifying restore", "Verifying restore...");
+            put("Checking filesystems", "Checking filesystems...");
+            put("Mounting filesystems", "Mounting filesystems...");
+            put("Flashing firmware", "Flashing firmware...");
+            put("Requesting FUD data", "Requesting FUD data...");
+            put("Updating baseband", "Updating Baseband...");
+            put("Sending SystemImageRootHash now", "Sending SystemImageRootHash...");
+            put("Waiting for device to disconnect", "Waiting for device to disconnect...");
+            put("Connecting to FDR", "Connecting to FDR client...");
+            put("About to send NOR", "About to send NOR data...");
+            put("Connecting to ASR", "Connecting to ASR...");
 //                put("waiting for message", "Waiting for message from FDR...");
 
-                //Special messages
-                put("Status: Restore Finished", "Restore Finished!");
-                put("what=", null);
-                put("code=", null);
-                put("unknown option -- use-pwndfu", null);
-                put("timeout waiting for command", null);
-            }};
+            //Special messages
+            put("Status: Restore Finished", "Restore Finished!");
+            put("what=", null);
+            put("code=", null);
+            put("unknown option -- use-pwndfu", null);
+            put("timeout waiting for command", null);
+        }};
 
+        String line;
+        while ((line = reader.readLine()) != null) {
+            // Parse messages
             for (Map.Entry<String, String> entrySet : parseableMessages.entrySet()) {
                 String futureRestorePossibleMatch = entrySet.getKey();
                 String fancyLog = entrySet.getValue();
@@ -170,7 +170,6 @@ public class FutureRestoreWorker {
                                         if (!openWebpageResult)
                                             appendToLog(logTextArea, writer, "Unable to open URL in your web browser. URL copied to clipboard, please open it manually.");
                                     }
-
                                     break;
                                 }
                             }
@@ -205,10 +204,11 @@ public class FutureRestoreWorker {
                             }
                         }
                     }
+                    break;
                 }
             }
 
-            //If it is a progress bar
+            // If it is a progress bar
             if (line.contains("[A")) {
                 Matcher progressBarMatcher = progressBarPattern.matcher(line);
                 if (progressBarMatcher.find()) {
@@ -216,7 +216,8 @@ public class FutureRestoreWorker {
                     logProgressBar.setValue(Integer.parseInt(progressBarMatcher.group(1)));
                 }
             } else {
-                logProgressBar.setValue(0);
+                if (logProgressBar.getValue() != 0)
+                    logProgressBar.setValue(0);
                 appendToLog(logTextArea, writer, line);
             }
         }

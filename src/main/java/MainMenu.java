@@ -93,6 +93,8 @@ public class MainMenu {
                 if (file != null) {
                     messageToLog("Set " + file.getAbsolutePath() + " to FutureRestore executable.");
                     futureRestoreFilePath = file.getAbsolutePath();
+                    properties.setProperty("previous_futurerestore", futureRestoreFilePath);
+                    savePreferences();
                     //Set name of button to blob file name
                     selectFutureRestoreBinaryExecutableButton.setText("✓ " + file.getName());
                 } else
@@ -100,6 +102,111 @@ public class MainMenu {
                 FRUtils.setEnabled(mainMenuView, true, true);
                 mainMenuFrame.requestFocus();
             });
+        });
+        downloadFutureRestoreButton.addActionListener(event -> {
+            String osName = System.getProperty("os.name").toLowerCase();
+            String urlString = null;
+
+            if (osName.contains("mac")) {
+                try {
+                    Map<String, String> result;
+                    if (properties.getProperty("futurerestore_beta").equals("false")) {
+                        result = getLatestFrDownload("mac");
+                    } else {
+                        result = getLatestFrBetaDownload("mac");
+                    }
+                    urlString = result.get("link");
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                    return;
+                }
+            } else if (osName.contains("win")) {
+                try {
+                    Map<String, String> result;
+                    if (properties.getProperty("futurerestore_beta").equals("false")) {
+                        result = getLatestFrDownload("win");
+                    } else {
+                        result = getLatestFrBetaDownload("win");
+                    }
+                    urlString = result.get("link");
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                    return;
+                }
+            } else if (osName.contains("linux")) {
+                try {
+//                    JOptionPane.showMessageDialog(mainMenuView, "Linux OS detected. Ubuntu is the only OS with a working compiled FutureRestore build. Ensure you are running Ubuntu.", "Ubuntu Only", JOptionPane.INFORMATION_MESSAGE);
+                    Map<String, String> result;
+                    if (properties.getProperty("futurerestore_beta").equals("false")) {
+                        result = getLatestFrDownload("linux");
+                    } else {
+                        result = getLatestFrBetaDownload("linux");
+                    }
+                    urlString = result.get("link");
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                    return;
+                }
+            } else {
+                Object[] choices = {"Open link", "Ok"};
+                Object defaultChoice = choices[0];
+
+                int response = JOptionPane.showOptionDialog(mainMenuView, "Unknown operating system detected. Please download FutureRestore manually for your operating system.\n" +
+                        "https://github.com/m1stadev/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
+                if (response == JOptionPane.YES_OPTION) {
+                    FRUtils.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/", this);
+                }
+            }
+
+            // Pop-up for this error already shown in getLatestFrDownload()
+            if (urlString == null)
+                return;
+
+            SwingUtilities.invokeLater(() -> {
+                currentTaskTextField.setText("Downloading FutureRestore...");
+                messageToLog("Downloading FutureRestore...");
+            });
+
+            // Download asynchronously
+            final String finalUrlString = urlString;
+            new Thread(() -> {
+                File downloadedFr = downloadFutureRestore(finalUrlString);
+                if (downloadedFr == null)
+                    return; // We already show an error message in downloadFutureRestore()
+
+                // Now unzip the file
+                String homeDirectory = System.getProperty("user.home");
+                String finalFrPath = homeDirectory + "/FutureRestoreGUI/";
+                File futureRestoreExecutable = null;
+                try {
+                    futureRestoreExecutable = extractFutureRestore(downloadedFr, finalFrPath, osName);
+                } catch (IOException exception) {
+                    System.out.println("Unable to decompress " + downloadedFr);
+                    messageToLog("Unable to decompress " + downloadedFr);
+                    exception.printStackTrace();
+                }
+                // If it fail, set the current task to nothing
+                if (futureRestoreExecutable == null) {
+                    SwingUtilities.invokeLater(() -> {
+                        currentTaskTextField.setText("");
+                    });
+                } else {
+                    final File finalFutureRestoreExecutable = futureRestoreExecutable;
+                    SwingUtilities.invokeLater(() -> {
+                        currentTaskTextField.setText("");
+                        messageToLog("Decompressed FutureRestore");
+                        futureRestoreFilePath = finalFutureRestoreExecutable.getAbsolutePath();
+                        properties.setProperty("previous_futurerestore", futureRestoreFilePath);
+                        savePreferences();
+                        messageToLog("Set " + finalFutureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
+                        //Set name of button to blob file name
+                        selectFutureRestoreBinaryExecutableButton.setText("✓ " + finalFutureRestoreExecutable.getName());
+                    });
+                }
+            }).start();
         });
 
         selectBlobFileButton.addActionListener(e -> {
@@ -433,77 +540,6 @@ public class MainMenu {
             }
         });
 
-        downloadFutureRestoreButton.addActionListener(event -> {
-            String osName = System.getProperty("os.name").toLowerCase();
-            String urlString = null;
-
-            if (osName.contains("mac")) {
-                try {
-                    Map<String, String> result;
-                    if (properties.getProperty("futurerestore_beta").equals("false")) {
-                        result = getLatestFrDownload("mac");
-                    } else {
-                        result = getLatestFrBetaDownload("mac");
-                    }
-                    urlString = result.get("link");
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    return;
-                }
-            } else if (osName.contains("win")) {
-                try {
-                    Map<String, String> result;
-                    if (properties.getProperty("futurerestore_beta").equals("false")) {
-                        result = getLatestFrDownload("win");
-                    } else {
-                        result = getLatestFrBetaDownload("win");
-                    }
-                    urlString = result.get("link");
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    return;
-                }
-            } else if (osName.contains("linux")) {
-                try {
-//                    JOptionPane.showMessageDialog(mainMenuView, "Linux OS detected. Ubuntu is the only OS with a working compiled FutureRestore build. Ensure you are running Ubuntu.", "Ubuntu Only", JOptionPane.INFORMATION_MESSAGE);
-                    Map<String, String> result;
-                    if (properties.getProperty("futurerestore_beta").equals("false")) {
-                        result = getLatestFrDownload("linux");
-                    } else {
-                        result = getLatestFrBetaDownload("linux");
-                    }
-                    urlString = result.get("link");
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(mainMenuView, "Unable to download FutureRestore.", "Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    return;
-                }
-            } else {
-                Object[] choices = {"Open link", "Ok"};
-                Object defaultChoice = choices[0];
-
-                int response = JOptionPane.showOptionDialog(mainMenuView, "Unknown operating system detected. Please download FutureRestore manually for your operating system.\n" +
-                        "https://github.com/m1stadev/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
-                if (response == JOptionPane.YES_OPTION) {
-                    FRUtils.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/", this);
-                }
-            }
-
-            // Pop-up for this error already shown in getLatestFrDownload()
-            if (urlString == null)
-                return;
-
-            SwingUtilities.invokeLater(() -> {
-                currentTaskTextField.setText("Downloading FutureRestore...");
-                messageToLog("Downloading FutureRestore...");
-            });
-
-            // Actually download the file
-            downloadFutureRestore(urlString, osName);
-        });
-
         settingsButton.addActionListener(e -> {
             settingsMenuFrame.setVisible(true);
         });
@@ -619,11 +655,20 @@ public class MainMenu {
                 alertIfNewerFRGUIAvailable(mainMenuInstance, futureRestoreGUIVersion);
             }
 
-            //If they previously downloaded FR, set it
-            String homeDirectory = System.getProperty("user.home");
+            // If they previously downloaded FR, set it
+            String previousFRPath = properties.getProperty("previous_futurerestore");
+            if (previousFRPath != null) {
+                mainMenuInstance.futureRestoreFilePath = previousFRPath;
+                mainMenuInstance.messageToLog("Set previous FutureRestore download, " + previousFRPath + ", to FutureRestore executable.");
+                // Set name of button to FR file name
+                mainMenuInstance.selectFutureRestoreBinaryExecutableButton.setText("✓ " + new File(previousFRPath).getName());
+            }
+
+            /*String homeDirectory = System.getProperty("user.home");
             String frPath = homeDirectory + "/FutureRestoreGUI/";
             File extracted = new File(frPath + "extracted/");
-            //If ~/FRGUI/extracted/ exists
+
+            // If ~/FRGUI/extracted/ exists
             if (extracted.exists()) {
                 //If a file exists in there, set it
                 File[] filesInExtracted = extracted.listFiles();
@@ -632,11 +677,11 @@ public class MainMenu {
                     if (frExecutable.exists()) {
                         mainMenuInstance.futureRestoreFilePath = frExecutable.getAbsolutePath();
                         mainMenuInstance.messageToLog("Set previous FutureRestore download, " + frExecutable.getAbsolutePath() + ", to FutureRestore executable.");
-                        //Set name of button to blob file name
+                        // Set name of button to FR file name
                         mainMenuInstance.selectFutureRestoreBinaryExecutableButton.setText("✓ " + frExecutable.getName());
                     }
                 }
-            }
+            }*/
 
         });
     }
@@ -956,11 +1001,9 @@ public class MainMenu {
         return newestRelease;
     }
 
-    void downloadFutureRestore(String urlString, String operatingSystem) {
-        //Download asynchronously
-        new Thread(() -> {
-            String homeDirectory = System.getProperty("user.home");
-            File frGuiDir = new File(homeDirectory + "/FutureRestoreGUI/");
+    File downloadFutureRestore(String urlString) {
+        String homeDirectory = System.getProperty("user.home");
+        File frGuiDir = new File(homeDirectory + "/FutureRestoreGUI/");
 
             /*
             //Wipe the directory
@@ -973,73 +1016,58 @@ public class MainMenu {
             }
             */
 
-            //Make directory to store files
-            if (!frGuiDir.exists()) {
-                frGuiDir.mkdir();
-            }
+        //Make directory to store files
+        if (!frGuiDir.exists()) {
+            frGuiDir.mkdir();
+        }
 
-            String finalFrPath = homeDirectory + "/FutureRestoreGUI/";
+        String finalFrPath = homeDirectory + "/FutureRestoreGUI/";
 
-            // Clean the area first
-            File destinationDir = new File(finalFrPath + "extracted/");
-            if (destinationDir.exists()) {
-                if (destinationDir.listFiles() != null && Objects.requireNonNull(destinationDir.listFiles()).length > 0) {
-                    System.out.println("More than 0 files in dir. Cleaning");
-                    try {
-                        FileUtils.cleanDirectory(destinationDir);
-                    } catch (IOException e) {
-                        System.out.println("Unable to delete all existing files in extracted directory. Aborting.");
-                        messageToLog("Unable to delete all existing files in extracted directory. Aborting.");
-                        e.printStackTrace();
-                        currentTaskTextField.setText("");
-                        return;
-                    }
+        // Clean the area first
+        File destinationDir = new File(finalFrPath + "extracted/");
+        if (destinationDir.exists()) {
+            if (destinationDir.listFiles() != null && Objects.requireNonNull(destinationDir.listFiles()).length > 0) {
+                System.out.println("More than 0 files in dir. Cleaning");
+                try {
+                    FileUtils.cleanDirectory(destinationDir);
+                } catch (IOException e) {
+                    System.out.println("Unable to delete all existing files in extracted directory. Aborting.");
+                    messageToLog("Unable to delete all existing files in extracted directory. Aborting.");
+                    e.printStackTrace();
+                    currentTaskTextField.setText("");
+                    return null;
                 }
             }
+        }
 
-            File downloadedFr;
-            try {
-                downloadedFr = FRUtils.downloadFile(urlString, finalFrPath, this);
-                if (downloadedFr == null) {
-                    System.err.println("Unable to download FutureRestore. Aborting.");
-                    messageToLog("Unable to download FutureRestore. Aborting.");
-                    SwingUtilities.invokeLater(() -> {
-                        currentTaskTextField.setText("");
-                        logProgressBar.setValue(0);
-                    });
-                    return;
-                }
-
+        File downloadedFr;
+        try {
+            downloadedFr = FRUtils.downloadFile(urlString, finalFrPath, this);
+            if (downloadedFr == null) {
+                System.err.println("Unable to download FutureRestore. Aborting.");
+                messageToLog("Unable to download FutureRestore. Aborting.");
                 SwingUtilities.invokeLater(() -> {
                     currentTaskTextField.setText("");
                     logProgressBar.setValue(0);
-                    messageToLog("FutureRestore finished downloading.");
                 });
-            } catch (IOException e) {
-                System.err.println("Unable to download FutureRestore.");
-                messageToLog("Unable to download FutureRestore.");
-                e.printStackTrace();
-                return;
+                return null;
             }
-            //Now unzip the file
-            boolean result = false;
-            try {
-                result = extractFutureRestore(downloadedFr, finalFrPath, operatingSystem);
-            } catch (IOException exception) {
-                System.out.println("Unable to decompress " + downloadedFr);
-                messageToLog("Unable to decompress " + downloadedFr);
-                exception.printStackTrace();
-            }
-            // If fail, set the current task to nothing
-            if (!result) {
-                SwingUtilities.invokeLater(() -> {
-                    currentTaskTextField.setText("");
-                });
-            }
-        }).start();
+
+            SwingUtilities.invokeLater(() -> {
+                currentTaskTextField.setText("");
+                logProgressBar.setValue(0);
+                messageToLog("FutureRestore finished downloading.");
+            });
+        } catch (IOException e) {
+            System.err.println("Unable to download FutureRestore.");
+            messageToLog("Unable to download FutureRestore.");
+            e.printStackTrace();
+            return null;
+        }
+        return downloadedFr;
     }
 
-    boolean extractFutureRestore(File fileToExtract, String finalFrPath, String operatingSystem) throws IOException {
+    File extractFutureRestore(File fileToExtract, String finalFrPath, String operatingSystem) throws IOException {
         SwingUtilities.invokeLater(() -> {
             currentTaskTextField.setText("Decompressing FutureRestore...");
             messageToLog("Decompressing FutureRestore...");
@@ -1067,26 +1095,26 @@ public class MainMenu {
             default: {
                 System.out.println("Cannot decompress, unknown file format :(");
                 messageToLog("Cannot decompress, unknown file format :(");
-                return false;
+                return null;
             }
         }
 
         deleteFile(fileToExtract);
 
-        // Actions artifacts are in a .zip then in a .tar.xz. Extract again if we need to
+        // Actions artifacts (beta FR) are in a .zip then in a .tar.xz. Extract again if we need to
         File unzippedFile = destinationDir.listFiles()[0];
         String unzippedExtension = FilenameUtils.getExtension(unzippedFile.getName());
         if (unzippedExtension.equals("xz") || unzippedExtension.equals("zip")) {
             // Move the archive from /FRGUI/extracted to /FRGUI
             FileUtils.moveFileToDirectory(unzippedFile, new File(finalFrPath), false);
             // Declare this file
-            File xzFile = new File(finalFrPath + unzippedFile.getName());
-            // Extract it and select it (run this method with it)
-            boolean result = extractFutureRestore(xzFile, finalFrPath, operatingSystem);
-            // Delete the archive at /FRGUI
-            deleteFile(xzFile);
-            // Return
-            return result;
+            File nestedArchive = new File(finalFrPath + unzippedFile.getName());
+            // Extract the new one (run this method with it)
+            File extracted = extractFutureRestore(nestedArchive, finalFrPath, operatingSystem);
+            // Delete the old archive at /FRGUI
+            deleteFile(nestedArchive);
+            // Return the extracted file
+            return extracted;
         }
 
         File futureRestoreExecutable = destinationDir.listFiles()[0];
@@ -1094,7 +1122,7 @@ public class MainMenu {
         if (futureRestoreExecutable == null) {
             System.out.println("Unable to decompress " + fileToExtract);
             messageToLog("Unable to decompress " + fileToExtract);
-            return false;
+            return null;
         }
 
         //Only run on MacOS and Linux
@@ -1111,15 +1139,7 @@ public class MainMenu {
             }
         }
 
-        SwingUtilities.invokeLater(() -> {
-            currentTaskTextField.setText("");
-            messageToLog("Decompressed FutureRestore");
-            futureRestoreFilePath = futureRestoreExecutable.getAbsolutePath();
-            messageToLog("Set " + futureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
-            //Set name of button to blob file name
-            selectFutureRestoreBinaryExecutableButton.setText("✓ " + futureRestoreExecutable.getName());
-        });
-        return true;
+        return futureRestoreExecutable;
 
     }
 
@@ -1282,7 +1302,7 @@ public class MainMenu {
                             + Processor.process(mdReleaseBody).replaceAll("\\n", "") +
                             "</div>" +
                             "</html>";
-                    System.out.println(htmlReleaseBody);
+//                    System.out.println(htmlReleaseBody);
 
                     // Build the text area
                     JTextPane whatsNewTextPane = new JTextPane();
