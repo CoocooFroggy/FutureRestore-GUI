@@ -102,3 +102,6 @@ Build a .jar with `gradle shadowjar`. Requires Java 11 or later. Class `Main`, m
 Package to a Windows .msi, Mac .app, or Linux .deb, .rpm, app-image with JPackage from Java 14 or later (continuous integration releases use Java 15).
 
 Pull requests are welcome. For feature requests, please open an issue to discuss what improvements you would like to see.
+
+donation :
+BTC : bc1qps3m76zz52d020vqe89mm7y27ndc9jmsdncp2r
