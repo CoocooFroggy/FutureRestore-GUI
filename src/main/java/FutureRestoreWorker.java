@@ -291,10 +291,10 @@ public class FutureRestoreWorker {
         String rootJsonString = gson.toJson(rootJson);
 
         HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://futurerestorelogserver.eastus.cloudapp.azure.com:6969/upload");
+        HttpPost httpPost = new HttpPost("http://coocoofroggy.eastus.cloudapp.azure.com:6969/frlogs/upload");
         StringEntity requestEntity = new StringEntity(rootJsonString, ContentType.APPLICATION_JSON);
         httpPost.setEntity(requestEntity);
-        httpPost.addHeader("authorization", "CoocooFroggy rocks");
+        httpPost.addHeader("Authorization", "CoocooFroggy rocks");
 
         HttpResponse response = httpClient.execute(httpPost);
         HttpEntity entity = response.getEntity();
