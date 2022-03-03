@@ -915,15 +915,22 @@ public class MainMenu {
         Map<String, Object> result = gson.fromJson(content, Map.class);
         ArrayList<Map<String, Object>> artifacts = (ArrayList<Map<String, Object>>) result.get("artifacts");
 
-        // Get asset for our operating system
+        // Loop through assets
         for (Map<String, Object> artifact : artifacts) {
             String assetName = ((String) artifact.get("name"));
-            // Look for our OS, architecture, and debug binary
+            // Look for our OS and release binary
             if (assetName.toLowerCase().contains(operatingSystem)
-                    && assetName.toLowerCase().contains(architecture)
                     && assetName.toLowerCase().contains("release")) {
-                linkNameMap.put("link", (String) artifact.get("archive_download_url"));
-                linkNameMap.put("name", assetName);
+                // If we're mac, match architecture as well
+                if (assetName.toLowerCase().contains("mac")) {
+                    if (assetName.toLowerCase().contains(architecture)) {
+                        linkNameMap.put("link", (String) artifact.get("archive_download_url"));
+                        linkNameMap.put("name", assetName);
+                    }
+                } else {
+                    linkNameMap.put("link", (String) artifact.get("archive_download_url"));
+                    linkNameMap.put("name", assetName);
+                }
                 return linkNameMap;
             }
         }
