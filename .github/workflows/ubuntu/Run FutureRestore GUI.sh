@@ -1,3 +1,4 @@
 #!/bin/bash
 
-FutureRestore\ GUI/bin/FutureRestore\ GUI
+currentdir="${0%/*}"
+"$currentdir/FutureRestore GUI/bin/FutureRestore GUI"
