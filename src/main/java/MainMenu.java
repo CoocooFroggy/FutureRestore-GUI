@@ -921,7 +921,7 @@ public class MainMenu {
             // Look for our OS, architecture, and debug binary
             if (assetName.toLowerCase().contains(operatingSystem)
                     && assetName.toLowerCase().contains(architecture)
-                    && assetName.toLowerCase().contains("debug")) {
+                    && assetName.toLowerCase().contains("release")) {
                 linkNameMap.put("link", (String) artifact.get("archive_download_url"));
                 linkNameMap.put("name", assetName);
                 return linkNameMap;
