@@ -32,36 +32,12 @@ public class SmartScroller implements AdjustmentListener
     public final static int START = 0;
     public final static int END = 1;
 
-    private int viewportPosition;
+    private final int viewportPosition;
 
-    private JScrollBar scrollBar;
     private boolean adjustScrollBar = true;
 
     private int previousValue = -1;
     private int previousMaximum = -1;
-
-    /**
-     *  Convenience constructor.
-     *  Scroll direction is VERTICAL and viewport position is at the END.
-     *
-     *  @param scrollPane the scroll pane to monitor
-     */
-    public SmartScroller(JScrollPane scrollPane)
-    {
-        this(scrollPane, VERTICAL, END);
-    }
-
-    /**
-     *  Convenience constructor.
-     *  Scroll direction is VERTICAL.
-     *
-     *  @param scrollPane the scroll pane to monitor
-     *  @param viewportPosition valid values are START and END
-     */
-    public SmartScroller(JScrollPane scrollPane, int viewportPosition)
-    {
-        this(scrollPane, VERTICAL, viewportPosition);
-    }
 
     /**
      *  Specify how the SmartScroller will function.
@@ -85,6 +61,7 @@ public class SmartScroller implements AdjustmentListener
 
         this.viewportPosition = viewportPosition;
 
+        JScrollBar scrollBar;
         if (scrollDirection == HORIZONTAL)
             scrollBar = scrollPane.getHorizontalScrollBar();
         else
@@ -107,13 +84,7 @@ public class SmartScroller implements AdjustmentListener
     @Override
     public void adjustmentValueChanged(final AdjustmentEvent e)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                checkScrollBar(e);
-            }
-        });
+        SwingUtilities.invokeLater(() -> checkScrollBar(e));
     }
 
     /*

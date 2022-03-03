@@ -115,7 +115,7 @@ public class FRUtils {
         JProgressBar logProgressBar = mainMenuInstance.getLogProgressBar();
         JTextField currentTaskTextField = mainMenuInstance.getCurrentTaskTextField();
 
-        //Download synchronously
+        // Download synchronously
         String frguiDownloadName = null;
         String frguiDownloadUrl = null;
         try {
@@ -151,19 +151,17 @@ public class FRUtils {
         String homeDirectory = System.getProperty("user.home");
         File frGuiDir = new File(homeDirectory + "/FutureRestoreGUI/");
 
-        //Make directory to store files if not exists
+        // Make directory to store files if not exists
         if (!frGuiDir.exists()) {
             frGuiDir.mkdir();
         }
 
-        String finalFrPath = homeDirectory + "/FutureRestoreGUI/";
+        String frguiDirPath = homeDirectory + "/FutureRestoreGUI/";
         File downloadedFrgui;
         try {
             System.out.println("Downloading...");
-            SwingUtilities.invokeLater(() -> {
-                currentTaskTextField.setText("Downloading FutureRestore GUI...");
-            });
-            downloadedFrgui = downloadFile(frguiDownloadUrl, finalFrPath, mainMenuInstance);
+            SwingUtilities.invokeLater(() -> currentTaskTextField.setText("Downloading FutureRestore GUI..."));
+            downloadedFrgui = downloadFileWithProgress(frguiDownloadUrl, frguiDirPath, mainMenuInstance.getLogProgressBar());
             SwingUtilities.invokeLater(() -> {
                 currentTaskTextField.setText("");
                 logProgressBar.setValue(0);
@@ -305,9 +303,7 @@ public class FRUtils {
             return;
         }
 
-        SwingUtilities.invokeLater(() -> {
-            component.setEnabled(toSet);
-        });
+        SwingUtilities.invokeLater(() -> component.setEnabled(toSet));
 
         if (component instanceof Container) {
             for (Component child : ((Container) component).getComponents()) {
@@ -325,57 +321,28 @@ public class FRUtils {
         }
     }
 
-//    public static void setMainMenuEnabled(JPanel mainMenuView, boolean toSet) {
-//        // If disabling, clear list before we start adding to list
-//        if (!toSet)
-//            disabledComponents.clear();
-//        for (Component component : mainMenuView.getComponents()) {
-//            // If disabling, add the previously disabled to this list
-//            if (!toSet) {
-//                if (!component.isEnabled())
-//                    disabledComponents.add(component);
-//            }
-//            // Else if enabling, if the component was in the list, don't enable it
-//            else if (disabledComponents.contains(component)) {
-//                continue;
-//            }
-//            SwingUtilities.invokeLater(() -> {
-//                component.setEnabled(toSet);
-//            });
-//        }
-//    }
-
-    public static File downloadFile(String urlString, String frguiHomeDir, MainMenu mainMenuInstance) throws IOException {
-        JProgressBar logProgressBar = mainMenuInstance.getLogProgressBar();
-
-
+    public static File downloadFileWithProgress(String urlString, String frguiHomeDir, JProgressBar logProgressBar) throws IOException {
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) (url.openConnection());
 
-        // For github actions downloads (for FR beta switch)
-        byte[] decoded = Base64.getDecoder().decode("Z2hwX1YySDBXOThEa3BZUWNaSkxsYUtrOTJocThYMGZCaTBsa1dTMg==");
-        String auth = "FutureRestore-GUI" + ":" + new String(decoded);
-        byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
-        String authHeaderValue = "Basic " + new String(encodedAuth);
-        con.setRequestProperty("Authorization", authHeaderValue);
+        // For github actions downloads (for FR beta switch), we need to be logged in
+        githubAuthorizeWithAccount(con);
 
         long completeFileSize = con.getContentLength();
 
         String responseCode = String.valueOf(con.getResponseCode());
-        if (!responseCode.startsWith("3") && !responseCode.startsWith("2")) {
-            return null;
-        }
+        // If response does not start with 3 or 2, return
+        if (!(responseCode.startsWith("3") || responseCode.startsWith("2"))) return null;
 
         String contentDisposition = con.getHeaderField("content-disposition");
         Pattern filenamePattern = Pattern.compile("(?<=filename=).*?(?=;|$)");
         Matcher filenameMatcher = filenamePattern.matcher(contentDisposition);
         // Get first result
         String filename = "futurerestore-download";
-        if (filenameMatcher.find()) {
+        if (filenameMatcher.find())
             filename = filenameMatcher.group(0);
-        }
 
-        File downloadLocation = new File(frguiHomeDir + filename);
+        File downloadLocation = new File(frguiHomeDir + "/" + filename);
 
         BufferedInputStream in = new BufferedInputStream(con.getInputStream());
         FileOutputStream fos = new FileOutputStream(downloadLocation);
@@ -387,10 +354,10 @@ public class FRUtils {
         while ((x = in.read(data, 0, 1024)) >= 0) {
             downloadedFileSize += x;
 
-            // calculate progress
+            // Calculate progress
             final int currentProgress = (int) ((((double) downloadedFileSize) / ((double) completeFileSize)) * 100000d);
 
-            // update progress bar
+            // Update progress bar
             SwingUtilities.invokeLater(() -> {
                 logProgressBar.setMaximum(100000);
                 logProgressBar.setValue(currentProgress);
@@ -402,5 +369,13 @@ public class FRUtils {
         in.close();
 
         return downloadLocation;
+    }
+
+    static void githubAuthorizeWithAccount(HttpURLConnection con) {
+        byte[] decoded = Base64.getDecoder().decode("Z2hwX1YySDBXOThEa3BZUWNaSkxsYUtrOTJocThYMGZCaTBsa1dTMg==");
+        String auth = "FutureRestore-GUI" + ":" + new String(decoded);
+        byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
+        String authHeaderValue = "Basic " + new String(encodedAuth);
+        con.setRequestProperty("Authorization", authHeaderValue);
     }
 }
