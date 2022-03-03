@@ -198,7 +198,7 @@ jobs:
         env:
           RUN_NUMBER: ${{ github.run_number }}
           VERSION: ${{ steps.output-version.outputs.version }}
-        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type msi --icon ./.github/workflows/windows/FRWindows.ico --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --win-shortcut --win-menu --module-path ./.github/workflows/windows/javafx-jmods-11.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version %VERSION%
+        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type msi --icon ./.github/workflows/windows/FRWindows.ico --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --win-shortcut --win-menu --win-console --module-path ./.github/workflows/windows/javafx-jmods-11.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version %VERSION%
         shell: cmd
 
       - name: Find MSI name
