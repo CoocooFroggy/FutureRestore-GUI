@@ -35,6 +35,8 @@ dependencies {
     implementation 'com.github.oshi:oshi-core:6.1.2'
     implementation group: 'commons-io', name: 'commons-io', version: '2.8.0'
     implementation 'com.github.rjeschke:txtmark:0.13'
+    // https://mvnrepository.com/artifact/com.intellij/forms_rt
+    implementation group: 'com.intellij', name: 'forms_rt', version: '7.0.3'
 }
 
 test {
