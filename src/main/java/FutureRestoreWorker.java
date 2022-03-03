@@ -24,7 +24,7 @@ public class FutureRestoreWorker {
     private static String logPath;
     private static boolean hasRecoveryRestarted = false;
 
-    public static void runFutureRestore(String futureRestoreFilePath, ArrayList<String> allArgs, JPanel mainMenuView, JTextArea logTextArea, JProgressBar logProgressBar, JTextField currentTaskTextField, JButton startFutureRestoreButton, JButton stopFutureRestoreButton) throws IOException, InterruptedException, TimeoutException {
+    public static void runFutureRestore(String futureRestoreFilePath, ArrayList<String> allArgs, JPanel mainMenuView, JTextArea logTextArea, JProgressBar logProgressBar, JTextField currentTaskTextField, JButton startFutureRestoreButton, JButton stopFutureRestoreButton) throws IOException {
         ArrayList<String> argsAndFR = (ArrayList<String>) allArgs.clone();
         argsAndFR.add(0, futureRestoreFilePath);
         allArgsArray = Arrays.copyOf(argsAndFR.toArray(), argsAndFR.toArray().length, String[].class);
@@ -47,7 +47,7 @@ public class FutureRestoreWorker {
         // Read Process Stream Output
         BufferedReader reader = new BufferedReader(new InputStreamReader(futureRestoreProcess.getInputStream()));
 
-        //Log automatically
+        // Log automatically
         File frGuiLogsDirectory = new File(homeDirectory + "/FutureRestoreGUI/logs");
         if (!frGuiLogsDirectory.exists())
             frGuiLogsDirectory.mkdir();
@@ -64,7 +64,7 @@ public class FutureRestoreWorker {
 
         final Pattern progressBarPattern = Pattern.compile("\u001B\\[A\u001B\\[J([0-9]{3})");
         final HashMap<String, String> parseableMessages = new HashMap<>() {{
-            //Normal status messages during restore
+            // Normal status messages during restore
             put("[DOWN] downloading file", "Downloading firmwares.json...");
             put("downloading SEP", "Downloading SEP...");
             put("downloading SE firmware", "Downloading SE firmware...");
@@ -96,7 +96,7 @@ public class FutureRestoreWorker {
             put("Connecting to ASR", "Connecting to ASR...");
 //                put("waiting for message", "Waiting for message from FDR...");
 
-            //Special messages
+            // Special messages
             put("Status: Restore Finished", "Restore Finished!");
             put("what=", null);
             put("code=", null);
@@ -119,20 +119,20 @@ public class FutureRestoreWorker {
                     else {
                         if (futureRestorePossibleMatch.equals("code=")) {
                             String code = line.replaceFirst("code=", "");
-                            //Parse error codes
+                            // Parse error codes
                             switch (code) {
-                                //Unable to enter recovery mode
+                                // Unable to enter recovery mode
                                 case "9043985": {
                                     if (!hasRecoveryRestarted) {
                                         hasRecoveryRestarted = true;
-                                        //Ensure current process is killed
+                                        // Ensure current process is killed
                                         if (FutureRestoreWorker.futureRestoreProcess != null && FutureRestoreWorker.futureRestoreProcess.isAlive())
                                             futureRestoreProcess.destroy();
-                                        //Restart
+                                        // Restart
                                         new Thread(() -> {
                                             try {
                                                 runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton, stopFutureRestoreButton);
-                                            } catch (IOException | InterruptedException | TimeoutException e) {
+                                            } catch (IOException e) {
                                                 System.out.println("Unable to rerun FutureRestore.");
                                                 e.printStackTrace();
                                             }
@@ -141,7 +141,7 @@ public class FutureRestoreWorker {
                                     }
                                     break;
                                 }
-                                //iBEC Error
+                                // iBEC Error
                                 case "64684049": {
                                     Object[] choices = {"Open link", "Ok"};
 
@@ -212,7 +212,7 @@ public class FutureRestoreWorker {
             if (line.contains("[A")) {
                 Matcher progressBarMatcher = progressBarPattern.matcher(line);
                 if (progressBarMatcher.find()) {
-                    //Set progress bar to parsed value
+                    // Set progress bar to parsed value
                     logProgressBar.setValue(Integer.parseInt(progressBarMatcher.group(1)));
                 }
             } else {
@@ -222,8 +222,6 @@ public class FutureRestoreWorker {
             }
         }
 
-
-        System.out.println("Done reading, closing reader");
         reader.close();
         writer.close();
 
@@ -248,7 +246,7 @@ public class FutureRestoreWorker {
         }
 
         if (MainMenu.properties.getProperty("upload_logs").equals("true")) {
-            //Make all args into a String
+            // Make all args into a String
             StringBuilder builder = new StringBuilder();
             for (String value : allArgsArray) {
                 builder.append(value).append(" ");

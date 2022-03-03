@@ -22,9 +22,8 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.TimeoutException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -81,30 +80,28 @@ public class MainMenu {
     private boolean optionSetNonceState = false;
 
     public MainMenu() {
-        $$$setupUI$$$();
-        selectFutureRestoreBinaryExecutableButton.addActionListener(e -> {
-            Platform.runLater(() -> {
-                FRUtils.setEnabled(mainMenuView, false, true);
-                //Create a file chooser
-                FileChooser futureRestoreFileChooser = new FileChooser();
-                //Open dialogue and set the return file
-                File file = futureRestoreFileChooser.showOpenDialog(null);
+        selectFutureRestoreBinaryExecutableButton.addActionListener(e -> Platform.runLater(() -> {
+            FRUtils.setEnabled(mainMenuView, false, true);
+            // Create a file chooser
+            FileChooser futureRestoreFileChooser = new FileChooser();
+            // Open dialogue and set the return file
+            File file = futureRestoreFileChooser.showOpenDialog(null);
 
-                if (file != null) {
-                    messageToLog("Set " + file.getAbsolutePath() + " to FutureRestore executable.");
-                    futureRestoreFilePath = file.getAbsolutePath();
-                    properties.setProperty("previous_futurerestore", futureRestoreFilePath);
-                    savePreferences();
-                    //Set name of button to blob file name
-                    selectFutureRestoreBinaryExecutableButton.setText("✓ " + file.getName());
-                } else
-                    System.out.println("Cancelled");
-                FRUtils.setEnabled(mainMenuView, true, true);
-                mainMenuFrame.requestFocus();
-            });
-        });
+            if (file != null) {
+                messageToLog("Set " + file.getAbsolutePath() + " to FutureRestore executable.");
+                futureRestoreFilePath = file.getAbsolutePath();
+                properties.setProperty("previous_futurerestore", futureRestoreFilePath);
+                savePreferences();
+                // Set name of button to blob file name
+                selectFutureRestoreBinaryExecutableButton.setText("✓ " + file.getName());
+            } else
+                System.out.println("Cancelled");
+            FRUtils.setEnabled(mainMenuView, true, true);
+            mainMenuFrame.requestFocus();
+        }));
         downloadFutureRestoreButton.addActionListener(event -> {
-            String osName = System.getProperty("os.name").toLowerCase();
+            final String osName = System.getProperty("os.name").toLowerCase();
+            final String osArch = System.getProperty("os.arch").toLowerCase();
             String urlString = null;
 
             if (osName.contains("mac")) {
@@ -113,7 +110,7 @@ public class MainMenu {
                     if (properties.getProperty("futurerestore_beta").equals("false")) {
                         result = getLatestFrDownload("mac");
                     } else {
-                        result = getLatestFrBetaDownload("mac");
+                        result = getLatestFrBetaDownload("mac", osArch);
                     }
                     urlString = result.get("link");
                 } catch (IOException e) {
@@ -127,7 +124,7 @@ public class MainMenu {
                     if (properties.getProperty("futurerestore_beta").equals("false")) {
                         result = getLatestFrDownload("win");
                     } else {
-                        result = getLatestFrBetaDownload("win");
+                        result = getLatestFrBetaDownload("win", osArch);
                     }
                     urlString = result.get("link");
                 } catch (IOException e) {
@@ -137,12 +134,11 @@ public class MainMenu {
                 }
             } else if (osName.contains("linux")) {
                 try {
-//                    JOptionPane.showMessageDialog(mainMenuView, "Linux OS detected. Ubuntu is the only OS with a working compiled FutureRestore build. Ensure you are running Ubuntu.", "Ubuntu Only", JOptionPane.INFORMATION_MESSAGE);
                     Map<String, String> result;
                     if (properties.getProperty("futurerestore_beta").equals("false")) {
                         result = getLatestFrDownload("linux");
                     } else {
-                        result = getLatestFrBetaDownload("linux");
+                        result = getLatestFrBetaDownload("linux", osArch);
                     }
                     urlString = result.get("link");
                 } catch (IOException e) {
@@ -179,7 +175,7 @@ public class MainMenu {
 
                 // Now unzip the file
                 String homeDirectory = System.getProperty("user.home");
-                String finalFrPath = homeDirectory + "/FutureRestoreGUI/";
+                String finalFrPath = homeDirectory + "/FutureRestoreGUI";
                 File futureRestoreExecutable = null;
                 try {
                     futureRestoreExecutable = extractFutureRestore(downloadedFr, finalFrPath, osName);
@@ -190,9 +186,7 @@ public class MainMenu {
                 }
                 // If it fail, set the current task to nothing
                 if (futureRestoreExecutable == null) {
-                    SwingUtilities.invokeLater(() -> {
-                        currentTaskTextField.setText("");
-                    });
+                    SwingUtilities.invokeLater(() -> currentTaskTextField.setText(""));
                 } else {
                     final File finalFutureRestoreExecutable = futureRestoreExecutable;
                     SwingUtilities.invokeLater(() -> {
@@ -202,88 +196,82 @@ public class MainMenu {
                         properties.setProperty("previous_futurerestore", futureRestoreFilePath);
                         savePreferences();
                         messageToLog("Set " + finalFutureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
-                        //Set name of button to blob file name
+                        // Set name of button to blob file name
                         selectFutureRestoreBinaryExecutableButton.setText("✓ " + finalFutureRestoreExecutable.getName());
                     });
                 }
             }).start();
         });
 
-        selectBlobFileButton.addActionListener(e -> {
-            Platform.runLater(() -> {
-                FRUtils.setEnabled(mainMenuView, false, true);
-                //Create a file chooser
-                FileChooser blobFileChooser = new FileChooser();
-                //Set filter
-                FileChooser.ExtensionFilter fileFilter =
-                        new FileChooser.ExtensionFilter(
-                                "Blob File (SHSH2, SHSH)", "*.shsh2", "*.shsh");
-                blobFileChooser.getExtensionFilters().add(fileFilter);
-                //Open dialogue and set the return file
-                File file = blobFileChooser.showOpenDialog(null);
+        selectBlobFileButton.addActionListener(e -> Platform.runLater(() -> {
+            FRUtils.setEnabled(mainMenuView, false, true);
+            // Create a file chooser
+            FileChooser blobFileChooser = new FileChooser();
+            // Set filter
+            FileChooser.ExtensionFilter fileFilter =
+                    new FileChooser.ExtensionFilter(
+                            "Blob File (SHSH2, SHSH)", "*.shsh2", "*.shsh");
+            blobFileChooser.getExtensionFilters().add(fileFilter);
+            // Open dialogue and set the return file
+            File file = blobFileChooser.showOpenDialog(null);
 
-                if (file != null) {
-                    messageToLog("Set " + file.getAbsolutePath() + " to SHSH blob.");
-                    blobFilePath = file.getAbsolutePath();
-                    blobName = file.getName();
-                    selectBlobFileButton.setText("✓ " + file.getName());
-                } else
-                    System.out.println("Cancelled");
-                FRUtils.setEnabled(mainMenuView, true, true);
-                mainMenuFrame.requestFocus();
-            });
-        });
+            if (file != null) {
+                messageToLog("Set " + file.getAbsolutePath() + " to SHSH blob.");
+                blobFilePath = file.getAbsolutePath();
+                blobName = file.getName();
+                selectBlobFileButton.setText("✓ " + file.getName());
+            } else
+                System.out.println("Cancelled");
+            FRUtils.setEnabled(mainMenuView, true, true);
+            mainMenuFrame.requestFocus();
+        }));
 
-        selectTargetIPSWFileButton.addActionListener(e -> {
-            Platform.runLater(() -> {
-                FRUtils.setEnabled(mainMenuView, false, true);
-                //Create a file chooser
-                FileChooser targetIpswFileChooser = new FileChooser();
-                //Set filter
-                FileChooser.ExtensionFilter fileFilter =
-                        new FileChooser.ExtensionFilter(
-                                "iOS Firmware (IPSW)", "*.ipsw");
-                targetIpswFileChooser.getExtensionFilters().add(fileFilter);
-                //Open dialogue and set the return file
-                File file = targetIpswFileChooser.showOpenDialog(null);
+        selectTargetIPSWFileButton.addActionListener(e -> Platform.runLater(() -> {
+            FRUtils.setEnabled(mainMenuView, false, true);
+            // Create a file chooser
+            FileChooser targetIpswFileChooser = new FileChooser();
+            // Set filter
+            FileChooser.ExtensionFilter fileFilter =
+                    new FileChooser.ExtensionFilter(
+                            "iOS Firmware (IPSW)", "*.ipsw");
+            targetIpswFileChooser.getExtensionFilters().add(fileFilter);
+            // Open dialogue and set the return file
+            File file = targetIpswFileChooser.showOpenDialog(null);
 
-                if (file != null) {
-                    messageToLog("Set " + file.getAbsolutePath() + " to target IPSW.");
-                    targetIpswPath = file.getAbsolutePath();
-                    targetIpswName = file.getName();
-                    //Set name of button to ipsw file name
-                    selectTargetIPSWFileButton.setText("✓ " + file.getName());
-                } else
-                    System.out.println("Cancelled");
-                FRUtils.setEnabled(mainMenuView, true, true);
-                mainMenuFrame.requestFocus();
-            });
-        });
+            if (file != null) {
+                messageToLog("Set " + file.getAbsolutePath() + " to target IPSW.");
+                targetIpswPath = file.getAbsolutePath();
+                targetIpswName = file.getName();
+                // Set name of button to ipsw file name
+                selectTargetIPSWFileButton.setText("✓ " + file.getName());
+            } else
+                System.out.println("Cancelled");
+            FRUtils.setEnabled(mainMenuView, true, true);
+            mainMenuFrame.requestFocus();
+        }));
 
-        selectBuildManifestButton.addActionListener(e -> {
-            Platform.runLater(() -> {
-                FRUtils.setEnabled(mainMenuView, false, true);
-                //Create a file chooser
-                FileChooser targetIpswFileChooser = new FileChooser();
-                //Set filter
-                FileChooser.ExtensionFilter fileFilter =
-                        new FileChooser.ExtensionFilter(
-                                "BuildManifest (PList)", "*.plist");
-                targetIpswFileChooser.getExtensionFilters().add(fileFilter);
-                //Open dialogue and set the return file
-                File file = targetIpswFileChooser.showOpenDialog(null);
+        selectBuildManifestButton.addActionListener(e -> Platform.runLater(() -> {
+            FRUtils.setEnabled(mainMenuView, false, true);
+            // Create a file chooser
+            FileChooser targetIpswFileChooser = new FileChooser();
+            // Set filter
+            FileChooser.ExtensionFilter fileFilter =
+                    new FileChooser.ExtensionFilter(
+                            "BuildManifest (PList)", "*.plist");
+            targetIpswFileChooser.getExtensionFilters().add(fileFilter);
+            // Open dialogue and set the return file
+            File file = targetIpswFileChooser.showOpenDialog(null);
 
-                if (file != null) {
-                    messageToLog("Set " + file.getAbsolutePath() + " to BuildManifest.");
-                    buildManifestPath = file.getAbsolutePath();
-                    //Set name of button to ipsw file name
-                    selectBuildManifestButton.setText("✓ " + file.getName());
-                } else
-                    System.out.println("Cancelled");
-                FRUtils.setEnabled(mainMenuView, true, true);
-                mainMenuFrame.requestFocus();
-            });
-        });
+            if (file != null) {
+                messageToLog("Set " + file.getAbsolutePath() + " to BuildManifest.");
+                buildManifestPath = file.getAbsolutePath();
+                // Set name of button to ipsw file name
+                selectBuildManifestButton.setText("✓ " + file.getName());
+            } else
+                System.out.println("Cancelled");
+            FRUtils.setEnabled(mainMenuView, true, true);
+            mainMenuFrame.requestFocus();
+        }));
 
         ActionListener optionsListener = e -> {
             optionDebugState = debugDCheckBox.isSelected();
@@ -351,7 +339,7 @@ public class MainMenu {
                 }
             }
 
-            //If blob name has a build number in it
+            // If blob name has a build number in it
             Pattern blobPattern = Pattern.compile("(?<=[_-])[A-Z0-9]{5,10}[a-z]?(?=[_-])");
             Matcher blobMatcher = blobPattern.matcher(blobName);
             String blobBuild = null;
@@ -360,7 +348,7 @@ public class MainMenu {
                 blobBuild = blobMatcher.group(0);
             }
 
-            //If IPSW has a build name in it
+            // If IPSW has a build name in it
             Pattern ipswPattern = Pattern.compile("(?<=[_-])[A-Z0-9]{5,10}[a-z]?(?=[_-])");
             Matcher ipswMatcher = ipswPattern.matcher(targetIpswName);
             String targetIpswBuild = null;
@@ -369,13 +357,13 @@ public class MainMenu {
                 targetIpswBuild = ipswMatcher.group(0);
             }
 
-            //If they're different
+            // If they're different
             if (blobBuild != null && targetIpswBuild != null)
                 if (!blobBuild.equals(targetIpswBuild)) {
                     JOptionPane.showMessageDialog(mainMenuView, "The build in your blob name, " + blobBuild + ", does not match the one in the IPSW name, " + targetIpswBuild + ". Ensure you have the right blob and IPSW before continuing.", "Warning", JOptionPane.WARNING_MESSAGE);
                 }
 
-            //Build their final command
+            // Build their final command
             ArrayList<String> allArgs = new ArrayList<>();
 
             allArgs.add("--apticket");
@@ -429,17 +417,17 @@ public class MainMenu {
 
             allArgs.add(targetIpswPath);
 
-            //Run command
+            // Run command
             runCommand(allArgs, true);
         });
         exitRecoveryButton.addActionListener(e -> {
-            //If they haven't selected a futurerestore yet
+            // If they haven't selected a futurerestore yet
             if (futureRestoreFilePath == null) {
                 JOptionPane.showMessageDialog(mainMenuView, "Please select a FutureRestore executable in order to exit recovery.", "No FutureRestore Selected", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            runCommand(new ArrayList<>(Arrays.asList("--exit-recovery")), false);
+            runCommand(new ArrayList<>(List.of("--exit-recovery")), false);
         });
 
         basebandComboBox.addActionListener(e -> {
@@ -540,24 +528,20 @@ public class MainMenu {
             }
         });
 
-        settingsButton.addActionListener(e -> {
-            settingsMenuFrame.setVisible(true);
-        });
+        settingsButton.addActionListener(e -> settingsMenuFrame.setVisible(true));
 
-        ActionListener nextButtonListener = e -> {
-            tabbedPane.setSelectedIndex(tabbedPane.getSelectedIndex() + 1);
-        };
+        ActionListener nextButtonListener = e -> tabbedPane.setSelectedIndex(tabbedPane.getSelectedIndex() + 1);
         nextButtonFiles.addActionListener(nextButtonListener);
         nextButtonOptions.addActionListener(nextButtonListener);
     }
 
-    public static Properties properties = new Properties();
+    public static final Properties properties = new Properties();
 
     static JFrame mainMenuFrame;
     static JFrame settingsMenuFrame;
 
     public static void main() {
-        //load and init prefs
+        // Load and init prefs
         initializePreferences();
 
         boolean isDarkThemeUsed = false;
@@ -565,7 +549,7 @@ public class MainMenu {
             case "auto": {
                 final OsThemeDetector detector = OsThemeDetector.getDetector();
                 isDarkThemeUsed = detector.isDark();
-                //Must set L&F before we create instance of MainMenu
+                // Must set L&F before we create instance of MainMenu
                 if (isDarkThemeUsed) {
                     FlatDarculaLaf.setup();
                 } else {
@@ -576,10 +560,8 @@ public class MainMenu {
                 break;
             }
             case "light": {
-                // Good practice
-                isDarkThemeUsed = false;
-                /*// Only set if not Mac
-                if (!System.getProperty("os.name").toLowerCase().contains("mac"))*/
+//                // Only set if not Mac
+//                if (!System.getProperty("os.name").toLowerCase().contains("mac"))
                 FlatIntelliJLaf.setup();
                 break;
             }
@@ -599,18 +581,18 @@ public class MainMenu {
             MainMenu mainMenuInstance = new MainMenu();
             SettingsMenu settingsMenuInstance = new SettingsMenu();
 
-            //Auto scroll log
+            // Auto scroll log
             new SmartScroller(mainMenuInstance.logScrollPane, SmartScroller.VERTICAL, SmartScroller.END);
 
-            //For JavaFX
+            // For JavaFX
             new JFXPanel();
 
             // Main Menu
             mainMenuFrame.setContentPane(mainMenuInstance.mainMenuView);
-            //End program on close
+            // End program on close
             mainMenuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             mainMenuFrame.pack();
-            //Centers it on screen
+            // Centers it on screen
             mainMenuFrame.setLocationRelativeTo(null);
 
             // init SettingsMenu
@@ -618,37 +600,37 @@ public class MainMenu {
 
             // Settings Menu
             settingsMenuFrame.setContentPane(settingsMenuInstance.settingsMenuView);
-            //Set settings frame to invisible on close
+            // Set settings frame to invisible on close
             settingsMenuFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
             settingsMenuFrame.pack();
-            //Centers it on screen
+            // Centers it on screen
             settingsMenuFrame.setLocationRelativeTo(null);
 
-            //Prepare for dark mode
+            // Prepare for dark mode
             if (finalIsDarkThemeUsed)
                 turnDark(mainMenuInstance);
             else {
-                //Custom light UI setup
+                // Custom light UI setup
                 mainMenuInstance.startFutureRestoreButton.setBackground(new Color(150, 200, 255));
                 mainMenuInstance.nextButtonFiles.setBackground(new Color(150, 200, 255));
                 mainMenuInstance.nextButtonOptions.setBackground(new Color(150, 200, 255));
             }
 
 
-            //Tell them if they are or are not sharing logs
+            // Tell them if they are or are not sharing logs
             if (properties.getProperty("upload_logs").equals("true")) {
                 mainMenuInstance.messageToLog("Help improve FutureRestore by sharing logs: Enabled");
             } else {
                 mainMenuInstance.messageToLog("Help improve FutureRestore by sharing logs: Disabled");
             }
 
-            //Set text for version
+            // Set text for version
             mainMenuInstance.authorAndVersionLabel.setText("by CoocooFroggy — v" + futureRestoreGUIVersion);
 
-            //Shows the view
+            // Shows the view
             mainMenuFrame.setVisible(true);
 
-            //Only if they have the setting enabled, check for updates
+            // Only if they have the setting enabled, check for updates
             if (properties.getProperty("check_updates").equals("true")) {
                 System.out.println("Checking for FutureRestore GUI updates in the background...");
                 mainMenuInstance.messageToLog("Checking for FutureRestore GUI updates in the background...");
@@ -746,14 +728,14 @@ public class MainMenu {
     }
 
     boolean chooseBbfw() {
-        //Create a file chooser
+        // Create a file chooser
         FileChooser targetIpswFileChooser = new FileChooser();
-        //Set filter
+        // Set filter
         FileChooser.ExtensionFilter fileFilter =
                 new FileChooser.ExtensionFilter(
                         "Baseband Firmware (BBFW)", "*.bbfw");
         targetIpswFileChooser.getExtensionFilters().add(fileFilter);
-        //Open dialogue and set the return file
+        // Open dialogue and set the return file
         File file = targetIpswFileChooser.showOpenDialog(null);
         mainMenuFrame.requestFocus();
 
@@ -769,14 +751,14 @@ public class MainMenu {
     }
 
     boolean chooseSep() {
-        //Create a file chooser
+        // Create a file chooser
         FileChooser targetIpswFileChooser = new FileChooser();
-        //Set filter
+        // Set filter
         FileChooser.ExtensionFilter fileFilter =
                 new FileChooser.ExtensionFilter(
                         "SEP (IM4P)", "*.im4p");
         targetIpswFileChooser.getExtensionFilters().add(fileFilter);
-        //Open dialogue and set the return file
+        // Open dialogue and set the return file
         File file = targetIpswFileChooser.showOpenDialog(null);
         mainMenuFrame.requestFocus();
 
@@ -793,24 +775,23 @@ public class MainMenu {
 
     void runCommand(ArrayList<String> allArgs, boolean fullFR) {
 
-        //Preview command if necessary. If returned false, then they clicked copy only, so don't run command.
+        // Preview command if necessary. If returned false, then they clicked copy only, so don't run command.
         if (!previewCommand(allArgs)) return;
 
-        //If they're running an actual restore
+        // If they're running an actual restore
         if (fullFR) {
-            //Set current task to starting...
+            // Set current task to starting...
             currentTaskTextField.setText("Starting FutureRestore...");
 
-            //Disable interaction
+            // Disable interaction
             startFutureRestoreButton.setEnabled(false);
             stopFutureRestoreUnsafeButton.setText("Stop FutureRestore (Unsafe)");
 
             // Not necessary if we don't check GitHub for version as well
             // Check FutureRestore version
             Runtime runtime = Runtime.getRuntime();
-            String version = null;
             try {
-                Process process = runtime.exec(futureRestoreFilePath);
+                runtime.exec(futureRestoreFilePath);
                 /*BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 Pattern pattern = Pattern.compile("Version: (.*)");
                 String s;
@@ -863,7 +844,7 @@ public class MainMenu {
         new Thread(() -> {
             try {
                 FutureRestoreWorker.runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton, stopFutureRestoreUnsafeButton);
-            } catch (IOException | InterruptedException | TimeoutException e) {
+            } catch (IOException e) {
                 System.out.println("Unable to run FutureRestore.");
                 startFutureRestoreButton.setEnabled(true);
                 stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
@@ -882,14 +863,16 @@ public class MainMenu {
         });
     }
 
-    String getLatestFrTag() throws IOException {
-        //Vars
-        Map<String, Object> newestRelease = getLatestFrGithub();
-        String newestTag = (String) newestRelease.get("tag_name");
-        System.out.println("Newest version: " + newestTag);
-
-        return newestTag;
-    }
+// --Commented out by Inspection START (3/2/22, 10:01 PM):
+//    String getLatestFrTag() throws IOException {
+//        // Vars
+//        Map<String, Object> newestRelease = getLatestFrGithub();
+//        String newestTag = (String) newestRelease.get("tag_name");
+//        System.out.println("Newest version: " + newestTag);
+//
+//        return newestTag;
+//    }
+// --Commented out by Inspection STOP (3/2/22, 10:01 PM)
 
     Map<String, String> getLatestFrDownload(String operatingSystem) throws IOException {
         // operatingSystem = "mac", "windows", "linux"
@@ -898,7 +881,7 @@ public class MainMenu {
 
         Map<String, Object> newestRelease = getLatestFrGithub();
         ArrayList<Map<String, Object>> assets = (ArrayList<Map<String, Object>>) newestRelease.get("assets");
-        //Get asset for our operating system
+        // Get asset for our operating system
         for (Map<String, Object> asset : assets) {
             String assetName = ((String) asset.get("name"));
             // Linux can be linux or ubuntu in filename
@@ -916,12 +899,12 @@ public class MainMenu {
                 return linkNameMap;
             }
         }
-        //Pop-up saying "no binaries for your OS available"
+        // Pop-up saying "no binaries for your OS available"
         noFrForOSPopup("No FutureRestore asset found for your operating system. Check releases to see if there's one available.\n", "https://github.com/m1stadev/futurerestore/releases/latest/");
         return linkNameMap;
     }
 
-    Map<String, String> getLatestFrBetaDownload(String operatingSystem) throws IOException {
+    Map<String, String> getLatestFrBetaDownload(String operatingSystem, String architecture) throws IOException {
         // operatingSystem = "mac", "windows", "linux"
 
         Map<String, String> linkNameMap = new HashMap<>();
@@ -932,24 +915,27 @@ public class MainMenu {
         Map<String, Object> result = gson.fromJson(content, Map.class);
         ArrayList<Map<String, Object>> artifacts = (ArrayList<Map<String, Object>>) result.get("artifacts");
 
-        //Get asset for our operating system
+        // Loop through assets
         for (Map<String, Object> artifact : artifacts) {
             String assetName = ((String) artifact.get("name"));
-            // Linux can be linux or ubuntu in filename
-            if (operatingSystem.equals("linux")) {
-                if (assetName.toLowerCase().contains("linux") || assetName.toLowerCase().contains("ubuntu")) {
+            // Look for our OS and release binary
+            if (assetName.toLowerCase().contains(operatingSystem)
+                    && assetName.toLowerCase().contains("release")) {
+                // If we're mac, match architecture as well
+                if (assetName.toLowerCase().contains("mac")) {
+                    if (assetName.toLowerCase().contains(architecture)) {
+                        linkNameMap.put("link", (String) artifact.get("archive_download_url"));
+                        linkNameMap.put("name", assetName);
+                    }
+                } else {
                     linkNameMap.put("link", (String) artifact.get("archive_download_url"));
                     linkNameMap.put("name", assetName);
-                    return linkNameMap;
                 }
-            } else if (assetName.toLowerCase().contains(operatingSystem)) {
-                linkNameMap.put("link", (String) artifact.get("archive_download_url"));
-                linkNameMap.put("name", assetName);
                 return linkNameMap;
             }
         }
 
-        //Pop-up saying "no binaries for your OS available"
+        // Pop-up saying "no binaries for your OS available"
         noFrForOSPopup("No FutureRestore beta asset found for your operating system.\n" +
                 "Try a release version instead, or manually download a beta for your OS.\n", "https://github.com/m1stadev/futurerestore/actions");
         return linkNameMap;
@@ -973,11 +959,7 @@ public class MainMenu {
         con.setRequestMethod("GET");
 
         // Auth for higher rate limit
-        byte[] decoded = Base64.getDecoder().decode("Z2hwX1YySDBXOThEa3BZUWNaSkxsYUtrOTJocThYMGZCaTBsa1dTMg==");
-        String auth = "FutureRestore-GUI" + ":" + new String(decoded);
-        byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
-        String authHeaderValue = "Basic " + new String(encodedAuth);
-        con.setRequestProperty("Authorization", authHeaderValue);
+        FRUtils.githubAuthorizeWithAccount(con);
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
@@ -997,41 +979,29 @@ public class MainMenu {
 
         Gson gson = new Gson();
         ArrayList<Map<String, Object>> result = gson.fromJson(content, ArrayList.class);
-        Map<String, Object> newestRelease = result.get(0);
-        return newestRelease;
+        return result.get(0); // Newest release
     }
 
     File downloadFutureRestore(String urlString) {
         String homeDirectory = System.getProperty("user.home");
-        File frGuiDir = new File(homeDirectory + "/FutureRestoreGUI/");
+        File frGuiDir = new File(homeDirectory + "/FutureRestoreGUI");
 
-            /*
-            //Wipe the directory
-            try {
-                Process process = Runtime.getRuntime().exec("rm -r " + frGuiDir);
-                process.waitFor();
-            } catch (IOException | InterruptedException e) {
-                System.out.println("Unable to wipe FutureRestoreGUI directory.");
-                e.printStackTrace();
-            }
-            */
-
-        //Make directory to store files
-        if (!frGuiDir.exists()) {
+        // Make directory to store files
+        if (!frGuiDir.exists())
             frGuiDir.mkdir();
-        }
 
-        String finalFrPath = homeDirectory + "/FutureRestoreGUI/";
+        String frguiDirPath = frGuiDir.getPath();
 
         // Clean the area first
-        File destinationDir = new File(finalFrPath + "extracted/");
+        File destinationDir = new File(frguiDirPath + "/extracted");
         if (destinationDir.exists()) {
-            if (destinationDir.listFiles() != null && Objects.requireNonNull(destinationDir.listFiles()).length > 0) {
+            File[] filesList = destinationDir.listFiles();
+            if (filesList != null && filesList.length > 0) {
                 System.out.println("More than 0 files in dir. Cleaning");
                 try {
                     FileUtils.cleanDirectory(destinationDir);
                 } catch (IOException e) {
-                    System.out.println("Unable to delete all existing files in extracted directory. Aborting.");
+                    System.err.println("Unable to delete all existing files in extracted directory. Aborting.");
                     messageToLog("Unable to delete all existing files in extracted directory. Aborting.");
                     e.printStackTrace();
                     currentTaskTextField.setText("");
@@ -1042,7 +1012,7 @@ public class MainMenu {
 
         File downloadedFr;
         try {
-            downloadedFr = FRUtils.downloadFile(urlString, finalFrPath, this);
+            downloadedFr = FRUtils.downloadFileWithProgress(urlString, frguiDirPath, this.getLogProgressBar());
             if (downloadedFr == null) {
                 System.err.println("Unable to download FutureRestore. Aborting.");
                 messageToLog("Unable to download FutureRestore. Aborting.");
@@ -1067,13 +1037,13 @@ public class MainMenu {
         return downloadedFr;
     }
 
-    File extractFutureRestore(File fileToExtract, String finalFrPath, String operatingSystem) throws IOException {
+    File extractFutureRestore(File fileToExtract, String frguiDirPath, String operatingSystem) throws IOException {
         SwingUtilities.invokeLater(() -> {
             currentTaskTextField.setText("Decompressing FutureRestore...");
             messageToLog("Decompressing FutureRestore...");
         });
 
-        File destinationDir = new File(finalFrPath + "extracted/");
+        File destinationDir = new File(frguiDirPath + "/extracted");
 
         String downloadedFileExtension = FilenameUtils.getExtension(fileToExtract.getName());
         switch (downloadedFileExtension) {
@@ -1102,22 +1072,20 @@ public class MainMenu {
         deleteFile(fileToExtract);
 
         // Actions artifacts (beta FR) are in a .zip then in a .tar.xz. Extract again if we need to
-        File unzippedFile = destinationDir.listFiles()[0];
+        File[] files = destinationDir.listFiles();
+        if (files == null) return null;
+        File unzippedFile = files[0];
         String unzippedExtension = FilenameUtils.getExtension(unzippedFile.getName());
         if (unzippedExtension.equals("xz") || unzippedExtension.equals("zip")) {
             // Move the archive from /FRGUI/extracted to /FRGUI
-            FileUtils.moveFileToDirectory(unzippedFile, new File(finalFrPath), false);
+            FileUtils.moveFileToDirectory(unzippedFile, new File(frguiDirPath), false);
             // Declare this file
-            File nestedArchive = new File(finalFrPath + unzippedFile.getName());
-            // Extract the new one (run this method with it)
-            File extracted = extractFutureRestore(nestedArchive, finalFrPath, operatingSystem);
-            // Delete the old archive at /FRGUI
-            deleteFile(nestedArchive);
-            // Return the extracted file
-            return extracted;
+            File nestedArchive = new File(frguiDirPath + "/" + unzippedFile.getName());
+            // Extract the new one (run this method with it) and return the extracted file
+            return extractFutureRestore(nestedArchive, frguiDirPath, operatingSystem);
         }
 
-        File futureRestoreExecutable = destinationDir.listFiles()[0];
+        File futureRestoreExecutable = files[0];
 
         if (futureRestoreExecutable == null) {
             System.out.println("Unable to decompress " + fileToExtract);
@@ -1125,9 +1093,9 @@ public class MainMenu {
             return null;
         }
 
-        //Only run on MacOS and Linux
+        // Only run on MacOS and Linux
         if (operatingSystem.contains("mac") || operatingSystem.contains("linux")) {
-            //Make FutureRestore executable
+            // Make FutureRestore executable
             Process process;
             try {
                 process = Runtime.getRuntime().exec("chmod +x " + futureRestoreExecutable);
@@ -1144,14 +1112,14 @@ public class MainMenu {
     }
 
     static void initializePreferences() {
-        //Read preferences
+        // Read preferences
         String homeDirectory = System.getProperty("user.home");
         File frGuiDirectory = new File(homeDirectory + "/FutureRestoreGUI/");
         if (!frGuiDirectory.exists())
             frGuiDirectory.mkdir();
         File prefsFile = new File(homeDirectory + "/FutureRestoreGUI/preferences.properties");
 
-        //Init
+        // Init
         if (!prefsFile.exists()) {
             try {
                 prefsFile.createNewFile();
@@ -1208,7 +1176,7 @@ public class MainMenu {
     }
 
     boolean previewCommand(ArrayList<String> allArgs) {
-        //If they want to preview command
+        // If they want to preview command
         if (properties.getProperty("preview_command").equals("true")) {
             StringBuilder commandStringBuilder = new StringBuilder();
             // Surround FutureRestore's path in quotes
@@ -1222,7 +1190,7 @@ public class MainMenu {
                 commandStringBuilder.append(arg).append(" ");
             }
 
-            //Build the preview area
+            // Build the preview area
             JTextArea commandPreviewTextArea = new JTextArea();
             commandPreviewTextArea.setEditable(false);
             commandPreviewTextArea.setLineWrap(true);
@@ -1239,31 +1207,31 @@ public class MainMenu {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             switch (response) {
                 case 0: {
-                    //Copy command only
+                    // Copy command only
                     clipboard.setContents(stringSelection, null);
                     messageToLog("Copied \"" + finalCommand + "\" to clipboard.");
-                    //Return false, don't continue running
+                    // Return false, don't continue running
                     return false;
                 }
                 case 1: {
-                    //Copy command and run
+                    // Copy command and run
                     clipboard.setContents(stringSelection, null);
                     messageToLog("Copied \"" + finalCommand + "\" to clipboard.");
-                    //Return true, continue running
+                    // Return true, continue running
                     return true;
                 }
                 case 2: {
-                    //Run only
-                    //Return true, continue running
+                    // Run only
+                    // Return true, continue running
                     return true;
                 }
                 case JOptionPane.CLOSED_OPTION: {
-                    //If they close the popup just don't do anything
+                    // If they close the popup just don't do anything
                     return false;
                 }
             }
         }
-        //Return true, continue running since preview command is disabled
+        // Return true, continue running since preview command is disabled
         return true;
     }
 
@@ -1278,7 +1246,7 @@ public class MainMenu {
                 String newestTag = (String) newestRelease.get("tag_name");
                 System.out.println("Newest FRGUI version: " + newestTag);
 
-                //If user is not on latest version
+                // If user is not on latest version
                 String currentFRGUITag = "v" + currentFRGUIVersion;
                 if (!newestTag.equals(currentFRGUITag)) {
                     System.out.println("A newer version of FutureRestore GUI is available.");
@@ -1364,7 +1332,9 @@ public class MainMenu {
         }
     }
 
-    /* Private vars */
+
+    // region Getters
+
     public JFrame getMainMenuFrame() {
         return mainMenuFrame;
     }
@@ -1395,6 +1365,14 @@ public class MainMenu {
 
     public JTabbedPane getTabbedPane() {
         return tabbedPane;
+    }
+    // endregion
+
+    {
+// GUI initializer generated by IntelliJ IDEA GUI Designer
+// >>> IMPORTANT!! <<<
+// DO NOT EDIT OR ADD ANY CODE HERE!
+        $$$setupUI$$$();
     }
 
     /**

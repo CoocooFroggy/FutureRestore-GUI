@@ -4,9 +4,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.Locale;
 
 public class SettingsMenu {
@@ -50,7 +48,7 @@ public class SettingsMenu {
 
             @Override
             public void changedUpdate(DocumentEvent arg0) {
-                //Plain text shouldn't trigger this event
+                // Plain text shouldn't trigger this event
             }
         });
 
@@ -84,25 +82,22 @@ public class SettingsMenu {
             }
         });
 
-        //Changing theme pref
-        ActionListener listener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JRadioButton buttonPressed = (JRadioButton) e.getSource();
+        // Changing theme pref
+        ActionListener listener = e -> {
+            JRadioButton buttonPressed = (JRadioButton) e.getSource();
 
-                //I'm sorry, tried to get a switch statement to work here but nothing was constant it seemed
-                if (buttonPressed.equals(autoRadioButton)) {
-                    MainMenu.properties.setProperty("theme_preference", "auto");
-                    MainMenu.savePreferences();
-                } else if (buttonPressed.equals(lightRadioButton)) {
-                    MainMenu.properties.setProperty("theme_preference", "light");
-                    MainMenu.savePreferences();
-                } else if (buttonPressed.equals(darkRadioButton)) {
-                    MainMenu.properties.setProperty("theme_preference", "dark");
-                    MainMenu.savePreferences();
-                }
-
+            // Apparently you can't use switch statements on non primitives
+            if (buttonPressed.equals(autoRadioButton)) {
+                MainMenu.properties.setProperty("theme_preference", "auto");
+                MainMenu.savePreferences();
+            } else if (buttonPressed.equals(lightRadioButton)) {
+                MainMenu.properties.setProperty("theme_preference", "light");
+                MainMenu.savePreferences();
+            } else if (buttonPressed.equals(darkRadioButton)) {
+                MainMenu.properties.setProperty("theme_preference", "dark");
+                MainMenu.savePreferences();
             }
+
         };
         autoRadioButton.addActionListener(listener);
         lightRadioButton.addActionListener(listener);
@@ -123,24 +118,15 @@ public class SettingsMenu {
         settingsMenuInstance.discordTextArea.setText(MainMenu.properties.getProperty("discord_name"));
 
         // Preview command check box
-        if (MainMenu.properties.getProperty("preview_command").equals("true"))
-            settingsMenuInstance.previewCommandCheckBox.setSelected(true);
-        else
-            settingsMenuInstance.previewCommandCheckBox.setSelected(false);
+        settingsMenuInstance.previewCommandCheckBox.setSelected(MainMenu.properties.getProperty("preview_command").equals("true"));
 
         // GUI update check box
-        if (MainMenu.properties.getProperty("check_updates").equals("true"))
-            settingsMenuInstance.GUIUpdatesCheckBox.setSelected(true);
-        else
-            settingsMenuInstance.GUIUpdatesCheckBox.setSelected(false);
+        settingsMenuInstance.GUIUpdatesCheckBox.setSelected(MainMenu.properties.getProperty("check_updates").equals("true"));
 
         // FR beta update check box
-        if (MainMenu.properties.getProperty("futurerestore_beta").equals("true"))
-            settingsMenuInstance.futureRestoreBetaCheckBox.setSelected(true);
-        else
-            settingsMenuInstance.futureRestoreBetaCheckBox.setSelected(false);
+        settingsMenuInstance.futureRestoreBetaCheckBox.setSelected(MainMenu.properties.getProperty("futurerestore_beta").equals("true"));
 
-        //Theme prefs radio buttons
+        // Theme prefs radio buttons
         switch (MainMenu.properties.getProperty("theme_preference")) {
             case "auto":
                 settingsMenuInstance.autoRadioButton.setSelected(true);
@@ -415,5 +401,4 @@ public class SettingsMenu {
     public JComponent $$$getRootComponent$$$() {
         return settingsMenuView;
     }
-
 }
