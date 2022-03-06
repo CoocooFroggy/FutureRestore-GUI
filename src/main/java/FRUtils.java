@@ -148,15 +148,15 @@ public class FRUtils {
             return null;
         }
 
-        String homeDirectory = System.getProperty("user.home");
-        File frGuiDir = new File(homeDirectory + "/FutureRestoreGUI/");
+        String userTemporaryDirectory = System.getProperty("java.io.tmpdir");
+        File frGuiDir = new File(userTemporaryDirectory + "/FutureRestoreGUI/");
 
         // Make directory to store files if not exists
         if (!frGuiDir.exists()) {
             frGuiDir.mkdir();
         }
 
-        String frguiDirPath = homeDirectory + "/FutureRestoreGUI/";
+        String frguiDirPath = userTemporaryDirectory + "/FutureRestoreGUI/";
         File downloadedFrgui;
         try {
             System.out.println("Downloading...");
