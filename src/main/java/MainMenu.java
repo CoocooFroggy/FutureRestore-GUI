@@ -174,9 +174,10 @@ public class MainMenu {
                     return; // We already show an error message in downloadFutureRestore()
 
                 // Now unzip the file
-                String homeDirectory = System.getProperty("user.home");
-                String finalFrPath = homeDirectory + "/FutureRestoreGUI";
+                String userTemporaryDirectory = System.getProperty("java.io.tmpdir");
+                String finalFrPath = userTemporaryDirectory + "/FutureRestoreGUI";
                 File futureRestoreExecutable = null;
+
                 try {
                     futureRestoreExecutable = extractFutureRestore(downloadedFr, finalFrPath, osName);
                 } catch (IOException exception) {
