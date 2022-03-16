@@ -1,14 +1,14 @@
 public class Main {
     public static void main(String[] args) {
-        MainMenu.futureRestoreGUIVersion = "1.96";
+        MainMenu.futureRestoreGUIVersion = "1.97";
         MainMenu.main();
         /*
 
 
-                   |
-                —  +  —
-                   |
-          "HAPPY BIRTHDAY ME :)"
+                         |
+                      —  +  —
+                         |
+          "What happens after 1.99 o_o"
 
 
          */

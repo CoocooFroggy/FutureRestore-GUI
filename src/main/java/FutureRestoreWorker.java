@@ -12,7 +12,6 @@ import javax.swing.*;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +23,14 @@ public class FutureRestoreWorker {
     private static String logPath;
     private static boolean hasRecoveryRestarted = false;
 
-    public static void runFutureRestore(String futureRestoreFilePath, ArrayList<String> allArgs, JPanel mainMenuView, JTextArea logTextArea, JProgressBar logProgressBar, JTextField currentTaskTextField, JButton startFutureRestoreButton, JButton stopFutureRestoreButton) throws IOException {
+    public static void runFutureRestore(String futureRestoreFilePath, ArrayList<String> allArgs, MainMenu mainMenu) throws IOException {
+        JPanel mainMenuView = mainMenu.getMainMenuView();
+        JTextArea logTextArea = mainMenu.getLogTextArea();
+        JTextField currentTaskTextField = mainMenu.getCurrentTaskTextField();
+        JProgressBar logProgressBar = mainMenu.getLogProgressBar();
+        JButton startFutureRestoreButton = mainMenu.getStartFutureRestoreButton();
+        JButton stopFutureRestoreButton = mainMenu.getStopFutureRestoreUnsafeButton();
+
         ArrayList<String> argsAndFR = (ArrayList<String>) allArgs.clone();
         argsAndFR.add(0, futureRestoreFilePath);
         allArgsArray = Arrays.copyOf(argsAndFR.toArray(), argsAndFR.toArray().length, String[].class);
@@ -58,6 +64,9 @@ public class FutureRestoreWorker {
         logName = "FRLog_" + dateTimeString + ".txt";
         logPath = frGuiLogsDirectory + "/" + logName;
         FileWriter writer = new FileWriter(logPath);
+
+        appendToLog(logTextArea, writer, "FutureRestore GUI Log – " + dateTimeString);
+        appendToLog(logTextArea, writer, "Command ran: " + getFullCommandString());
 
         // Count the number of FDR timeouts
         int fdrTimeouts = 0;
@@ -117,90 +126,94 @@ public class FutureRestoreWorker {
                     }
                     // Otherwise, error was parsed
                     else {
-                        if (futureRestorePossibleMatch.equals("code=")) {
-                            String code = line.replaceFirst("code=", "");
-                            // Parse error codes
-                            switch (code) {
-                                // Unable to enter recovery mode
-                                case "9043985": {
-                                    if (!hasRecoveryRestarted) {
-                                        hasRecoveryRestarted = true;
-                                        // Ensure current process is killed
-                                        if (FutureRestoreWorker.futureRestoreProcess != null && FutureRestoreWorker.futureRestoreProcess.isAlive())
-                                            futureRestoreProcess.destroy();
-                                        // Restart
-                                        new Thread(() -> {
-                                            try {
-                                                runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton, stopFutureRestoreButton);
-                                            } catch (IOException e) {
-                                                System.out.println("Unable to rerun FutureRestore.");
-                                                e.printStackTrace();
-                                            }
-                                        }).start();
-                                        return;
+                        switch (futureRestorePossibleMatch) {
+                            case "code=":
+                                String code = line.replaceFirst("code=", "");
+                                // Parse error codes
+                                switch (code) {
+                                    // Unable to enter recovery mode
+                                    case "9043985": {
+                                        if (!hasRecoveryRestarted) {
+                                            hasRecoveryRestarted = true;
+                                            // Ensure current process is killed
+                                            if (FutureRestoreWorker.futureRestoreProcess != null && FutureRestoreWorker.futureRestoreProcess.isAlive())
+                                                futureRestoreProcess.destroy();
+                                            // Restart
+                                            runFutureRestore(futureRestoreFilePath, allArgs, mainMenu);
+                                            return;
+                                        }
+                                        break;
                                     }
-                                    break;
-                                }
-                                // iBEC Error
-                                case "64684049": {
-                                    Object[] choices = {"Open link", "Ok"};
+                                    // iBEC Error
+                                    case "64684049": {
+                                        Object[] choices = {"Open link", "Ok"};
 
-                                    int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an iBEC error. This is a common error and easily fixable.\n" +
-                                            "A solution for this error is available here:\n" +
-                                            "https://github.com/m1stadev/futurerestore#restoring-on-windows-10", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
-                                    if (response == JOptionPane.YES_OPTION) {
-                                        boolean openWebpageResult = FRUtils.openWebpage("https://github.com/m1stadev/futurerestore#restoring-on-windows-10", null);
-                                        if (!openWebpageResult)
-                                            appendToLog(logTextArea, writer, "Unable to open URL in your web browser. URL copied to clipboard, please open it manually.");
+                                        int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an iBEC error. This is a common error and easily fixable.\n" +
+                                                "A solution for this error is available here:\n" +
+                                                "https://github.com/m1stadev/futurerestore#restoring-on-windows-10", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+                                        if (response == JOptionPane.YES_OPTION) {
+                                            boolean openWebpageResult = FRUtils.openWebpage("https://github.com/m1stadev/futurerestore#restoring-on-windows-10", null);
+                                            if (!openWebpageResult)
+                                                appendToLog(logTextArea, writer, "Unable to open URL in your web browser. URL copied to clipboard, please open it manually.");
+                                        }
+
+                                        break;
                                     }
+                                    // AP Nonce mismatch
+                                    case "44498961": {
+                                        Object[] choices = {"Open link", "Ok"};
 
-                                    break;
-                                }
-                                // AP Nonce mismatch
-                                case "44498961": {
-                                    Object[] choices = {"Open link", "Ok"};
-
-                                    int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an APTicket—APNonce mismatch error. This is a common error.\n" +
-                                                    "Ensure you've set the correct generator on your device that corresponds with your blob's APNonce and try again.\n" +
-                                                    "If you need more help, follow the steps to set generator on \"ios.cfw.guide\".\n" +
-                                                    "https://ios.cfw.guide/futurerestore#getting-started",
-                                            "APTicket does not match APNonce", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, choices, choices[0]);
-                                    if (response == JOptionPane.YES_OPTION) {
-                                        boolean openWebpageResult = FRUtils.openWebpage("https://ios.cfw.guide/futurerestore#getting-started", null);
-                                        if (!openWebpageResult)
-                                            appendToLog(logTextArea, writer, "Unable to open URL in your web browser. URL copied to clipboard, please open it manually.");
+                                        int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an APTicket—APNonce mismatch error. This is a common error.\n" +
+                                                        "Ensure you've set the correct generator on your device that corresponds with your blob's APNonce and try again.\n" +
+                                                        "If you need more help, follow the steps to set generator on \"ios.cfw.guide\".\n" +
+                                                        "https://ios.cfw.guide/futurerestore#getting-started",
+                                                "APTicket does not match APNonce", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, choices, choices[0]);
+                                        if (response == JOptionPane.YES_OPTION) {
+                                            boolean openWebpageResult = FRUtils.openWebpage("https://ios.cfw.guide/futurerestore#getting-started", null);
+                                            if (!openWebpageResult)
+                                                appendToLog(logTextArea, writer, "Unable to open URL in your web browser. URL copied to clipboard, please open it manually.");
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
+                                break;
+                            case "what=": {
+                                String error = line.replaceFirst("what=", "");
+                                currentTaskTextField.setText(error);
+                                break;
                             }
-                        }
-                        if (futureRestorePossibleMatch.equals("what=")) {
-                            String error = line.replaceFirst("what=", "");
-                            currentTaskTextField.setText(error);
-                        }
-                        if (futureRestorePossibleMatch.equals("unknown option -- use-pwndfu")) {
-                            JOptionPane.showMessageDialog(mainMenuView,
-                                    "Looks like there is no pwndfu argument on this version of FutureRestore.\n" +
-                                    "Ensure you're using a FutureRestore version which supports this argument, or turn off \"Pwned Restore.\"",
-                                    "FutureRestore PWNDFU Unknown", JOptionPane.ERROR_MESSAGE);
-                        }
-                        if (futureRestorePossibleMatch.equals("timeout waiting for command")) {
-                            fdrTimeouts++;
-                            if (fdrTimeouts > 50) {
-                                logTextArea.append("Stopping FutureRestore—FDR looped over 50 times\n");
-                                futureRestoreProcess.destroy();
-                                logTextArea.append("FutureRestore process killed.\n");
-                                reader.close();
-                                writer.close();
+                            case "unknown option -- use-pwndfu": {
+                                JOptionPane.showMessageDialog(mainMenuView,
+                                        "Looks like there is no --use-pwndfu argument on this version of FutureRestore.\n" +
+                                                "Ensure you're using a FutureRestore version which supports this argument, or turn off \"Pwned Restore.\"",
+                                        "FutureRestore PWNDFU Unknown", JOptionPane.ERROR_MESSAGE);
+                                break;
+                            }
+                            case "unknown option -- custom-latest": {
+                                JOptionPane.showMessageDialog(mainMenuView,
+                                        "Looks like there is no --custom-latest argument on this version of FutureRestore.\n" +
+                                                "Ensure you're using a FutureRestore version which supports this argument, or turn off \"Pwned Restore.\"",
+                                        "FutureRestore PWNDFU Unknown", JOptionPane.ERROR_MESSAGE);
+                                break;
+                            }
+                            case "timeout waiting for command": {
+                                fdrTimeouts++;
+                                if (fdrTimeouts > 50) {
+                                    logTextArea.append("Stopping FutureRestore—FDR looped over 50 times.\n");
+                                    futureRestoreProcess.destroy();
+                                    logTextArea.append("FutureRestore process killed.\n");
+                                    reader.close();
+                                    writer.close();
 
-                                uploadLogsIfNecessary();
+                                    uploadLogsIfNecessary();
 
-                                SwingUtilities.invokeLater(() -> {
-                                    currentTaskTextField.setText("FDR looped over 50 times");
-                                    startFutureRestoreButton.setEnabled(true);
-                                    stopFutureRestoreButton.setText("Stop FutureRestore");
-                                });
-                                return;
+                                    SwingUtilities.invokeLater(() -> {
+                                        currentTaskTextField.setText("FDR looped over 50 times");
+                                        startFutureRestoreButton.setEnabled(true);
+                                        stopFutureRestoreButton.setText("Stop FutureRestore");
+                                    });
+                                    return;
+                                }
                             }
                         }
                     }
@@ -246,14 +259,18 @@ public class FutureRestoreWorker {
         }
 
         if (MainMenu.properties.getProperty("upload_logs").equals("true")) {
-            // Make all args into a String
-            StringBuilder builder = new StringBuilder();
-            for (String value : allArgsArray) {
-                builder.append(value).append(" ");
-            }
-            String fullCommand = builder.toString();
+            String fullCommand = getFullCommandString();
             uploadLog(logPath, logName, fullCommand);
         }
+    }
+
+    private static String getFullCommandString() {
+        // Make all args into a String
+        StringBuilder builder = new StringBuilder();
+        for (String value : allArgsArray) {
+            builder.append(value).append(" ");
+        }
+        return builder.toString();
     }
 
     /*

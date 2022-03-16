@@ -2,15 +2,17 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="MainMenu">
   <grid id="27dc6" binding="mainMenuView" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="20" width="1042" height="539"/>
+      <xy x="20" y="20" width="681" height="539"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
       <component id="37e3d" class="javax.swing.JLabel">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="10" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="226" height="34"/>
+          </grid>
+          <gridbag top="10" left="10" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <font size="28" style="1"/>
@@ -19,8 +21,10 @@
       </component>
       <component id="6f78f" class="javax.swing.JLabel" binding="authorAndVersionLabel">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag top="0" left="10" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="226" height="16"/>
+          </grid>
+          <gridbag top="0" left="10" bottom="10" right="0" weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <text value="by CoocooFroggy"/>
@@ -51,7 +55,7 @@
       <component id="e0dd6" class="javax.swing.JProgressBar" binding="logProgressBar">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties/>
       </component>
@@ -202,26 +206,16 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="e0a05" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <font style="1"/>
-                  <text value="Arguments"/>
-                </properties>
-              </component>
               <component id="b2d6d" class="javax.swing.JSeparator">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="0.0"/>
+                  <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0" ipady="5"/>
                 </constraints>
                 <properties/>
               </component>
               <component id="2677" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="5" column="0" row-span="2" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="2" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
@@ -231,8 +225,8 @@
               </component>
               <component id="ac048" class="javax.swing.JComboBox" binding="basebandComboBox">
                 <constraints>
-                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag top="10" left="0" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <model>
@@ -244,7 +238,7 @@
               </component>
               <component id="b3f1d" class="javax.swing.JComboBox" binding="sepComboBox">
                 <constraints>
-                  <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
@@ -257,10 +251,10 @@
               </component>
               <component id="afbbf" class="javax.swing.JTextField" binding="basebandTextField">
                 <constraints>
-                  <grid row="5" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
-                  <gridbag top="10" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+                  <gridbag top="10" left="0" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <editable value="false"/>
@@ -269,10 +263,10 @@
               </component>
               <component id="8dd04" class="javax.swing.JTextField" binding="sepTextField">
                 <constraints>
-                  <grid row="6" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
-                  <gridbag weightx="0.0" weighty="0.0"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <editable value="false"/>
@@ -281,7 +275,7 @@
               </component>
               <component id="74301" class="javax.swing.JButton" binding="selectBuildManifestButton" default-binding="true">
                 <constraints>
-                  <grid row="5" column="4" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="3" row-span="2" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <gridbag top="10" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
@@ -291,144 +285,231 @@
               </component>
               <component id="4b39a" class="javax.swing.JButton" binding="nextButtonOptions">
                 <constraints>
-                  <grid row="7" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="5" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="5" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag top="0" left="0" bottom="5" right="10" weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <text value="Next"/>
                 </properties>
               </component>
-              <component id="427a4" class="javax.swing.JCheckBox" binding="debugDCheckBox" default-binding="true">
+              <grid id="87a13" binding="allArgumentsPanel" layout-manager="GridBagLayout">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="10" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
+                  <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
-                <properties>
-                  <selected value="true"/>
-                  <text value="Extra Logs"/>
-                </properties>
-              </component>
-              <component id="a62e" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <font name="Menlo" size="10"/>
-                  <text value="(--debug)"/>
-                </properties>
-              </component>
-              <component id="b77e0" class="javax.swing.JCheckBox" binding="updateUCheckBox" default-binding="true">
-                <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="10" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <text value="Preserve Data"/>
-                </properties>
-              </component>
-              <component id="14577" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <font name="Menlo" size="10"/>
-                  <text value="(--update)"/>
-                </properties>
-              </component>
-              <component id="51f43" class="javax.swing.JCheckBox" binding="pwndfuCheckBox">
-                <constraints>
-                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="10" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <text value="Pwned Restore"/>
-                </properties>
-              </component>
-              <component id="b130a" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <font name="Menlo" size="10"/>
-                  <text value="(--use-pwndfu)"/>
-                </properties>
-              </component>
-              <component id="7091a" class="javax.swing.JCheckBox" binding="waitWCheckBox" default-binding="true">
-                <constraints>
-                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="10" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <text value="AP Nonce Collision"/>
-                </properties>
-              </component>
-              <component id="16606" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <font name="Menlo" size="10"/>
-                  <text value="(--wait)"/>
-                </properties>
-              </component>
-              <component id="f288d" class="javax.swing.JCheckBox" binding="noIbssCheckBox">
-                <constraints>
-                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="10" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <enabled value="false"/>
-                  <selected value="false"/>
-                  <text value="Don't Send iBSS"/>
-                </properties>
-              </component>
-              <component id="44cab" class="javax.swing.JLabel" binding="noIbssLabel">
-                <constraints>
-                  <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <enabled value="false"/>
-                  <font name="Menlo" size="10"/>
-                  <text value="(--no-ibss)"/>
-                </properties>
-              </component>
-              <component id="9d335" class="javax.swing.JCheckBox" binding="setNonceCheckBox">
-                <constraints>
-                  <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="10" left="0" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <enabled value="false"/>
-                  <selected value="false"/>
-                  <text value="Set Nonce to Blob's"/>
-                </properties>
-              </component>
-              <component id="32739" class="javax.swing.JLabel" binding="setNonceLabel">
-                <constraints>
-                  <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <enabled value="false"/>
-                  <font name="Menlo" size="10"/>
-                  <text value="(--set-nonce)"/>
-                </properties>
-              </component>
-              <component id="816a9" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="2" column="0" row-span="2" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <font/>
-                  <text value="Pwned Args"/>
-                </properties>
-              </component>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <grid id="f6067" layout-manager="GridBagLayout">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="427a4" class="javax.swing.JCheckBox" binding="debugDCheckBox" default-binding="true">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="10" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <selected value="true"/>
+                          <text value="Extra Logs"/>
+                        </properties>
+                      </component>
+                      <component id="a62e" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font name="Menlo" size="10"/>
+                          <text value="(--debug)"/>
+                        </properties>
+                      </component>
+                      <component id="b77e0" class="javax.swing.JCheckBox" binding="updateUCheckBox" default-binding="true">
+                        <constraints>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="10" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <text value="Preserve Data"/>
+                        </properties>
+                      </component>
+                      <component id="14577" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font name="Menlo" size="10"/>
+                          <text value="(--update)"/>
+                        </properties>
+                      </component>
+                      <component id="7091a" class="javax.swing.JCheckBox" binding="waitWCheckBox" default-binding="true">
+                        <constraints>
+                          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="10" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <text value="AP Nonce Collision"/>
+                        </properties>
+                      </component>
+                      <component id="16606" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font name="Menlo" size="10"/>
+                          <text value="(--wait)"/>
+                        </properties>
+                      </component>
+                      <component id="35bcd" class="javax.swing.JCheckBox" binding="customLatestCheckBox">
+                        <constraints>
+                          <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="10" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <text value="Custom Latest"/>
+                          <toolTipText value="Specify custom latest version to use for SEP, Baseband and other FirmwareUpdater components."/>
+                        </properties>
+                      </component>
+                      <component id="3b950" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="1" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="25" bottom="10" right="10" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font name="Menlo" size="10"/>
+                          <text value="(--custom-latest &lt;VERSION&gt;)"/>
+                        </properties>
+                      </component>
+                      <component id="3e72a" class="javax.swing.JTextField" binding="customLatestTextField">
+                        <constraints>
+                          <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                          <gridbag top="10" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <editable value="false"/>
+                          <enabled value="false"/>
+                          <toolTipText value="Enter a signed iOS version, such as 15.3.1."/>
+                        </properties>
+                      </component>
+                      <component id="e0a05" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font style="1"/>
+                          <text value="Arguments"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <grid id="f8837" layout-manager="GridBagLayout">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="816a9" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="10" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font/>
+                          <text value="Pwned Args"/>
+                        </properties>
+                      </component>
+                      <component id="51f43" class="javax.swing.JCheckBox" binding="pwndfuCheckBox">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="10" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <text value="Pwned Restore"/>
+                          <toolTipText value="Restoring devices with Odysseus method. Device needs to be in pwned DFU mode already."/>
+                        </properties>
+                      </component>
+                      <component id="b130a" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <font name="Menlo" size="10"/>
+                          <text value="(--use-pwndfu)"/>
+                        </properties>
+                      </component>
+                      <component id="f288d" class="javax.swing.JCheckBox" binding="noIbssCheckBox">
+                        <constraints>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="10" left="0" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <enabled value="false"/>
+                          <selected value="false"/>
+                          <text value="Don't Send iBSS"/>
+                        </properties>
+                      </component>
+                      <component id="44cab" class="javax.swing.JLabel" binding="noIbssLabel">
+                        <constraints>
+                          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <enabled value="false"/>
+                          <font name="Menlo" size="10"/>
+                          <text value="(--no-ibss)"/>
+                        </properties>
+                      </component>
+                      <component id="9d335" class="javax.swing.JCheckBox" binding="setNonceCheckBox">
+                        <constraints>
+                          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="10" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <enabled value="false"/>
+                          <selected value="false"/>
+                          <text value="Set Device Nonce"/>
+                        </properties>
+                      </component>
+                      <component id="32739" class="javax.swing.JLabel" binding="setNonceLabel">
+                        <constraints>
+                          <grid row="1" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="25" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <enabled value="false"/>
+                          <font name="Menlo" size="10"/>
+                          <text value="(--set-nonce &lt;optional 0xGENERATOR&gt;)"/>
+                        </properties>
+                      </component>
+                      <component id="ea128" class="javax.swing.JTextField" binding="setNonceTextField">
+                        <constraints>
+                          <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                          <gridbag top="10" left="0" bottom="0" right="10" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <editable value="false"/>
+                          <enabled value="false"/>
+                          <toolTipText value="Optionally enter your generator (including 0x), or leave blank to set nonce to the specified blob's."/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
             </children>
           </grid>
           <grid id="48969" layout-manager="GridBagLayout">
@@ -481,13 +562,13 @@
               <vspacer id="1f644">
                 <constraints>
                   <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="2.0"/>
+                  <gridbag weightx="0.0" weighty="1.0"/>
                 </constraints>
               </vspacer>
               <vspacer id="7cee">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="2.0"/>
+                  <gridbag weightx="0.0" weighty="1.0"/>
                 </constraints>
               </vspacer>
               <component id="2fce7" class="javax.swing.JLabel">
@@ -516,7 +597,7 @@
               <vspacer id="c69a5">
                 <constraints>
                   <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="2.0"/>
+                  <gridbag weightx="0.0" weighty="1.0"/>
                 </constraints>
               </vspacer>
             </children>

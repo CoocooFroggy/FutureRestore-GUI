@@ -22,8 +22,8 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,6 +60,10 @@ public class MainMenu {
     private JCheckBox setNonceCheckBox;
     private JLabel noIbssLabel;
     private JLabel setNonceLabel;
+    private JTextField customLatestTextField;
+    private JCheckBox customLatestCheckBox;
+    private JPanel allArgumentsPanel;
+    private JTextField setNonceTextField;
 
     private String futureRestoreFilePath;
     private String blobName;
@@ -75,6 +79,7 @@ public class MainMenu {
     private boolean optionDebugState = true;
     private boolean optionUpdateState = false;
     private boolean optionWaitState = false;
+    private boolean optionCustomLatestState = false;
     private boolean optionPwndfuState = false;
     private boolean optionNoIbssState = false;
     private boolean optionSetNonceState = false;
@@ -94,8 +99,7 @@ public class MainMenu {
                 savePreferences();
                 // Set name of button to blob file name
                 selectFutureRestoreBinaryExecutableButton.setText("✓ " + file.getName());
-            } else
-                System.out.println("Cancelled");
+            }
             FRUtils.setEnabled(mainMenuView, true, true);
             mainMenuFrame.requestFocus();
         }));
@@ -161,10 +165,8 @@ public class MainMenu {
             if (urlString == null)
                 return;
 
-            SwingUtilities.invokeLater(() -> {
-                currentTaskTextField.setText("Downloading FutureRestore...");
-                messageToLog("Downloading FutureRestore...");
-            });
+            currentTaskTextField.setText("Downloading FutureRestore...");
+            messageToLog("Downloading FutureRestore...");
 
             // Download asynchronously
             final String finalUrlString = urlString;
@@ -188,17 +190,14 @@ public class MainMenu {
                 if (futureRestoreExecutable == null) {
                     SwingUtilities.invokeLater(() -> currentTaskTextField.setText(""));
                 } else {
-                    final File finalFutureRestoreExecutable = futureRestoreExecutable;
-                    SwingUtilities.invokeLater(() -> {
-                        currentTaskTextField.setText("");
-                        messageToLog("Decompressed FutureRestore");
-                        futureRestoreFilePath = finalFutureRestoreExecutable.getAbsolutePath();
-                        properties.setProperty("previous_futurerestore", futureRestoreFilePath);
-                        savePreferences();
-                        messageToLog("Set " + finalFutureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
-                        // Set name of button to blob file name
-                        selectFutureRestoreBinaryExecutableButton.setText("✓ " + finalFutureRestoreExecutable.getName());
-                    });
+                    currentTaskTextField.setText("");
+                    messageToLog("Decompressed FutureRestore");
+                    futureRestoreFilePath = futureRestoreExecutable.getAbsolutePath();
+                    properties.setProperty("previous_futurerestore", futureRestoreFilePath);
+                    savePreferences();
+                    messageToLog("Set " + futureRestoreExecutable.getAbsolutePath() + " to FutureRestore executable.");
+                    // Set name of button to blob file name
+                    selectFutureRestoreBinaryExecutableButton.setText("✓ " + futureRestoreExecutable.getName());
                 }
             }).start();
         });
@@ -220,8 +219,7 @@ public class MainMenu {
                 blobFilePath = file.getAbsolutePath();
                 blobName = file.getName();
                 selectBlobFileButton.setText("✓ " + file.getName());
-            } else
-                System.out.println("Cancelled");
+            }
             FRUtils.setEnabled(mainMenuView, true, true);
             mainMenuFrame.requestFocus();
         }));
@@ -244,8 +242,7 @@ public class MainMenu {
                 targetIpswName = file.getName();
                 // Set name of button to ipsw file name
                 selectTargetIPSWFileButton.setText("✓ " + file.getName());
-            } else
-                System.out.println("Cancelled");
+            }
             FRUtils.setEnabled(mainMenuView, true, true);
             mainMenuFrame.requestFocus();
         }));
@@ -267,8 +264,7 @@ public class MainMenu {
                 buildManifestPath = file.getAbsolutePath();
                 // Set name of button to ipsw file name
                 selectBuildManifestButton.setText("✓ " + file.getName());
-            } else
-                System.out.println("Cancelled");
+            }
             FRUtils.setEnabled(mainMenuView, true, true);
             mainMenuFrame.requestFocus();
         }));
@@ -277,6 +273,7 @@ public class MainMenu {
             optionDebugState = debugDCheckBox.isSelected();
             optionUpdateState = updateUCheckBox.isSelected();
             optionWaitState = waitWCheckBox.isSelected();
+            optionCustomLatestState = customLatestCheckBox.isSelected();
             optionPwndfuState = pwndfuCheckBox.isSelected();
             optionNoIbssState = noIbssCheckBox.isSelected();
             optionSetNonceState = setNonceCheckBox.isSelected();
@@ -286,7 +283,19 @@ public class MainMenu {
                 noIbssLabel.setEnabled(true);
                 setNonceCheckBox.setEnabled(true);
                 setNonceLabel.setEnabled(true);
+                // If they have --set-nonce selected, show the TextField for custom generator
+                if (optionSetNonceState) {
+                    setNonceTextField.setVisible(true);
+                    setNonceTextField.setEnabled(true);
+                    setNonceTextField.setEditable(true);
+                } else {
+                    setNonceTextField.setVisible(false);
+                    setNonceTextField.setEnabled(false);
+                    setNonceTextField.setEditable(false);
+                    setNonceTextField.setText("");
+                }
             } else {
+                // Deselect and disable pwndfu boxes
                 noIbssCheckBox.setSelected(false);
                 noIbssCheckBox.setEnabled(false);
                 noIbssLabel.setEnabled(false);
@@ -298,10 +307,23 @@ public class MainMenu {
                 optionNoIbssState = false;
                 optionSetNonceState = false;
             }
+
+            // If custom latest is turned on/off, update the little box next to it
+            if (optionCustomLatestState) {
+                customLatestTextField.setVisible(true);
+                customLatestTextField.setEnabled(true);
+                customLatestTextField.setEditable(true);
+            } else {
+                customLatestTextField.setVisible(false);
+                customLatestTextField.setEnabled(false);
+                customLatestTextField.setEditable(false);
+                customLatestTextField.setText("");
+            }
         };
         debugDCheckBox.addActionListener(optionsListener);
         updateUCheckBox.addActionListener(optionsListener);
         waitWCheckBox.addActionListener(optionsListener);
+        customLatestCheckBox.addActionListener(optionsListener);
 
         pwndfuCheckBox.addActionListener(optionsListener);
         noIbssCheckBox.addActionListener(optionsListener);
@@ -310,11 +332,8 @@ public class MainMenu {
         startFutureRestoreButton.addActionListener(e -> {
             // If FutureRestore is already running, just disable ourselves
             if (FutureRestoreWorker.futureRestoreProcess != null && FutureRestoreWorker.futureRestoreProcess.isAlive()) {
-                SwingUtilities.invokeLater(() -> {
-                    startFutureRestoreButton.setEnabled(false);
-                    // Potentially make the button say unsafe again
-                });
-                return;
+                startFutureRestoreButton.setEnabled(false);
+                // Potentially make the button say unsafe again
             }
 
             // Ensure they have FutureRestore selected
@@ -323,7 +342,7 @@ public class MainMenu {
                 return;
             }
 
-            // Ensure they actually selected a blob, IPSW, and buildmanifest if needed
+            // Ensure they actually selected a blob, IPSW, and BuildManifest if needed
             if (blobFilePath == null) {
                 JOptionPane.showMessageDialog(mainMenuView, "Select a blob file.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -335,6 +354,14 @@ public class MainMenu {
             if (bbState.equals("manual") || sepState.equals("manual")) {
                 if (buildManifestPath == null) {
                     JOptionPane.showMessageDialog(mainMenuView, "Select a BuildManifest file.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+
+            // Ensure they typed in a custom latest version if selected
+            if (optionCustomLatestState) {
+                if (customLatestTextField.getText().trim().length() == 0) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Specify a custom latest version or disable the \"Custom Latest\" option.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
@@ -375,12 +402,22 @@ public class MainMenu {
                 allArgs.add("--update");
             if (optionWaitState)
                 allArgs.add("--wait");
+            if (optionCustomLatestState) {
+                allArgs.add("--custom-latest");
+                // Remove trailing and leading whitespace with .trim()
+                allArgs.add(customLatestTextField.getText().trim());
+            }
             if (optionPwndfuState)
                 allArgs.add("--use-pwndfu");
             if (optionNoIbssState)
                 allArgs.add("--no-ibss");
             if (optionSetNonceState) {
-                allArgs.add("--set-nonce");
+                // If they specified a generator
+                String customGenerator = setNonceTextField.getText().trim();
+                if (customGenerator.length() > 0)
+                    allArgs.add("--set-nonce=" + customGenerator);
+                else
+                    allArgs.add("--set-nonce");
             }
 
             switch (sepState) {
@@ -520,11 +557,9 @@ public class MainMenu {
             }
 
             if (killed) {
-                SwingUtilities.invokeLater(() -> {
-                    startFutureRestoreButton.setEnabled(true);
-                    stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
-                    currentTaskTextField.setText("");
-                });
+                startFutureRestoreButton.setEnabled(true);
+                stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
+                currentTaskTextField.setText("");
             }
         });
 
@@ -591,9 +626,6 @@ public class MainMenu {
             mainMenuFrame.setContentPane(mainMenuInstance.mainMenuView);
             // End program on close
             mainMenuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            mainMenuFrame.pack();
-            // Centers it on screen
-            mainMenuFrame.setLocationRelativeTo(null);
 
             // init SettingsMenu
             SettingsMenu.initializeSettingsMenu(settingsMenuInstance);
@@ -627,7 +659,15 @@ public class MainMenu {
             // Set text for version
             mainMenuInstance.authorAndVersionLabel.setText("by CoocooFroggy — v" + futureRestoreGUIVersion);
 
-            // Shows the view
+            // Hide the TextFields for custom generator and custom latest
+            mainMenuInstance.setNonceTextField.setVisible(false);
+            mainMenuInstance.customLatestTextField.setVisible(false);
+
+            // Packs
+            mainMenuFrame.pack();
+            // Centers it on screen
+            mainMenuFrame.setLocationRelativeTo(null);
+            // Shows it
             mainMenuFrame.setVisible(true);
 
             // Only if they have the setting enabled, check for updates
@@ -640,35 +680,18 @@ public class MainMenu {
             // If they previously downloaded FR, set it
             String previousFRPath = properties.getProperty("previous_futurerestore");
             if (previousFRPath != null) {
-                mainMenuInstance.futureRestoreFilePath = previousFRPath;
-                mainMenuInstance.messageToLog("Set previous FutureRestore download, " + previousFRPath + ", to FutureRestore executable.");
-                // Set name of button to FR file name
-                mainMenuInstance.selectFutureRestoreBinaryExecutableButton.setText("✓ " + new File(previousFRPath).getName());
-            }
-
-            /*String homeDirectory = System.getProperty("user.home");
-            String frPath = homeDirectory + "/FutureRestoreGUI/";
-            File extracted = new File(frPath + "extracted/");
-
-            // If ~/FRGUI/extracted/ exists
-            if (extracted.exists()) {
-                //If a file exists in there, set it
-                File[] filesInExtracted = extracted.listFiles();
-                if (filesInExtracted != null && filesInExtracted.length > 0) {
-                    File frExecutable = filesInExtracted[0];
-                    if (frExecutable.exists()) {
-                        mainMenuInstance.futureRestoreFilePath = frExecutable.getAbsolutePath();
-                        mainMenuInstance.messageToLog("Set previous FutureRestore download, " + frExecutable.getAbsolutePath() + ", to FutureRestore executable.");
-                        // Set name of button to FR file name
-                        mainMenuInstance.selectFutureRestoreBinaryExecutableButton.setText("✓ " + frExecutable.getName());
-                    }
+                // Only if it exists
+                if (new File(previousFRPath).exists()) {
+                    mainMenuInstance.futureRestoreFilePath = previousFRPath;
+                    mainMenuInstance.messageToLog("Set previous FutureRestore download, " + previousFRPath + ", to FutureRestore executable.");
+                    // Set name of button to FR file name
+                    mainMenuInstance.selectFutureRestoreBinaryExecutableButton.setText("✓ " + new File(previousFRPath).getName());
                 }
-            }*/
-
+            }
         });
     }
 
-    /* UTILITIES */
+    // region Utilities
 
     static void turnDark(MainMenu mainMenuInstance) {
         JPanel mainMenuView = mainMenuInstance.mainMenuView;
@@ -792,16 +815,6 @@ public class MainMenu {
             Runtime runtime = Runtime.getRuntime();
             try {
                 runtime.exec(futureRestoreFilePath);
-                /*BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                Pattern pattern = Pattern.compile("Version: (.*)");
-                String s;
-                Only check the first 5 lines
-                for (int i = 0; i < 5; i++) {
-                    s = bufferedReader.readLine();
-                    Matcher matcher = pattern.matcher(s);
-                    if (matcher.find());
-                        version = matcher.group(1);
-                }*/
             } catch (IOException ioException) {
                 System.out.println("Unable to check FutureRestore version.");
                 JOptionPane.showMessageDialog(mainMenuView, "Unable to run FutureRestore. Ensure you selected the correct FutureRestore executable.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -811,31 +824,6 @@ public class MainMenu {
                 stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
                 return;
             }
-
-            /*
-            // Good idea at first but got kinda annoying every time
-
-            // Ask if they want to check for latest
-            if (version == null) {
-                JOptionPane.showMessageDialog(mainMenuView, "Unable to check FutureRestore version from selected executable. Manually ensure you have the latest version.", "Warning", JOptionPane.ERROR_MESSAGE);
-            } else {
-                int response = JOptionPane.showConfirmDialog(mainMenuView, "Your FutureRestore's version: v" + version + ". Would you like to ensure this is the latest version on m1sta's fork?", "FutureRestore Version", JOptionPane.YES_NO_OPTION);
-                if (response == JOptionPane.YES_OPTION) {
-                    try {
-                        String latestVersion = getLatestFutureRestore();
-                        if (version.equals(latestVersion)) {
-                            JOptionPane.showMessageDialog(mainMenuView, "You're up to date! The latest version is v" + latestVersion + ".");
-                        } else {
-                            JOptionPane.showMessageDialog(mainMenuView, "You're not on the latest version. The latest version is " + latestVersion + ", and you're on " + version + ".", "Version Mismatch", JOptionPane.WARNING_MESSAGE);
-                        }
-                    } catch (IOException ioException) {
-                        System.out.println("Unable to check for latest FutureRestore");
-                        JOptionPane.showMessageDialog(mainMenuView, "Unable to fetch FutureRestore's latest version. Manually check that " + version + " is the latest.", "Unable to Fetch Version", JOptionPane.WARNING_MESSAGE);
-                        ioException.printStackTrace();
-                    }
-                }
-            }
-            */
         }
 
         System.out.println("Starting FutureRestore...");
@@ -843,12 +831,14 @@ public class MainMenu {
 
         new Thread(() -> {
             try {
-                FutureRestoreWorker.runFutureRestore(futureRestoreFilePath, allArgs, mainMenuView, logTextArea, logProgressBar, currentTaskTextField, startFutureRestoreButton, stopFutureRestoreUnsafeButton);
+                FutureRestoreWorker.runFutureRestore(futureRestoreFilePath, allArgs, this);
             } catch (IOException e) {
-                System.out.println("Unable to run FutureRestore.");
+                System.err.println("Unable to run FutureRestore.");
+                e.printStackTrace();
+                messageToLog("Unable to run FutureRestore.");
+                messageToLog(e.getMessage());
                 startFutureRestoreButton.setEnabled(true);
                 stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
-                e.printStackTrace();
             }
         }).start();
 
@@ -862,17 +852,6 @@ public class MainMenu {
             lineNumber++;
         });
     }
-
-// --Commented out by Inspection START (3/2/22, 10:01 PM):
-//    String getLatestFrTag() throws IOException {
-//        // Vars
-//        Map<String, Object> newestRelease = getLatestFrGithub();
-//        String newestTag = (String) newestRelease.get("tag_name");
-//        System.out.println("Newest version: " + newestTag);
-//
-//        return newestTag;
-//    }
-// --Commented out by Inspection STOP (3/2/22, 10:01 PM)
 
     Map<String, String> getLatestFrDownload(String operatingSystem) throws IOException {
         // operatingSystem = "mac", "windows", "linux"
@@ -1093,7 +1072,7 @@ public class MainMenu {
             return null;
         }
 
-        // Only run on MacOS and Linux
+        // Only run on macOS and Linux
         if (operatingSystem.contains("mac") || operatingSystem.contains("linux")) {
             // Make FutureRestore executable
             Process process;
@@ -1146,7 +1125,7 @@ public class MainMenu {
         if (properties.getProperty("check_updates") == null)
             properties.setProperty("check_updates", "true");
         if (properties.getProperty("futurerestore_beta") == null)
-            properties.setProperty("futurerestore_beta", "false");
+            properties.setProperty("futurerestore_beta", "true");
         if (properties.getProperty("theme_preference") == null)
             properties.setProperty("theme_preference", "auto");
 
@@ -1332,6 +1311,7 @@ public class MainMenu {
         }
     }
 
+    // endregion
 
     // region Getters
 
@@ -1366,6 +1346,15 @@ public class MainMenu {
     public JTabbedPane getTabbedPane() {
         return tabbedPane;
     }
+
+    public JTextArea getLogTextArea() {
+        return logTextArea;
+    }
+
+    public JButton getStopFutureRestoreUnsafeButton() {
+        return stopFutureRestoreUnsafeButton;
+    }
+
     // endregion
 
     {
@@ -1393,6 +1382,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 10, 0, 0);
         mainMenuView.add(label1, gbc);
@@ -1401,6 +1391,7 @@ public class MainMenu {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 10, 0);
         mainMenuView.add(authorAndVersionLabel, gbc);
@@ -1428,6 +1419,7 @@ public class MainMenu {
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainMenuView.add(logProgressBar, gbc);
         settingsButton = new JButton();
@@ -1572,35 +1564,25 @@ public class MainMenu {
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridBagLayout());
         tabbedPane.addTab("Options", panel2);
+        final JSeparator separator1 = new JSeparator();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 4;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipady = 5;
+        panel2.add(separator1, gbc);
         final JLabel label6 = new JLabel();
         Font label6Font = this.$$$getFont$$$(null, Font.BOLD, -1, label6.getFont());
         if (label6Font != null) label6.setFont(label6Font);
-        label6.setText("Arguments");
+        label6.setText("Baseband and SEP");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 2;
         gbc.gridheight = 2;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(0, 10, 0, 10);
         panel2.add(label6, gbc);
-        final JSeparator separator1 = new JSeparator();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.gridwidth = 5;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel2.add(separator1, gbc);
-        final JLabel label7 = new JLabel();
-        Font label7Font = this.$$$getFont$$$(null, Font.BOLD, -1, label7.getFont());
-        if (label7Font != null) label7.setFont(label7Font);
-        label7.setText("Baseband and SEP");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        gbc.gridheight = 2;
-        gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = new Insets(0, 10, 0, 10);
-        panel2.add(label7, gbc);
         basebandComboBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Latest Baseband");
@@ -1609,8 +1591,7 @@ public class MainMenu {
         basebandComboBox.setModel(defaultComboBoxModel1);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 5;
-        gbc.weightx = 1.0;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 0, 0, 0);
@@ -1623,7 +1604,7 @@ public class MainMenu {
         sepComboBox.setModel(defaultComboBoxModel2);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 6;
+        gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel2.add(sepComboBox, gbc);
@@ -1632,8 +1613,8 @@ public class MainMenu {
         basebandTextField.setText("✓ (No file)");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
-        gbc.gridy = 5;
-        gbc.gridwidth = 2;
+        gbc.gridy = 2;
+        gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 0, 0, 0);
@@ -1643,8 +1624,8 @@ public class MainMenu {
         sepTextField.setText("✓ (No file)");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
-        gbc.gridy = 6;
-        gbc.gridwidth = 2;
+        gbc.gridy = 3;
+        gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel2.add(sepTextField, gbc);
@@ -1652,8 +1633,8 @@ public class MainMenu {
         selectBuildManifestButton.setEnabled(false);
         selectBuildManifestButton.setText("Select BuildManifest...");
         gbc = new GridBagConstraints();
-        gbc.gridx = 4;
-        gbc.gridy = 5;
+        gbc.gridx = 3;
+        gbc.gridy = 2;
         gbc.gridheight = 2;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(10, 0, 0, 10);
@@ -1661,11 +1642,27 @@ public class MainMenu {
         nextButtonOptions = new JButton();
         nextButtonOptions.setText("Next");
         gbc = new GridBagConstraints();
-        gbc.gridx = 4;
-        gbc.gridy = 7;
+        gbc.gridx = 3;
+        gbc.gridy = 4;
         gbc.anchor = GridBagConstraints.NORTHEAST;
         gbc.insets = new Insets(0, 0, 5, 10);
         panel2.add(nextButtonOptions, gbc);
+        allArgumentsPanel = new JPanel();
+        allArgumentsPanel.setLayout(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 4;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel2.add(allArgumentsPanel, gbc);
+        final JPanel panel3 = new JPanel();
+        panel3.setLayout(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 10, 0, 10);
+        allArgumentsPanel.add(panel3, gbc);
         debugDCheckBox = new JCheckBox();
         debugDCheckBox.setSelected(true);
         debugDCheckBox.setText("Extra Logs");
@@ -1675,17 +1672,17 @@ public class MainMenu {
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 0, 10);
-        panel2.add(debugDCheckBox, gbc);
-        final JLabel label8 = new JLabel();
-        Font label8Font = this.$$$getFont$$$("Menlo", -1, 10, label8.getFont());
-        if (label8Font != null) label8.setFont(label8Font);
-        label8.setText("(--debug)");
+        panel3.add(debugDCheckBox, gbc);
+        final JLabel label7 = new JLabel();
+        Font label7Font = this.$$$getFont$$$("Menlo", -1, 10, label7.getFont());
+        if (label7Font != null) label7.setFont(label7Font);
+        label7.setText("(--debug)");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(0, 25, 10, 0);
-        panel2.add(label8, gbc);
+        panel3.add(label7, gbc);
         updateUCheckBox = new JCheckBox();
         updateUCheckBox.setText("Preserve Data");
         gbc = new GridBagConstraints();
@@ -1694,36 +1691,17 @@ public class MainMenu {
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 0, 10);
-        panel2.add(updateUCheckBox, gbc);
-        final JLabel label9 = new JLabel();
-        Font label9Font = this.$$$getFont$$$("Menlo", -1, 10, label9.getFont());
-        if (label9Font != null) label9.setFont(label9Font);
-        label9.setText("(--update)");
+        panel3.add(updateUCheckBox, gbc);
+        final JLabel label8 = new JLabel();
+        Font label8Font = this.$$$getFont$$$("Menlo", -1, 10, label8.getFont());
+        if (label8Font != null) label8.setFont(label8Font);
+        label8.setText("(--update)");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(0, 25, 10, 0);
-        panel2.add(label9, gbc);
-        pwndfuCheckBox = new JCheckBox();
-        pwndfuCheckBox.setText("Pwned Restore");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.weightx = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 0, 0, 10);
-        panel2.add(pwndfuCheckBox, gbc);
-        final JLabel label10 = new JLabel();
-        Font label10Font = this.$$$getFont$$$("Menlo", -1, 10, label10.getFont());
-        if (label10Font != null) label10.setFont(label10Font);
-        label10.setText("(--use-pwndfu)");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.insets = new Insets(0, 25, 10, 0);
-        panel2.add(label10, gbc);
+        panel3.add(label8, gbc);
         waitWCheckBox = new JCheckBox();
         waitWCheckBox.setText("AP Nonce Collision");
         gbc = new GridBagConstraints();
@@ -1732,28 +1710,109 @@ public class MainMenu {
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 0, 10);
-        panel2.add(waitWCheckBox, gbc);
-        final JLabel label11 = new JLabel();
-        Font label11Font = this.$$$getFont$$$("Menlo", -1, 10, label11.getFont());
-        if (label11Font != null) label11.setFont(label11Font);
-        label11.setText("(--wait)");
+        panel3.add(waitWCheckBox, gbc);
+        final JLabel label9 = new JLabel();
+        Font label9Font = this.$$$getFont$$$("Menlo", -1, 10, label9.getFont());
+        if (label9Font != null) label9.setFont(label9Font);
+        label9.setText("(--wait)");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(0, 25, 10, 0);
-        panel2.add(label11, gbc);
+        panel3.add(label9, gbc);
+        customLatestCheckBox = new JCheckBox();
+        customLatestCheckBox.setText("Custom Latest");
+        customLatestCheckBox.setToolTipText("Specify custom latest version to use for SEP, Baseband and other FirmwareUpdater components.");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 4;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(10, 0, 0, 10);
+        panel3.add(customLatestCheckBox, gbc);
+        final JLabel label10 = new JLabel();
+        Font label10Font = this.$$$getFont$$$("Menlo", -1, 10, label10.getFont());
+        if (label10Font != null) label10.setFont(label10Font);
+        label10.setText("(--custom-latest <VERSION>)");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 4;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.insets = new Insets(0, 25, 10, 10);
+        panel3.add(label10, gbc);
+        customLatestTextField = new JTextField();
+        customLatestTextField.setEditable(false);
+        customLatestTextField.setEnabled(false);
+        customLatestTextField.setToolTipText("Enter a signed iOS version, such as 15.3.1.");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 5;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 0, 0, 10);
+        panel3.add(customLatestTextField, gbc);
+        final JLabel label11 = new JLabel();
+        Font label11Font = this.$$$getFont$$$(null, Font.BOLD, -1, label11.getFont());
+        if (label11Font != null) label11.setFont(label11Font);
+        label11.setText("Arguments");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridheight = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = new Insets(0, 10, 0, 10);
+        panel3.add(label11, gbc);
+        final JPanel panel4 = new JPanel();
+        panel4.setLayout(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 10, 0, 10);
+        allArgumentsPanel.add(panel4, gbc);
+        final JLabel label12 = new JLabel();
+        Font label12Font = this.$$$getFont$$$(null, -1, -1, label12.getFont());
+        if (label12Font != null) label12.setFont(label12Font);
+        label12.setText("Pwned Args");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridheight = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = new Insets(0, 10, 0, 10);
+        panel4.add(label12, gbc);
+        pwndfuCheckBox = new JCheckBox();
+        pwndfuCheckBox.setText("Pwned Restore");
+        pwndfuCheckBox.setToolTipText("Restoring devices with Odysseus method. Device needs to be in pwned DFU mode already.");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(10, 0, 0, 10);
+        panel4.add(pwndfuCheckBox, gbc);
+        final JLabel label13 = new JLabel();
+        Font label13Font = this.$$$getFont$$$("Menlo", -1, 10, label13.getFont());
+        if (label13Font != null) label13.setFont(label13Font);
+        label13.setText("(--use-pwndfu)");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.insets = new Insets(0, 25, 10, 0);
+        panel4.add(label13, gbc);
         noIbssCheckBox = new JCheckBox();
         noIbssCheckBox.setEnabled(false);
         noIbssCheckBox.setSelected(false);
         noIbssCheckBox.setText("Don't Send iBSS");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
-        gbc.gridy = 2;
+        gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 0, 10);
-        panel2.add(noIbssCheckBox, gbc);
+        panel4.add(noIbssCheckBox, gbc);
         noIbssLabel = new JLabel();
         noIbssLabel.setEnabled(false);
         Font noIbssLabelFont = this.$$$getFont$$$("Menlo", -1, 10, noIbssLabel.getFont());
@@ -1761,56 +1820,56 @@ public class MainMenu {
         noIbssLabel.setText("(--no-ibss)");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
-        gbc.gridy = 3;
+        gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(0, 25, 10, 0);
-        panel2.add(noIbssLabel, gbc);
+        panel4.add(noIbssLabel, gbc);
         setNonceCheckBox = new JCheckBox();
         setNonceCheckBox.setEnabled(false);
         setNonceCheckBox.setSelected(false);
-        setNonceCheckBox.setText("Set Nonce to Blob's");
+        setNonceCheckBox.setText("Set Device Nonce");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
-        gbc.gridy = 2;
-        gbc.weightx = 1.0;
+        gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 0, 0, 0);
-        panel2.add(setNonceCheckBox, gbc);
+        gbc.insets = new Insets(10, 0, 0, 10);
+        panel4.add(setNonceCheckBox, gbc);
         setNonceLabel = new JLabel();
         setNonceLabel.setEnabled(false);
         Font setNonceLabelFont = this.$$$getFont$$$("Menlo", -1, 10, setNonceLabel.getFont());
         if (setNonceLabelFont != null) setNonceLabel.setFont(setNonceLabelFont);
-        setNonceLabel.setText("(--set-nonce)");
+        setNonceLabel.setText("(--set-nonce <optional 0xGENERATOR>)");
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
-        gbc.gridy = 3;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.insets = new Insets(0, 25, 10, 0);
-        panel2.add(setNonceLabel, gbc);
-        final JLabel label12 = new JLabel();
-        Font label12Font = this.$$$getFont$$$(null, -1, -1, label12.getFont());
-        if (label12Font != null) label12.setFont(label12Font);
-        label12.setText("Pwned Args");
+        panel4.add(setNonceLabel, gbc);
+        setNonceTextField = new JTextField();
+        setNonceTextField.setEditable(false);
+        setNonceTextField.setEnabled(false);
+        setNonceTextField.setToolTipText("Optionally enter your generator (including 0x), or leave blank to set nonce to the specified blob's.");
         gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridheight = 2;
-        gbc.anchor = GridBagConstraints.EAST;
-        gbc.insets = new Insets(0, 10, 0, 10);
-        panel2.add(label12, gbc);
-        final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridBagLayout());
-        tabbedPane.addTab("Controls", panel3);
-        final JLabel label13 = new JLabel();
-        Font label13Font = this.$$$getFont$$$(null, Font.BOLD, -1, label13.getFont());
-        if (label13Font != null) label13.setFont(label13Font);
-        label13.setText("Controls");
+        gbc.gridx = 4;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 0, 0, 10);
+        panel4.add(setNonceTextField, gbc);
+        final JPanel panel5 = new JPanel();
+        panel5.setLayout(new GridBagLayout());
+        tabbedPane.addTab("Controls", panel5);
+        final JLabel label14 = new JLabel();
+        Font label14Font = this.$$$getFont$$$(null, Font.BOLD, -1, label14.getFont());
+        if (label14Font != null) label14.setFont(label14Font);
+        label14.setText("Controls");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(10, 10, 0, 10);
-        panel3.add(label13, gbc);
+        panel5.add(label14, gbc);
         exitRecoveryButton = new JButton();
         exitRecoveryButton.setText("Exit Recovery");
         exitRecoveryButton.setVerticalAlignment(0);
@@ -1820,7 +1879,7 @@ public class MainMenu {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(10, 0, 0, 0);
-        panel3.add(exitRecoveryButton, gbc);
+        panel5.add(exitRecoveryButton, gbc);
         startFutureRestoreButton = new JButton();
         Font startFutureRestoreButtonFont = this.$$$getFont$$$(null, Font.BOLD, 16, startFutureRestoreButton.getFont());
         if (startFutureRestoreButtonFont != null) startFutureRestoreButton.setFont(startFutureRestoreButtonFont);
@@ -1832,7 +1891,7 @@ public class MainMenu {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(10, 0, 0, 0);
-        panel3.add(startFutureRestoreButton, gbc);
+        panel5.add(startFutureRestoreButton, gbc);
         stopFutureRestoreUnsafeButton = new JButton();
         stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
         gbc = new GridBagConstraints();
@@ -1840,31 +1899,31 @@ public class MainMenu {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(10, 0, 0, 10);
-        panel3.add(stopFutureRestoreUnsafeButton, gbc);
+        panel5.add(stopFutureRestoreUnsafeButton, gbc);
         final JPanel spacer5 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 2;
-        gbc.weighty = 2.0;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel3.add(spacer5, gbc);
+        panel5.add(spacer5, gbc);
         final JPanel spacer6 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
-        gbc.weighty = 2.0;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel3.add(spacer6, gbc);
-        final JLabel label14 = new JLabel();
-        Font label14Font = this.$$$getFont$$$(null, Font.BOLD, -1, label14.getFont());
-        if (label14Font != null) label14.setFont(label14Font);
-        label14.setText("Current Task");
+        panel5.add(spacer6, gbc);
+        final JLabel label15 = new JLabel();
+        Font label15Font = this.$$$getFont$$$(null, Font.BOLD, -1, label15.getFont());
+        if (label15Font != null) label15.setFont(label15Font);
+        label15.setText("Current Task");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(15, 10, 25, 10);
-        panel3.add(label14, gbc);
+        panel5.add(label15, gbc);
         currentTaskTextField = new JTextField();
         currentTaskTextField.setEditable(false);
         Font currentTaskTextFieldFont = this.$$$getFont$$$(null, -1, 18, currentTaskTextField.getFont());
@@ -1879,14 +1938,14 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(0, 0, 10, 10);
-        panel3.add(currentTaskTextField, gbc);
+        panel5.add(currentTaskTextField, gbc);
         final JPanel spacer7 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 4;
-        gbc.weighty = 2.0;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel3.add(spacer7, gbc);
+        panel5.add(spacer7, gbc);
     }
 
     /**
