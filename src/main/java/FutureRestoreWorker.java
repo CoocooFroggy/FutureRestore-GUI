@@ -150,9 +150,9 @@ public class FutureRestoreWorker {
 
                                         int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an iBEC error. This is a common error and easily fixable.\n" +
                                                 "A solution for this error is available here:\n" +
-                                                "https://github.com/m1stadev/futurerestore#restoring-on-windows-10", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+                                                "https://github.com/futurerestore/futurerestore#restoring-on-windows-10", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
                                         if (response == JOptionPane.YES_OPTION) {
-                                            boolean openWebpageResult = FRUtils.openWebpage("https://github.com/m1stadev/futurerestore#restoring-on-windows-10", null);
+                                            boolean openWebpageResult = FRUtils.openWebpage("https://github.com/futurerestore/futurerestore#restoring-on-windows-10", null);
                                             if (!openWebpageResult)
                                                 appendToLog(logTextArea, writer, "Unable to open URL in your web browser. URL copied to clipboard, please open it manually.");
                                         }

@@ -155,9 +155,9 @@ public class MainMenu {
                 Object defaultChoice = choices[0];
 
                 int response = JOptionPane.showOptionDialog(mainMenuView, "Unknown operating system detected. Please download FutureRestore manually for your operating system.\n" +
-                        "https://github.com/m1stadev/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
+                        "https://github.com/futurerestore/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
                 if (response == JOptionPane.YES_OPTION) {
-                    FRUtils.openWebpage("https://github.com/m1stadev/futurerestore/releases/latest/", this);
+                    FRUtils.openWebpage("https://github.com/futurerestore/futurerestore/releases/latest/", this);
                 }
             }
 
@@ -879,7 +879,7 @@ public class MainMenu {
             }
         }
         // Pop-up saying "no binaries for your OS available"
-        noFrForOSPopup("No FutureRestore asset found for your operating system. Check releases to see if there's one available.\n", "https://github.com/m1stadev/futurerestore/releases/latest/");
+        noFrForOSPopup("No FutureRestore asset found for your operating system. Check releases to see if there's one available.\n", "https://github.com/futurerestore/futurerestore/releases/latest/");
         return linkNameMap;
     }
 
@@ -888,7 +888,7 @@ public class MainMenu {
 
         Map<String, String> linkNameMap = new HashMap<>();
 
-        String content = getRequestUrl("https://api.github.com/repos/m1stadev/futurerestore/actions/artifacts");
+        String content = getRequestUrl("https://api.github.com/repos/futurerestore/futurerestore/actions/artifacts");
 
         Gson gson = new Gson();
         Map<String, Object> result = gson.fromJson(content, Map.class);
@@ -916,7 +916,7 @@ public class MainMenu {
 
         // Pop-up saying "no binaries for your OS available"
         noFrForOSPopup("No FutureRestore beta asset found for your operating system.\n" +
-                "Try a release version instead, or manually download a beta for your OS.\n", "https://github.com/m1stadev/futurerestore/actions");
+                "Try a release version instead, or manually download a beta for your OS.\n", "https://github.com/futurerestore/futurerestore/actions");
         return linkNameMap;
     }
 
@@ -954,7 +954,7 @@ public class MainMenu {
     }
 
     private Map<String, Object> getLatestFrGithub() throws IOException {
-        String content = getRequestUrl("https://api.github.com/repos/m1stadev/futurerestore/releases");
+        String content = getRequestUrl("https://api.github.com/repos/futurerestore/futurerestore/releases");
 
         Gson gson = new Gson();
         ArrayList<Map<String, Object>> result = gson.fromJson(content, ArrayList.class);
