@@ -64,7 +64,7 @@ Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/relea
 
 See [how to use FutureRestore](https://ios.cfw.guide/futurerestore).
 
-1. Download FutureRestore automatically through the **Download FutureRestore** button, or manually from [this fork](https://github.com/futurerestore/futurerestore/releases).
+1. Download FutureRestore automatically through the **Download FutureRestore** button, or manually from [Cryptic & m1sta's fork](https://github.com/futurerestore/futurerestore/releases).
 2. Select your **blob** (SHSH2) file.
 3. Select your **target firmware** (iPSW) file.
 4. Choose your desired arguments. See [this table](https://github.com/futurerestore/futurerestore#help) for an explanation of arguments.
