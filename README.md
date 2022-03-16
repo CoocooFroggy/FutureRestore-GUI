@@ -4,9 +4,7 @@
 ![Github issues](https://img.shields.io/github/issues/CoocooFroggy/FutureRestore-GUI.svg)
 ![GitHub all releases](https://img.shields.io/github/downloads/CoocooFroggy/FutureRestore-GUI/total)
 
-A GUI wrapper for a hacked up wrapper for a full reimplementation of the restore of a firmware to a device, which allows manually specifying SEP and Baseband for restoring, written in Java with Swing.
-
-*More simply, A modern GUI for FutureRestore, with added features to make the process easier.*
+A modern GUI for FutureRestore, with added features to make the process easier.
 
 ![Screenshot of FutureRestore GUI in Light Theme](.github/Light.png?raw=true "FutureRestore GUI Light")
 ![Screenshot of FutureRestore GUI in Dark Theme](.github/Dark.png?raw=true "FutureRestore GUI Dark")
@@ -15,26 +13,22 @@ A GUI wrapper for a hacked up wrapper for a full reimplementation of the restore
 
 Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/releases). No Java installation required (it's bundled).
 
-- Mac: Right click the Mac app and click "Open" to open.  
-- Windows: Double click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.  
-- Linux (64 bit, amd64/x86_64):  
-  - On Debian based Linux systems, such as Ubuntu and Mint, double click the .deb file to install it. Launch it from your application library.  
+- Mac: Mount the DMG with a double click. Drag into the Applications folder. You may need to right-click and press "Open" your first launch.
+- Windows: Double-click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.  
+- Linux:  
+  - On Debian based Linux systems, such as Ubuntu and Mint, double-click the .deb file to install it. Launch it from your application library.  
   - On other Linux systems, download the Linux-Universal build, and run the `Run FutureRestore GUI.sh` script in terminal to launch the GUI.
 
 #### Package managers
 
 - Mac: `brew install futurerestore-gui`
 - Windows: `winget install futurerestore-gui`
-- Debian Linux:
-```
-u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"KEY.gpg" | sudo apt-key add - && sudo curl -s --compressed -o /etc/apt/sources.list.d/coocoofroggyppa.list $u"coocoofroggyppa.list" && sudo apt update && sudo apt install futurerestore-gui
-```
 
 ## Features
 
 - Fancy, user-friendly interface for selecting files for FutureRestore. No more huge commands such as:
 ```
-/Users/CoocooFroggy/Downloads/futurerestore -d -t /Users/CoocooFroggy/Downloads/353561670934855681_iPhone69\,4_d200ap_18.2-31D37_27325c8258be46e69d9ee57fa9a8fbc28b873df434e5e702a8b27999551138ae.shsh2 --latest-sep --latest-baseband /Users/CoocooFroggy/Downloads/iPhone69\,4\,iPhone20\,0_18.2_31D37_Restore.ipsw
+/Users/CoocooFroggy/Downloads/futurerestore -d -t /Users/CoocooFroggy/Downloads/353561670934855681_iPhone69\,4_d200ap_18.2-31D37_27325c8258be46e69d9ee57fa9a8fbc28b873df434e5e702a8b27999551138ae.shsh2 --use-pwndfu --set-nonce=0x1111111111111111 --custom-latest 15.3.1 --latest-sep --latest-baseband /Users/CoocooFroggy/Downloads/iPhone69\,4\,iPhone20\,0_18.2_31D37_Restore.ipsw
 ```
 - Only select BuildManifest once for both SEP and BB.
 - Ensures you don't select incorrect files: The program will ensure you have a working FutureRestore build. You can only select .iPSW files for target firmware, .BBFW files for baseband, etc.
@@ -42,7 +36,7 @@ u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"
 - **Exit Recovery** button to run `futurerestore --exit-recovery`
 - **Stop FutureRestore** to kill the FutureRestore process. Button dynamically changes to "Stop FutureRestore (Unsafe)" while the process is running. Pop-up to confirm killing the process if it's currently running.
 - Automatically launch with **Dark or Light mode theme** (not supported on Linux).
-- **Error parsing** such as iBEC, APTicket-APNonce mismatch, unable to place device in recovery mode. Will show a pop-up with some help and a link on where to get help. 
+- **Error parsing** such as iBEC, APTicket – APNonce mismatch, unable to place device in recovery mode. Will show a pop-up with some help and a link on where to get help. 
 ![Error Parsing Example](.github/AP%20Nonce%20Error.png?raw=true "FutureRestore GUI AP Nonce Error")
 - **Automatically retry** FutureRestore only once if error received is "unable to place device in recovery mode."
 - Inline **GUI progress bar** for downloading SEP, BB, Sending Filesystem, etc.
@@ -52,7 +46,11 @@ u="https://coocoofroggy.github.io/CoocooFroggy-PPA/" && curl -s --compressed $u"
 - Optionally share logs automatically to help improve FutureRestore
 - If you like terminal, you can use this to simply **generate the command and copy it** with a few clicks
 - **Automatic dark mode** supported for macOS, Windows 10, and some Linux distros
-- **Pwndfu** restore and **onboard** blobs (with a supported FutureRestore build)
+- New FutureRestore features (with a supported FutureRestore build)
+  - **Pwndfu** restore and **onboard** blobs
+  - Set generator from blob
+  - Custom firmware version for --latest 
+- Automatic GUI updates
 
 ## Settings
 
@@ -99,6 +97,6 @@ git clone https://github.com/CoocooFroggy/FutureRestore-GUI.git
 #### Building:
 Build a .jar with `gradle shadowjar`. Requires Java 11 or later. Class `Main`, method `main` is the entry point of this program. Please do not touch Not an actual Number.
 
-Package to a Windows .msi, Mac .app, or Linux .deb, .rpm, app-image with JPackage from Java 14 or later (continuous integration releases use Java 15).
+Package to a Windows .msi, Mac .app, or Linux .deb, .rpm, app-image with JPackage from Java 14 or later (continuous integration releases use Java 17).
 
 Pull requests are welcome. For feature requests, please open an issue to discuss what improvements you would like to see.
