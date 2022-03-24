@@ -1220,8 +1220,7 @@ public class MainMenu {
                 String content = getRequestUrl("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases/latest");
 
                 Gson gson = new Gson();
-                ArrayList<Map<String, Object>> result = gson.fromJson(content, ArrayList.class);
-                Map<String, Object> newestRelease = result.get(0);
+                Map<String, Object> newestRelease = gson.fromJson(content, Map.class);
                 String newestTag = (String) newestRelease.get("tag_name");
                 System.out.println("Newest FRGUI version: " + newestTag);
 
