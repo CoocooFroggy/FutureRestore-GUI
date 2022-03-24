@@ -13,8 +13,6 @@ import org.rauschig.jarchivelib.ArchiverFactory;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
@@ -66,6 +64,9 @@ public class MainMenu {
     private JCheckBox customLatestCheckBox;
     private JPanel allArgumentsPanel;
     private JTextField setNonceTextField;
+    private JCheckBox customLatestBuildIdCheckBox;
+    private JTextField customLatestBuildIdTextField;
+    private JCheckBox customLatestBetaCheckBox;
 
     private String futureRestoreFilePath;
     private String blobName;
@@ -82,6 +83,8 @@ public class MainMenu {
     private boolean optionUpdateState = false;
     private boolean optionWaitState = false;
     private boolean optionCustomLatestState = false;
+    private boolean optionCustomLatestBuildIdState = false;
+    private boolean optionCustomLatestBetaState = false;
     private boolean optionPwndfuState = false;
     private boolean optionNoIbssState = false;
     private boolean optionSetNonceState = false;
@@ -276,6 +279,8 @@ public class MainMenu {
             optionUpdateState = updateUCheckBox.isSelected();
             optionWaitState = waitWCheckBox.isSelected();
             optionCustomLatestState = customLatestCheckBox.isSelected();
+            optionCustomLatestBuildIdState = customLatestBuildIdCheckBox.isSelected();
+            optionCustomLatestBetaState = customLatestBetaCheckBox.isSelected();
             optionPwndfuState = pwndfuCheckBox.isSelected();
             optionNoIbssState = noIbssCheckBox.isSelected();
             optionSetNonceState = setNonceCheckBox.isSelected();
@@ -286,16 +291,7 @@ public class MainMenu {
                 setNonceCheckBox.setEnabled(true);
                 setNonceLabel.setEnabled(true);
                 // Hide or show the TextField next to --set-nonce depending on its state
-                if (optionSetNonceState) {
-                    setNonceTextField.setVisible(true);
-                    setNonceTextField.setEnabled(true);
-                    setNonceTextField.setEditable(true);
-                } else {
-                    setNonceTextField.setVisible(false);
-                    setNonceTextField.setEnabled(false);
-                    setNonceTextField.setEditable(false);
-                    setNonceTextField.setText("");
-                }
+                updateBoxBasedOnState(setNonceTextField, optionSetNonceState);
             } else {
                 // Deselect and disable pwndfu boxes
                 noIbssCheckBox.setSelected(false);
@@ -315,23 +311,29 @@ public class MainMenu {
                 optionSetNonceState = false;
             }
 
-            // Hide or show the TextField next to --custom-latest depending on its state
-            if (optionCustomLatestState) {
-                customLatestTextField.setVisible(true);
-                customLatestTextField.setEnabled(true);
-                customLatestTextField.setEditable(true);
+            // Disable --custom-latest-buildid if --custom-latest is on
+            customLatestBuildIdCheckBox.setEnabled(!optionCustomLatestState);
+            // Disable --custom-latest if --custom-latest-buildid is on
+            customLatestCheckBox.setEnabled(!optionCustomLatestBuildIdState);
+            // Enable beta checkbox if either of them is on
+            if (optionCustomLatestState || optionCustomLatestBuildIdState) {
+                customLatestBetaCheckBox.setEnabled(true);
             } else {
-                customLatestTextField.setVisible(false);
-                customLatestTextField.setEnabled(false);
-                customLatestTextField.setEditable(false);
-                customLatestTextField.setText("");
+                customLatestBetaCheckBox.setEnabled(false);
+                customLatestBetaCheckBox.setSelected(false);
             }
+
+            updateBoxBasedOnState(customLatestTextField, optionCustomLatestState);
+            updateBoxBasedOnState(customLatestBuildIdTextField, optionCustomLatestBuildIdState);
+
             mainMenuFrame.repaint();
         };
         debugDCheckBox.addActionListener(optionsListener);
         updateUCheckBox.addActionListener(optionsListener);
         waitWCheckBox.addActionListener(optionsListener);
         customLatestCheckBox.addActionListener(optionsListener);
+        customLatestBuildIdCheckBox.addActionListener(optionsListener);
+        customLatestBetaCheckBox.addActionListener(optionsListener);
 
         pwndfuCheckBox.addActionListener(optionsListener);
         noIbssCheckBox.addActionListener(optionsListener);
@@ -370,6 +372,13 @@ public class MainMenu {
             if (optionCustomLatestState) {
                 if (customLatestTextField.getText().trim().length() == 0) {
                     JOptionPane.showMessageDialog(mainMenuView, "Specify a custom latest version or disable the \"Custom Latest\" option.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            // Ensure they typed in a custom latest version if selected
+            if (optionCustomLatestBuildIdState) {
+                if (customLatestBuildIdTextField.getText().trim().length() == 0) {
+                    JOptionPane.showMessageDialog(mainMenuView, "Specify a custom latest version or disable the \"Custom Latest Build ID\" option.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
@@ -414,6 +423,13 @@ public class MainMenu {
                 allArgs.add("--custom-latest");
                 // Remove trailing and leading whitespace with .trim()
                 allArgs.add(customLatestTextField.getText().trim());
+            } else if (optionCustomLatestBuildIdState) { // Else if because both can't be selected
+                allArgs.add("--custom-latest-buildid");
+                // Remove trailing and leading whitespace with .trim()
+                allArgs.add(customLatestBuildIdTextField.getText().trim());
+            }
+            if (optionCustomLatestBetaState) {
+                allArgs.add("--custom-latest-beta");
             }
             if (optionPwndfuState)
                 allArgs.add("--use-pwndfu");
@@ -584,6 +600,20 @@ public class MainMenu {
         });
     }
 
+    private void updateBoxBasedOnState(JTextField textField, boolean state) {
+        // Hide or show the TextField next to --custom-latest depending on its state
+        if (state) {
+            textField.setVisible(true);
+            textField.setEnabled(true);
+            textField.setEditable(true);
+        } else {
+            textField.setVisible(false);
+            textField.setEnabled(false);
+            textField.setEditable(false);
+            textField.setText("");
+        }
+    }
+
     private void shrinkWrapTabbedPane() {
         // https://stackoverflow.com/a/20754740/13668740
         Component mCompo = tabbedPane.getSelectedComponent();
@@ -683,9 +713,10 @@ public class MainMenu {
             // Set text for version
             mainMenuInstance.authorAndVersionLabel.setText("by CoocooFroggy — v" + futureRestoreGUIVersion);
 
-            // Hide the TextFields for custom generator and custom latest
+            // Hide the TextFields for custom generator and custom latests
             mainMenuInstance.setNonceTextField.setVisible(false);
             mainMenuInstance.customLatestTextField.setVisible(false);
+            mainMenuInstance.customLatestBuildIdTextField.setVisible(false);
 
             // Packs
             mainMenuFrame.pack();
@@ -1462,7 +1493,6 @@ public class MainMenu {
         gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(tabbedPane, gbc);
         final JPanel panel1 = new JPanel();
@@ -1729,22 +1759,80 @@ public class MainMenu {
         panel5.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        panel3.add(panel5, gbc);
+        customLatestBuildIdCheckBox = new JCheckBox();
+        customLatestBuildIdCheckBox.setText("Custom Latest Build ID");
+        customLatestBuildIdCheckBox.setToolTipText("Specify custom latest build ID to use for SEP, Baseband and other FirmwareUpdater components.");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel5.add(customLatestBuildIdCheckBox, gbc);
+        customLatestBuildIdTextField = new JTextField();
+        customLatestBuildIdTextField.setEditable(false);
+        customLatestBuildIdTextField.setEnabled(false);
+        customLatestBuildIdTextField.setToolTipText("Enter a signed iOS build ID, such as ABC.");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 10, 0, 0);
+        panel5.add(customLatestBuildIdTextField, gbc);
+        final JLabel label11 = new JLabel();
+        Font label11Font = this.$$$getFont$$$("Menlo", -1, 10, label11.getFont());
+        if (label11Font != null) label11.setFont(label11Font);
+        label11.setText("(--custom-latest-buildid <BUILDID>)");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 10, 0, 0);
+        panel5.add(label11, gbc);
+        customLatestBetaCheckBox = new JCheckBox();
+        customLatestBetaCheckBox.setEnabled(false);
+        customLatestBetaCheckBox.setText("Custom Latest Beta");
+        customLatestBetaCheckBox.setToolTipText("Get custom URL from list of beta firmwares.");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel3.add(customLatestBetaCheckBox, gbc);
+        final JLabel label12 = new JLabel();
+        label12.setEnabled(false);
+        Font label12Font = this.$$$getFont$$$("Menlo", -1, 10, label12.getFont());
+        if (label12Font != null) label12.setFont(label12Font);
+        label12.setText("(--custom-latest-beta)");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 6;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 10, 0, 0);
+        panel3.add(label12, gbc);
+        final JPanel panel6 = new JPanel();
+        panel6.setLayout(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.VERTICAL;
         gbc.insets = new Insets(0, 0, 10, 0);
-        allArgumentsPanel.add(panel5, gbc);
-        final JLabel label11 = new JLabel();
-        Font label11Font = this.$$$getFont$$$(null, -1, -1, label11.getFont());
-        if (label11Font != null) label11.setFont(label11Font);
-        label11.setText("Pwned Args");
+        allArgumentsPanel.add(panel6, gbc);
+        final JLabel label13 = new JLabel();
+        Font label13Font = this.$$$getFont$$$(null, -1, -1, label13.getFont());
+        if (label13Font != null) label13.setFont(label13Font);
+        label13.setText("Pwned Args");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 10, 0);
-        panel5.add(label11, gbc);
+        panel6.add(label13, gbc);
         pwndfuCheckBox = new JCheckBox();
         pwndfuCheckBox.setText("Pwned Restore");
         pwndfuCheckBox.setToolTipText("Restoring devices with Odysseus method. Device needs to be in pwned DFU mode already.");
@@ -1752,17 +1840,17 @@ public class MainMenu {
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        panel5.add(pwndfuCheckBox, gbc);
-        final JLabel label12 = new JLabel();
-        Font label12Font = this.$$$getFont$$$("Menlo", -1, 10, label12.getFont());
-        if (label12Font != null) label12.setFont(label12Font);
-        label12.setText("(--use-pwndfu)");
+        panel6.add(pwndfuCheckBox, gbc);
+        final JLabel label14 = new JLabel();
+        Font label14Font = this.$$$getFont$$$("Menlo", -1, 10, label14.getFont());
+        if (label14Font != null) label14.setFont(label14Font);
+        label14.setText("(--use-pwndfu)");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
-        panel5.add(label12, gbc);
+        panel6.add(label14, gbc);
         noIbssCheckBox = new JCheckBox();
         noIbssCheckBox.setEnabled(false);
         noIbssCheckBox.setSelected(false);
@@ -1771,7 +1859,7 @@ public class MainMenu {
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
-        panel5.add(noIbssCheckBox, gbc);
+        panel6.add(noIbssCheckBox, gbc);
         noIbssLabel = new JLabel();
         noIbssLabel.setEnabled(false);
         Font noIbssLabelFont = this.$$$getFont$$$("Menlo", -1, 10, noIbssLabel.getFont());
@@ -1782,16 +1870,16 @@ public class MainMenu {
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
-        panel5.add(noIbssLabel, gbc);
-        final JPanel panel6 = new JPanel();
-        panel6.setLayout(new GridBagLayout());
+        panel6.add(noIbssLabel, gbc);
+        final JPanel panel7 = new JPanel();
+        panel7.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel5.add(panel6, gbc);
+        panel6.add(panel7, gbc);
         setNonceCheckBox = new JCheckBox();
         setNonceCheckBox.setEnabled(false);
         setNonceCheckBox.setSelected(false);
@@ -1800,7 +1888,7 @@ public class MainMenu {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        panel6.add(setNonceCheckBox, gbc);
+        panel7.add(setNonceCheckBox, gbc);
         setNonceLabel = new JLabel();
         setNonceLabel.setEnabled(false);
         Font setNonceLabelFont = this.$$$getFont$$$("Menlo", -1, 10, setNonceLabel.getFont());
@@ -1811,7 +1899,7 @@ public class MainMenu {
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
-        panel6.add(setNonceLabel, gbc);
+        panel7.add(setNonceLabel, gbc);
         setNonceTextField = new JTextField();
         setNonceTextField.setEditable(false);
         setNonceTextField.setEnabled(false);
@@ -1822,17 +1910,17 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 10, 0, 0);
-        panel6.add(setNonceTextField, gbc);
-        final JLabel label13 = new JLabel();
-        Font label13Font = this.$$$getFont$$$(null, Font.BOLD, -1, label13.getFont());
-        if (label13Font != null) label13.setFont(label13Font);
-        label13.setText("Baseband and SEP");
+        panel7.add(setNonceTextField, gbc);
+        final JLabel label15 = new JLabel();
+        Font label15Font = this.$$$getFont$$$(null, Font.BOLD, -1, label15.getFont());
+        if (label15Font != null) label15.setFont(label15Font);
+        label15.setText("Baseband and SEP");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 10, 10, 10);
-        panel2.add(label13, gbc);
+        panel2.add(label15, gbc);
         basebandComboBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Latest Baseband");
@@ -1859,29 +1947,28 @@ public class MainMenu {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 10, 0, 0);
         panel2.add(sepComboBox, gbc);
-        final JPanel panel7 = new JPanel();
-        panel7.setLayout(new GridBagLayout());
-        tabbedPane.addTab("Controls", panel7);
         final JPanel panel8 = new JPanel();
         panel8.setLayout(new GridBagLayout());
+        tabbedPane.addTab("Controls", panel8);
+        final JPanel panel9 = new JPanel();
+        panel9.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 10, 0, 10);
-        panel7.add(panel8, gbc);
-        final JLabel label14 = new JLabel();
-        Font label14Font = this.$$$getFont$$$(null, Font.BOLD, -1, label14.getFont());
-        if (label14Font != null) label14.setFont(label14Font);
-        label14.setText("Controls");
+        panel8.add(panel9, gbc);
+        final JLabel label16 = new JLabel();
+        Font label16Font = this.$$$getFont$$$(null, Font.BOLD, -1, label16.getFont());
+        if (label16Font != null) label16.setFont(label16Font);
+        label16.setText("Controls");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(0, 0, 0, 10);
-        panel8.add(label14, gbc);
+        panel9.add(label16, gbc);
         exitRecoveryButton = new JButton();
         exitRecoveryButton.setText("Exit Recovery");
         exitRecoveryButton.setVerticalAlignment(0);
@@ -1891,7 +1978,7 @@ public class MainMenu {
         gbc.gridy = 0;
         gbc.weightx = 0.1;
         gbc.fill = GridBagConstraints.BOTH;
-        panel8.add(exitRecoveryButton, gbc);
+        panel9.add(exitRecoveryButton, gbc);
         startFutureRestoreButton = new JButton();
         Font startFutureRestoreButtonFont = this.$$$getFont$$$(null, Font.BOLD, 16, startFutureRestoreButton.getFont());
         if (startFutureRestoreButtonFont != null) startFutureRestoreButton.setFont(startFutureRestoreButtonFont);
@@ -1901,7 +1988,7 @@ public class MainMenu {
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel8.add(startFutureRestoreButton, gbc);
+        panel9.add(startFutureRestoreButton, gbc);
         stopFutureRestoreUnsafeButton = new JButton();
         stopFutureRestoreUnsafeButton.setText("Stop FutureRestore");
         gbc = new GridBagConstraints();
@@ -1909,17 +1996,17 @@ public class MainMenu {
         gbc.gridy = 0;
         gbc.weightx = 0.1;
         gbc.fill = GridBagConstraints.BOTH;
-        panel8.add(stopFutureRestoreUnsafeButton, gbc);
-        final JLabel label15 = new JLabel();
-        Font label15Font = this.$$$getFont$$$(null, Font.BOLD, -1, label15.getFont());
-        if (label15Font != null) label15.setFont(label15Font);
-        label15.setText("Current Task");
+        panel9.add(stopFutureRestoreUnsafeButton, gbc);
+        final JLabel label17 = new JLabel();
+        Font label17Font = this.$$$getFont$$$(null, Font.BOLD, -1, label17.getFont());
+        if (label17Font != null) label17.setFont(label17Font);
+        label17.setText("Current Task");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(0, 0, 0, 10);
-        panel8.add(label15, gbc);
+        panel9.add(label17, gbc);
         currentTaskTextField = new JTextField();
         currentTaskTextField.setEditable(false);
         Font currentTaskTextFieldFont = this.$$$getFont$$$(null, -1, 18, currentTaskTextField.getFont());
@@ -1932,7 +2019,7 @@ public class MainMenu {
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        panel8.add(currentTaskTextField, gbc);
+        panel9.add(currentTaskTextField, gbc);
     }
 
     /**

@@ -73,7 +73,7 @@
           <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="200" height="200"/>
           </grid>
-          <gridbag weightx="1.0" weighty="1.0"/>
+          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <tabLayoutPolicy value="0"/>
@@ -364,6 +364,71 @@
                           </component>
                         </children>
                       </grid>
+                      <grid id="1b7e6" layout-manager="GridBagLayout">
+                        <constraints>
+                          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="433b9" class="javax.swing.JCheckBox" binding="customLatestBuildIdCheckBox">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <gridbag weightx="0.0" weighty="0.0"/>
+                            </constraints>
+                            <properties>
+                              <text value="Custom Latest Build ID"/>
+                              <toolTipText value="Specify custom latest build ID to use for SEP, Baseband and other FirmwareUpdater components."/>
+                            </properties>
+                          </component>
+                          <component id="a0c92" class="javax.swing.JTextField" binding="customLatestBuildIdTextField">
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                              <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+                            </constraints>
+                            <properties>
+                              <editable value="false"/>
+                              <enabled value="false"/>
+                              <toolTipText value="Enter a signed iOS build ID, such as ABC."/>
+                            </properties>
+                          </component>
+                          <component id="79bd0" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+                            </constraints>
+                            <properties>
+                              <font name="Menlo" size="10"/>
+                              <text value="(--custom-latest-buildid &lt;BUILDID&gt;)"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                      <component id="73fd2" class="javax.swing.JCheckBox" binding="customLatestBetaCheckBox">
+                        <constraints>
+                          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <enabled value="false"/>
+                          <text value="Custom Latest Beta"/>
+                          <toolTipText value="Get custom URL from list of beta firmwares."/>
+                        </properties>
+                      </component>
+                      <component id="e49b3" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <enabled value="false"/>
+                          <font name="Menlo" size="10"/>
+                          <text value="(--custom-latest-beta)"/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
                   <grid id="f8837" layout-manager="GridBagLayout">
@@ -523,7 +588,7 @@
               <grid id="5c976" layout-manager="GridBagLayout">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag top="0" left="10" bottom="0" right="10" weightx="1.0" weighty="1.0"/>
+                  <gridbag top="0" left="10" bottom="0" right="10" weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
