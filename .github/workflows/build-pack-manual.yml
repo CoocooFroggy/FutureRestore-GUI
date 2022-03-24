@@ -26,6 +26,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
+          distribution: 'temurin'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -56,6 +57,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
+          distribution: 'temurin'
 
       - name: Download final jar
         uses: actions/download-artifact@v2
@@ -119,6 +121,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
+          distribution: 'temurin'
 
       - name: Install create-dmg
         run: brew install create-dmg
@@ -178,6 +181,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
+          distribution: 'temurin'
 
       - name: Download final jar
         uses: actions/download-artifact@v2
