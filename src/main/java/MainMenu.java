@@ -1217,7 +1217,7 @@ public class MainMenu {
     static void alertIfNewerFRGUIAvailable(MainMenu mainMenuInstance, String currentFRGUIVersion) {
         new Thread(() -> {
             try {
-                String content = getRequestUrl("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
+                String content = getRequestUrl("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases/latest");
 
                 Gson gson = new Gson();
                 ArrayList<Map<String, Object>> result = gson.fromJson(content, ArrayList.class);
