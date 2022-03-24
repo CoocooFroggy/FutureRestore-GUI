@@ -1,16 +1,11 @@
-name: Build, Pack, Release
+name: Build, Pack, Prerelease
 
 # Controls when the action will run. 
 on:
-  pull_request:
-    branches: [ master ]
-    types: [ closed ]
+  workflow_dispatch:
 
 jobs:
   build-and-create-draft:
-    # Only run if it was a PR merge
-    if: github.event.pull_request.merged == true
-
     runs-on: ubuntu-latest
 
     steps:
@@ -52,9 +47,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{ steps.parse-version.outputs.version }}
-          release_name: FutureRestore GUI — v${{ steps.parse-version.outputs.version }}
+          release_name: FutureRestore GUI Prerelease — v${{ steps.parse-version.outputs.version }}
           draft: true
-          prerelease: false
+          prerelease: true
 
       - name: Create upload URL file
         env:
