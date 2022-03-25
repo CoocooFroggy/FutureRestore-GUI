@@ -107,6 +107,9 @@ public class MainMenu {
             mainMenuFrame.requestFocus();
         }));
         downloadFutureRestoreButton.addActionListener(event -> {
+            // Go to Controls tab so we can see the log
+            tabbedPane.setSelectedIndex(2);
+
             final String osName = System.getProperty("os.name").toLowerCase();
             final String osArch = System.getProperty("os.arch").toLowerCase();
             String urlString = null;
@@ -202,6 +205,8 @@ public class MainMenu {
                     // Set name of button to blob file name
                     selectFutureRestoreBinaryExecutableButton.setText("✓ " + futureRestoreExecutable.getName());
                 }
+                // Return to first tab
+                tabbedPane.setSelectedIndex(0);
             }).start();
         });
 
@@ -1130,7 +1135,14 @@ public class MainMenu {
                     // sh is for Linux (unless Cryptic adds a macOS script). Therefore, we can run pkexec without worry
                     ProcessBuilder processBuilder = new ProcessBuilder("/usr/bin/pkexec", "bash", file.getAbsolutePath());
                     try {
-                        if (processBuilder.start().waitFor() != 0) {
+                        Process process = processBuilder.start();
+                        SwingUtilities.invokeLater(() -> currentTaskTextField.setText("Running " + file.getName() + "..."));
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            messageToLog(line);
+                        }
+                        if (process.waitFor() != 0) {
                             JOptionPane.showMessageDialog(mainMenuView,
                                     "Unable to run the script. Continuing with download + extraction.",
                                     "Script Error", JOptionPane.ERROR_MESSAGE);
