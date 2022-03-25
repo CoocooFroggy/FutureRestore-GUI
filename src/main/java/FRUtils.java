@@ -378,4 +378,13 @@ public class FRUtils {
         String authHeaderValue = "Basic " + new String(encodedAuth);
         con.setRequestProperty("Authorization", authHeaderValue);
     }
+
+    public static String getLatestFrguiReleaseBody() throws IOException {
+        String content = MainMenu.getRequestUrl("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
+
+        Gson gson = new Gson();
+        ArrayList<Map<String, Object>> result = gson.fromJson(content, ArrayList.class);
+        Map<String, Object> newestRelease = result.get(0);
+        return (String) newestRelease.get("body");
+    }
 }

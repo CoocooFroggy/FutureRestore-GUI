@@ -191,7 +191,7 @@ public class MainMenu {
                     messageToLog("Unable to decompress " + downloadedFr);
                     exception.printStackTrace();
                 }
-                // If it fail, set the current task to nothing
+                // If it fails, set the current task to nothing
                 if (futureRestoreExecutable == null) {
                     SwingUtilities.invokeLater(() -> currentTaskTextField.setText(""));
                 } else {
@@ -749,6 +749,7 @@ public class MainMenu {
     }
 
     // region Utilities
+    // What a mess! I should clean up later.
 
     static void turnDark(MainMenu mainMenuInstance) {
         JPanel mainMenuView = mainMenuInstance.mainMenuView;
@@ -1091,11 +1092,6 @@ public class MainMenu {
                 archiver.extract(fileToExtract, destinationDir);
                 break;
             }
-            case "exe":
-            case "": {
-                FileUtils.copyFileToDirectory(fileToExtract, destinationDir);
-                break;
-            }
             default: {
                 System.out.println("Cannot decompress, unknown file format :(");
                 messageToLog("Cannot decompress, unknown file format :(");
@@ -1107,42 +1103,77 @@ public class MainMenu {
 
         // Actions artifacts (beta FR) are in a .zip then in a .tar.xz. Extract again if we need to
         File[] files = destinationDir.listFiles();
-        if (files == null) return null;
-        File unzippedFile = files[0];
-        String unzippedExtension = FilenameUtils.getExtension(unzippedFile.getName());
-        if (unzippedExtension.equals("xz") || unzippedExtension.equals("zip")) {
-            // Move the archive from /FRGUI/extracted to /FRGUI
-            FileUtils.moveFileToDirectory(unzippedFile, new File(frguiDirPath), false);
-            // Declare this file
-            File nestedArchive = new File(frguiDirPath + "/" + unzippedFile.getName());
-            // Extract the new one (run this method with it) and return the extracted file
-            return extractFutureRestore(nestedArchive, frguiDirPath, operatingSystem);
-        }
-
-        File futureRestoreExecutable = files[0];
-
-        if (futureRestoreExecutable == null) {
-            System.out.println("Unable to decompress " + fileToExtract);
-            messageToLog("Unable to decompress " + fileToExtract);
-            return null;
-        }
-
-        // Only run on macOS and Linux
-        if (operatingSystem.contains("mac") || operatingSystem.contains("linux")) {
-            // Make FutureRestore executable
-            Process process;
-            try {
-                process = Runtime.getRuntime().exec("chmod +x " + futureRestoreExecutable);
-                process.waitFor();
-            } catch (IOException | InterruptedException e) {
-                System.out.println("Unable to make FutureRestore executable.");
-                messageToLog("Unable to make FutureRestore executable.");
-                e.printStackTrace();
+        if (files == null || files.length == 0) return null;
+        for (File file : files) {
+            String unzippedExtension = FilenameUtils.getExtension(file.getName());
+            if (unzippedExtension.equals("xz") || unzippedExtension.equals("zip")) {
+                // Move the archive from /FRGUI/extracted to /FRGUI
+                FileUtils.moveFileToDirectory(file, new File(frguiDirPath), false);
+                // Declare this file
+                File nestedArchive = new File(frguiDirPath + "/" + file.getName());
+                // Extract the new one (run this method with it) and return the extracted file
+                return extractFutureRestore(nestedArchive, frguiDirPath, operatingSystem);
             }
+
+            // file is not an archive at this point, and is either futurerestore itself or a script.
+            // It is in the /FRGUI/extracted directory.
+
+            // If it is a script
+            if (unzippedExtension.equals("sh")) {
+                Object[] choices = {"Run as root", "Skip"};
+                Object defaultChoice = choices[0];
+
+                int response = JOptionPane.showOptionDialog(mainMenuView,
+                        "There's a shell script included with your download, called \"" + fileToExtract.getName() + "\".\n" +
+                                "Do you want to execute it?",
+                        "Script Detected", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
+                if (response == JOptionPane.YES_OPTION) {
+                    // If the script is ".sh", we don't need to check for Windows
+                    // sh is for Linux (unless Cryptic adds a macOS script). Therefore, we can run pkexec without worry
+                    ProcessBuilder processBuilder = new ProcessBuilder("/usr/bin/pkexec", "bash", fileToExtract.getAbsolutePath());
+                    try {
+                        if (processBuilder.start().waitFor() != 0) {
+                            JOptionPane.showMessageDialog(mainMenuView,
+                                    "Unable to run the script. Continuing with download + extraction.",
+                                    "Script Error", JOptionPane.ERROR_MESSAGE);
+                            continue;
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(mainMenuView,
+                                "Unable to run the script. Continuing with download + extraction.",
+                                "Script Error", JOptionPane.ERROR_MESSAGE);
+                        continue;
+                    }
+                }
+            }
+
+            // Only run on macOS and Linux
+            if (operatingSystem.contains("mac") || operatingSystem.contains("linux")) {
+                // Make FutureRestore executable
+                Process process;
+                try {
+                    process = Runtime.getRuntime().exec("chmod +x " + file);
+                    process.waitFor();
+                } catch (IOException | InterruptedException e) {
+                    System.out.println("Unable to make FutureRestore executable.");
+                    messageToLog("Unable to make FutureRestore executable.");
+                    e.printStackTrace();
+                }
+            }
+            return file;
         }
 
-        return futureRestoreExecutable;
-
+        // We should never reach here unless there's no FutureRestore executable/binary in the zip
+        // Show an error to the user
+        Object[] choices = {"Open link", "Ok"};
+        Object defaultChoice = choices[0];
+        int response = JOptionPane.showOptionDialog(mainMenuView, "Could not find FutureRestore in the downloaded archive. Please download FutureRestore.\n" +
+                "https://github.com/futurerestore/futurerestore/releases/latest/", "Download FutureRestore", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
+        if (response == JOptionPane.YES_OPTION) {
+            FRUtils.openWebpage("https://github.com/futurerestore/futurerestore/releases/latest/", this);
+        }
+        return null;
     }
 
     static void initializePreferences() {
@@ -1293,7 +1324,7 @@ public class MainMenu {
                     label.setBorder(padding);
 
                     // Fetch release notes
-                    String mdReleaseBody = getLatestFrguiReleaseBody();
+                    String mdReleaseBody = FRUtils.getLatestFrguiReleaseBody();
                     String htmlReleaseBody = "<html>" +
                             "<head>" +
                             "<style type=\"text/css\">" +
@@ -1328,7 +1359,6 @@ public class MainMenu {
                     int response = JOptionPane.showOptionDialog(mainMenuFrame, panel, "Update FutureRestore GUI", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
 
                     if (response == JOptionPane.YES_OPTION) {
-//                        FRUtils.openWebpage("https://github.com/CoocooFroggy/FutureRestore-GUI/releases");
                         boolean didSucceedUpdate = FRUtils.updateFRGUI(mainMenuInstance);
                         // If update failed fatally, enable everything again
                         if (!didSucceedUpdate) {
@@ -1344,15 +1374,6 @@ public class MainMenu {
                 e.printStackTrace();
             }
         }).start();
-    }
-
-    public static String getLatestFrguiReleaseBody() throws IOException {
-        String content = getRequestUrl("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
-
-        Gson gson = new Gson();
-        ArrayList<Map<String, Object>> result = gson.fromJson(content, ArrayList.class);
-        Map<String, Object> newestRelease = result.get(0);
-        return (String) newestRelease.get("body");
     }
 
     public static void deleteFile(File fileToDelete) {
@@ -1450,33 +1471,6 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 10, 0);
         mainMenuView.add(authorAndVersionLabel, gbc);
-        logScrollPane = new JScrollPane();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.gridwidth = 2;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        mainMenuView.add(logScrollPane, gbc);
-        logTextArea = new JTextArea();
-        logTextArea.setColumns(0);
-        logTextArea.setEditable(false);
-        Font logTextAreaFont = this.$$$getFont$$$("Andale Mono", -1, -1, logTextArea.getFont());
-        if (logTextAreaFont != null) logTextArea.setFont(logTextAreaFont);
-        logTextArea.setLineWrap(true);
-        logTextArea.setRows(20);
-        logTextArea.setText("");
-        logTextArea.setWrapStyleWord(true);
-        logScrollPane.setViewportView(logTextArea);
-        logProgressBar = new JProgressBar();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        mainMenuView.add(logProgressBar, gbc);
         settingsButton = new JButton();
         settingsButton.setText("Settings");
         gbc = new GridBagConstraints();
@@ -1492,7 +1486,7 @@ public class MainMenu {
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
-        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         mainMenuView.add(tabbedPane, gbc);
         final JPanel panel1 = new JPanel();
@@ -1957,7 +1951,7 @@ public class MainMenu {
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 10, 0, 10);
+        gbc.insets = new Insets(0, 10, 10, 10);
         panel8.add(panel9, gbc);
         final JLabel label16 = new JLabel();
         Font label16Font = this.$$$getFont$$$(null, Font.BOLD, -1, label16.getFont());
@@ -2020,6 +2014,33 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
         panel9.add(currentTaskTextField, gbc);
+        logScrollPane = new JScrollPane();
+        logScrollPane.setHorizontalScrollBarPolicy(31);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel8.add(logScrollPane, gbc);
+        logTextArea = new JTextArea();
+        logTextArea.setColumns(0);
+        logTextArea.setEditable(false);
+        Font logTextAreaFont = this.$$$getFont$$$("Andale Mono", -1, -1, logTextArea.getFont());
+        if (logTextAreaFont != null) logTextArea.setFont(logTextAreaFont);
+        logTextArea.setLineWrap(true);
+        logTextArea.setMinimumSize(new Dimension(1311, 15));
+        logTextArea.setRows(30);
+        logTextArea.setText("");
+        logTextArea.setWrapStyleWord(true);
+        logScrollPane.setViewportView(logTextArea);
+        logProgressBar = new JProgressBar();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel8.add(logProgressBar, gbc);
     }
 
     /**
