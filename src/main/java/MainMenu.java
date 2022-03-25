@@ -108,7 +108,7 @@ public class MainMenu {
         }));
         downloadFutureRestoreButton.addActionListener(event -> {
             // Go to Controls tab so we can see the log
-            tabbedPane.setSelectedIndex(2);
+            SwingUtilities.invokeLater(() -> tabbedPane.setSelectedIndex(2));
 
             final String osName = System.getProperty("os.name").toLowerCase();
             final String osArch = System.getProperty("os.arch").toLowerCase();
@@ -206,7 +206,7 @@ public class MainMenu {
                     selectFutureRestoreBinaryExecutableButton.setText("✓ " + futureRestoreExecutable.getName());
                 }
                 // Return to first tab
-                tabbedPane.setSelectedIndex(0);
+                SwingUtilities.invokeLater(() -> tabbedPane.setSelectedIndex(0));
             }).start();
         });
 
