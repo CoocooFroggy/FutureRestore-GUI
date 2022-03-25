@@ -1122,13 +1122,13 @@ public class MainMenu {
                 Object defaultChoice = choices[0];
 
                 int response = JOptionPane.showOptionDialog(mainMenuView,
-                        "There's a shell script included with your download, called \"" + fileToExtract.getName() + "\".\n" +
+                        "There's a shell script included with your download, called \"" + file.getName() + "\".\n" +
                                 "Do you want to execute it?",
                         "Script Detected", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
                 if (response == JOptionPane.YES_OPTION) {
                     // If the script is ".sh", we don't need to check for Windows
                     // sh is for Linux (unless Cryptic adds a macOS script). Therefore, we can run pkexec without worry
-                    ProcessBuilder processBuilder = new ProcessBuilder("/usr/bin/pkexec", "bash", fileToExtract.getAbsolutePath());
+                    ProcessBuilder processBuilder = new ProcessBuilder("/usr/bin/pkexec", "bash", file.getAbsolutePath());
                     try {
                         if (processBuilder.start().waitFor() != 0) {
                             JOptionPane.showMessageDialog(mainMenuView,
