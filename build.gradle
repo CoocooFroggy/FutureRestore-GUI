@@ -20,6 +20,9 @@ jar {
 group 'com.coocoofroggy'
 version '1.0'
 
+project.sourceCompatibility = '11'
+project.targetCompatibility = '11'
+
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }

@@ -28,8 +28,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainMenu {
-    static String futureRestoreGUIVersion = "";
-
     private JButton selectBlobFileButton;
     private JButton selectTargetIPSWFileButton;
     private JCheckBox updateUCheckBox;
@@ -595,9 +593,7 @@ public class MainMenu {
         nextButtonFiles.addActionListener(nextButtonListener);
         nextButtonOptions.addActionListener(nextButtonListener);
 
-        tabbedPane.addChangeListener(e -> {
-            shrinkWrapTabbedPane();
-        });
+        tabbedPane.addChangeListener(e -> shrinkWrapTabbedPane());
     }
 
     private void updateBoxBasedOnState(JTextField textField, boolean state) {
@@ -711,7 +707,7 @@ public class MainMenu {
             }
 
             // Set text for version
-            mainMenuInstance.authorAndVersionLabel.setText("by CoocooFroggy — v" + futureRestoreGUIVersion);
+            mainMenuInstance.authorAndVersionLabel.setText("by CoocooFroggy — v" + Main.futureRestoreGUIVersion);
 
             // Hide the TextFields for custom generator and custom latests
             mainMenuInstance.setNonceTextField.setVisible(false);
@@ -731,7 +727,7 @@ public class MainMenu {
             if (properties.getProperty("check_updates").equals("true")) {
                 System.out.println("Checking for FutureRestore GUI updates in the background...");
                 mainMenuInstance.messageToLog("Checking for FutureRestore GUI updates in the background...");
-                alertIfNewerFRGUIAvailable(mainMenuInstance, futureRestoreGUIVersion);
+                alertIfNewerFRGUIAvailable(mainMenuInstance);
             }
 
             // If they previously downloaded FR, set it
@@ -1104,6 +1100,8 @@ public class MainMenu {
         // Actions artifacts (beta FR) are in a .zip then in a .tar.xz. Extract again if we need to
         File[] files = destinationDir.listFiles();
         if (files == null || files.length == 0) return null;
+
+        File futureRestoreBinary = null;
         for (File file : files) {
             String unzippedExtension = FilenameUtils.getExtension(file.getName());
             if (unzippedExtension.equals("xz") || unzippedExtension.equals("zip")) {
@@ -1161,8 +1159,11 @@ public class MainMenu {
                     e.printStackTrace();
                 }
             }
-            return file;
+            // We don't immediately return here in case there's a script later in the loop
+            futureRestoreBinary = file;
         }
+        if (futureRestoreBinary != null)
+            return futureRestoreBinary;
 
         // We should never reach here unless there's no FutureRestore executable/binary in the zip
         // Show an error to the user
@@ -1300,26 +1301,32 @@ public class MainMenu {
         return true;
     }
 
-    static void alertIfNewerFRGUIAvailable(MainMenu mainMenuInstance, String currentFRGUIVersion) {
+    static void alertIfNewerFRGUIAvailable(MainMenu mainMenuInstance) {
         new Thread(() -> {
             try {
-                String content = getRequestUrl("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
+                final Gson gson = new Gson();
 
-                Gson gson = new Gson();
-                ArrayList<Map<String, Object>> result = gson.fromJson(content, ArrayList.class);
-                Map<String, Object> newestRelease = result.get(0);
+                Map<String, Object> newestRelease;
+                if (Main.futureRestoreGUIPrerelease) {
+                    String content = getRequestUrl("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
+                    ArrayList<Map<String, Object>> result = gson.fromJson(content, ArrayList.class);
+                    newestRelease = result.get(0);
+                } else {
+                    String content = getRequestUrl("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases/latest");
+                    newestRelease = gson.fromJson(content, Map.class);
+                }
                 String newestTag = (String) newestRelease.get("tag_name");
                 System.out.println("Newest FRGUI version: " + newestTag);
 
                 // If user is not on latest version
-                String currentFRGUITag = "v" + currentFRGUIVersion;
+                String currentFRGUITag = "v" + Main.futureRestoreGUIVersion;
                 if (!newestTag.equals(currentFRGUITag)) {
                     System.out.println("A newer version of FutureRestore GUI is available.");
                     mainMenuInstance.messageToLog("A newer version of FutureRestore GUI is available.");
 
                     // Label on top of release notes
                     JLabel label = new JLabel("A newer version of FutureRestore GUI is available.\n" +
-                            "You're on version " + currentFRGUIVersion + " and the latest version is " + newestTag + ".");
+                            "You're on version " + Main.futureRestoreGUIVersion + " and the latest version is " + newestTag + ".");
                     Border padding = BorderFactory.createEmptyBorder(0, 0, 10, 10);
                     label.setBorder(padding);
 
@@ -2001,19 +2008,23 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(0, 0, 0, 10);
         panel9.add(label17, gbc);
-        currentTaskTextField = new JTextField();
-        currentTaskTextField.setEditable(false);
-        Font currentTaskTextFieldFont = this.$$$getFont$$$(null, -1, 18, currentTaskTextField.getFont());
-        if (currentTaskTextFieldFont != null) currentTaskTextField.setFont(currentTaskTextFieldFont);
-        currentTaskTextField.setHorizontalAlignment(0);
+        final JScrollPane scrollPane1 = new JScrollPane();
+        scrollPane1.setVerticalScrollBarPolicy(21);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.gridwidth = 3;
         gbc.weightx = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel9.add(currentTaskTextField, gbc);
+        gbc.ipady = 30;
+        panel9.add(scrollPane1, gbc);
+        currentTaskTextField = new JTextField();
+        currentTaskTextField.setEditable(false);
+        Font currentTaskTextFieldFont = this.$$$getFont$$$(null, -1, 18, currentTaskTextField.getFont());
+        if (currentTaskTextFieldFont != null) currentTaskTextField.setFont(currentTaskTextFieldFont);
+        currentTaskTextField.setHorizontalAlignment(0);
+        scrollPane1.setViewportView(currentTaskTextField);
         logScrollPane = new JScrollPane();
         logScrollPane.setHorizontalScrollBarPolicy(31);
         gbc = new GridBagConstraints();

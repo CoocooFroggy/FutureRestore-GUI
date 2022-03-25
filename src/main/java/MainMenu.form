@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="MainMenu">
   <grid id="27dc6" binding="mainMenuView" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="20" width="2017" height="543"/>
+      <xy x="20" y="20" width="705" height="505"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -614,19 +614,26 @@
                       <text value="Current Task"/>
                     </properties>
                   </component>
-                  <component id="77c97" class="javax.swing.JTextField" binding="currentTaskTextField">
+                  <scrollpane id="8d769">
                     <constraints>
-                      <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <gridbag weightx="1.0" weighty="0.0"/>
+                      <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipady="30"/>
                     </constraints>
                     <properties>
-                      <editable value="false"/>
-                      <font size="18"/>
-                      <horizontalAlignment value="0"/>
+                      <verticalScrollBarPolicy value="21"/>
                     </properties>
-                  </component>
+                    <border type="none"/>
+                    <children>
+                      <component id="77c97" class="javax.swing.JTextField" binding="currentTaskTextField">
+                        <constraints/>
+                        <properties>
+                          <editable value="false"/>
+                          <font size="18"/>
+                          <horizontalAlignment value="0"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </scrollpane>
                 </children>
               </grid>
               <scrollpane id="2e35b" binding="logScrollPane">
