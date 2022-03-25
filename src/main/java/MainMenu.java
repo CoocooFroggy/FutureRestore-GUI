@@ -1146,16 +1146,15 @@ public class MainMenu {
                             JOptionPane.showMessageDialog(mainMenuView,
                                     "Unable to run the script. Continuing with download + extraction.",
                                     "Script Error", JOptionPane.ERROR_MESSAGE);
-                            continue;
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(mainMenuView,
                                 "Unable to run the script. Continuing with download + extraction.",
                                 "Script Error", JOptionPane.ERROR_MESSAGE);
-                        continue;
                     }
                 }
+                continue;
             }
 
             // Only run on macOS and Linux
