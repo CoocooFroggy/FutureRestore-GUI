@@ -35,7 +35,7 @@ Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/relea
 - **Download FutureRestore** will automatically fetch the latest FutureRestore for your operating system, extract it, and select it.
 - **Exit Recovery** button to run `futurerestore --exit-recovery`
 - **Stop FutureRestore** to kill the FutureRestore process. Button dynamically changes to "Stop FutureRestore (Unsafe)" while the process is running. Pop-up to confirm killing the process if it's currently running.
-- Automatically launch with **Dark or Light mode theme** (not supported on Linux).
+- Automatically launch with **Dark or Light mode theme**.
 - **Error parsing** such as iBEC, APTicket – APNonce mismatch, unable to place device in recovery mode. Will show a pop-up with some help and a link on where to get help. 
 ![Error Parsing Example](.github/AP%20Nonce%20Error.png?raw=true "FutureRestore GUI AP Nonce Error")
 - **Automatically retry** FutureRestore only once if error received is "unable to place device in recovery mode."
