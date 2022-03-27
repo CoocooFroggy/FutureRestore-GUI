@@ -119,11 +119,19 @@ public class FRUtils {
         String frguiDownloadName = null;
         String frguiDownloadUrl = null;
         try {
-            System.out.println("Finding download...");
-            URL releasesApiUrl = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases/latest");
-            String releasesApiResponse = IOUtils.toString(releasesApiUrl.openConnection().getInputStream(), StandardCharsets.UTF_8);
             Gson gson = new Gson();
-            Map<String, Object> latestReleaseApi = gson.fromJson(releasesApiResponse, Map.class);
+            System.out.println("Finding download...");
+            Map<String, Object> latestReleaseApi;
+            if (Main.futureRestoreGUIPrerelease) {
+                URL releasesApiUrl = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
+                String releasesApiResponse = IOUtils.toString(releasesApiUrl.openConnection().getInputStream(), StandardCharsets.UTF_8);
+                ArrayList<Map<String, Object>> releasesApi = gson.fromJson(releasesApiResponse, ArrayList.class);
+                latestReleaseApi = releasesApi.get(0);
+            } else {
+                URL releasesApiUrl = new URL("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases/latest");
+                String releasesApiResponse = IOUtils.toString(releasesApiUrl.openConnection().getInputStream(), StandardCharsets.UTF_8);
+                latestReleaseApi = gson.fromJson(releasesApiResponse, Map.class);
+            }
 
             ArrayList<Map<String, Object>> assetsApi = (ArrayList<Map<String, Object>>) latestReleaseApi.get("assets");
 
@@ -377,5 +385,14 @@ public class FRUtils {
         byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
         String authHeaderValue = "Basic " + new String(encodedAuth);
         con.setRequestProperty("Authorization", authHeaderValue);
+    }
+
+    public static String getLatestFrguiReleaseBody() throws IOException {
+        String content = MainMenu.getRequestUrl("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases");
+
+        Gson gson = new Gson();
+        ArrayList<Map<String, Object>> result = gson.fromJson(content, ArrayList.class);
+        Map<String, Object> newestRelease = result.get(0);
+        return (String) newestRelease.get("body");
     }
 }

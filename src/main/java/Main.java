@@ -1,6 +1,7 @@
 public class Main {
+    static final String futureRestoreGUIVersion = "1.98";
+    static final boolean futureRestoreGUIPrerelease = false;
     public static void main(String[] args) {
-        MainMenu.futureRestoreGUIVersion = "1.97.2";
         MainMenu.main();
         /*
 

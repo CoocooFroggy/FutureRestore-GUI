@@ -109,7 +109,8 @@ public class FutureRestoreWorker {
             put("Status: Restore Finished", "Restore Finished!");
             put("what=", null);
             put("code=", null);
-            put("unknown option -- use-pwndfu", null);
+            put("unknown option -- ", null);
+            put("unrecognized option `", null);
             put("timeout waiting for command", null);
         }};
 
@@ -127,7 +128,7 @@ public class FutureRestoreWorker {
                     // Otherwise, error was parsed
                     else {
                         switch (futureRestorePossibleMatch) {
-                            case "code=":
+                            case "code=": {
                                 String code = line.replaceFirst("code=", "");
                                 // Parse error codes
                                 switch (code) {
@@ -177,23 +178,36 @@ public class FutureRestoreWorker {
                                     }
                                 }
                                 break;
+                            }
                             case "what=": {
                                 String error = line.replaceFirst("what=", "");
                                 currentTaskTextField.setText(error);
                                 break;
                             }
-                            case "unknown option -- use-pwndfu": {
-                                JOptionPane.showMessageDialog(mainMenuView,
-                                        "Looks like there is no --use-pwndfu argument on this version of FutureRestore.\n" +
-                                                "Ensure you're using a FutureRestore version which supports this argument, or turn off \"Pwned Restore.\"",
-                                        "FutureRestore PWNDFU Unknown", JOptionPane.ERROR_MESSAGE);
+                            case "unknown option -- ": {
+                                Pattern pattern = Pattern.compile("(?<=unknown option -- )[^\\s]+");
+                                Matcher matcher = pattern.matcher(line);
+                                if (matcher.find()) {
+                                    JOptionPane.showMessageDialog(mainMenuView,
+                                            "Looks like there is no --" + matcher.group() + " argument on this version of FutureRestore.\n" +
+                                                    "Ensure you're using a FutureRestore version which supports this argument, or turn off the option.",
+                                            "FutureRestore Unknown Option", JOptionPane.ERROR_MESSAGE);
+                                }
+                                String finalLine = line;
+                                SwingUtilities.invokeLater(() -> currentTaskTextField.setText(finalLine));
                                 break;
                             }
-                            case "unknown option -- custom-latest": {
-                                JOptionPane.showMessageDialog(mainMenuView,
-                                        "Looks like there is no --custom-latest argument on this version of FutureRestore.\n" +
-                                                "Ensure you're using a FutureRestore version which supports this argument, or turn off \"Pwned Restore.\"",
-                                        "FutureRestore PWNDFU Unknown", JOptionPane.ERROR_MESSAGE);
+                            case "unrecognized option `": {
+                                Pattern pattern = Pattern.compile("(?<=unrecognized option `).*(?=')");
+                                Matcher matcher = pattern.matcher(line);
+                                if (matcher.find()) {
+                                    JOptionPane.showMessageDialog(mainMenuView,
+                                            "Looks like there is no " + matcher.group() + " argument on this version of FutureRestore.\n" +
+                                                    "Ensure you're using a FutureRestore version which supports this argument, or turn off the option.",
+                                            "FutureRestore Unknown Option", JOptionPane.ERROR_MESSAGE);
+                                }
+                                String finalLine = line;
+                                SwingUtilities.invokeLater(() -> currentTaskTextField.setText(finalLine));
                                 break;
                             }
                             case "timeout waiting for command": {
@@ -302,7 +316,7 @@ public class FutureRestoreWorker {
         rootJson.put("log", logString);
         rootJson.put("logName", logName);
         rootJson.put("discord", discordName);
-        rootJson.put("guiVersion", MainMenu.futureRestoreGUIVersion);
+        rootJson.put("guiVersion", Main.futureRestoreGUIVersion);
         String rootJsonString = gson.toJson(rootJson);
 
         HttpClient httpClient = HttpClients.createDefault();
