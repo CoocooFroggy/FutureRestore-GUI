@@ -973,19 +973,32 @@ public class MainMenu {
         for (Map<String, Object> artifact : artifacts) {
             String assetName = ((String) artifact.get("name"));
             // Look for our OS and release binary
-            if (assetName.toLowerCase().contains(operatingSystem)
-                    && assetName.toLowerCase().contains("release")) {
-                // If we're mac, match architecture as well
-                if (assetName.toLowerCase().contains("mac")) {
-                    if (assetName.toLowerCase().contains(architecture)) {
+            String lcAssetName = assetName.toLowerCase();
+            if (lcAssetName.contains(operatingSystem) && lcAssetName.contains("release")) {
+                // If we're Mac
+                if (lcAssetName.contains("mac")) {
+                    // If the asset has an architecture in it
+                    if (lcAssetName.contains("x86_64") || lcAssetName.contains("arm64")) {
+                        // Match it with ours
+                        if (lcAssetName.contains(architecture)) {
+                            linkNameMap.put("link", (String) artifact.get("archive_download_url"));
+                            linkNameMap.put("name", assetName);
+                            return linkNameMap;
+                        }
+                    }
+                    // Otherwise, don't worry about matching architecture
+                    else {
                         linkNameMap.put("link", (String) artifact.get("archive_download_url"));
                         linkNameMap.put("name", assetName);
+                        return linkNameMap;
                     }
-                } else {
+                }
+                // Not Mac
+                else {
                     linkNameMap.put("link", (String) artifact.get("archive_download_url"));
                     linkNameMap.put("name", assetName);
+                    return linkNameMap;
                 }
-                return linkNameMap;
             }
         }
 
