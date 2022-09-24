@@ -1,11 +1,11 @@
 plugins {
     id 'java'
     id "com.github.johnrengelman.shadow" version "6.1.0"
-    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
 javafx {
-    version = "11.0.2"
+    version = "18"
     modules = [ 'javafx.swing' ]
 }
 
@@ -20,8 +20,8 @@ jar {
 group 'com.coocoofroggy'
 version '1.0'
 
-project.sourceCompatibility = '11'
-project.targetCompatibility = '11'
+project.sourceCompatibility = '18'
+project.targetCompatibility = '18'
 
 repositories {
     mavenCentral()
@@ -30,14 +30,18 @@ repositories {
 
 dependencies {
     implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'com.formdev:flatlaf:2.0.2'
-    implementation group: 'org.tukaani', name: 'xz', version: '1.8'
-    implementation group: 'org.rauschig', name: 'jarchivelib', version: '0.7.1'
-    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+    implementation 'com.formdev:flatlaf:2.4'
+    // https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5
+    implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.1.3'
     implementation 'com.github.Dansoftowner:jSystemThemeDetector:3.6'
-    implementation 'com.github.oshi:oshi-core:6.1.3'
+    implementation 'com.github.oshi:oshi-core:6.2.2'
     implementation group: 'commons-io', name: 'commons-io', version: '2.8.0'
     implementation 'com.github.rjeschke:txtmark:0.13'
     // https://mvnrepository.com/artifact/com.intellij/forms_rt
     implementation group: 'com.intellij', name: 'forms_rt', version: '7.0.3'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
+    implementation group: 'org.apache.commons', name: 'commons-compress', version: '1.21'
+    // Required by commons compress for XZ support
+    // https://mvnrepository.com/artifact/org.tukaani/xz
+    implementation group: 'org.tukaani', name: 'xz', version: '1.9'
 }

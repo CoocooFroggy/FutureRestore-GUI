@@ -131,7 +131,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: upload-url
-        # Make it usable in Github actions
+        # Make it usable in GitHub actions
       - name: Set output for upload-url
         id: set_upload_url
         run: |
@@ -214,7 +214,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: upload-url
-        # Make it usable in Github actions
+        # Make it usable in GitHub actions
       - name: Set output for upload-url
         id: set_upload_url
         run: |
@@ -280,7 +280,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: upload-url
-        # Make it usable in Github actions
+        # Make it usable in GitHub actions
       - name: Set output for upload-url
         id: set_upload_url
         run: |
