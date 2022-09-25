@@ -4,6 +4,9 @@ name: Build, Pack; Manual Dev
 on:
   # Triggers the workflow on push but only for the master branch
   workflow_dispatch:
+  push:
+    branches:
+      - dev
 
 jobs:
   build-and-setup:
