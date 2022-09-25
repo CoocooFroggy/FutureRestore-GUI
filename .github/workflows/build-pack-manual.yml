@@ -75,6 +75,11 @@ jobs:
           version=$(tail version.txt)
           echo "::set-output name=version::$version"
 
+      - name: Download JavaFX
+        run: |
+          curl -o jmods.zip https://download2.gluonhq.com/openjfx/18.0.2/openjfx-18.0.2_linux-aarch64_bin-jmods.zip
+          unzip jmods.zip
+
       - name: Run JPackage deb
         env:
           RUN_NUMBER: ${{ github.run_number }}
@@ -142,6 +147,11 @@ jobs:
           version=$(tail version.txt)
           echo "::set-output name=version::$version"
 
+      - name: Download JavaFX
+        run: |
+          curl -o jmods.zip https://download2.gluonhq.com/openjfx/18.0.2/openjfx-18.0.2_osx-aarch64_bin-jmods.zip
+          unzip jmods.zip
+
       - name: Run JPackage and remove signature
         env:
           RUN_NUMBER: ${{ github.run_number}}
@@ -151,9 +161,6 @@ jobs:
           codesign --remove-signature FutureRestore\ GUI.app
           mkdir dmg-input
           mv "FutureRestore GUI.app" dmg-input
-
-#      - name: Debug with ssh
-#        uses: lhotari/action-upterm@v1
 
       - name: Create DMG from .app
         run: |
@@ -199,6 +206,11 @@ jobs:
           FOR /F "tokens=*" %%g IN ('tail version.txt') do (SET version=%%g)
           echo ::set-output name=version::%version%
         shell: cmd
+
+      - name: Download JavaFX
+        run: |
+          curl -o jmods.zip https://download2.gluonhq.com/openjfx/18.0.2/openjfx-18.0.2_windows-x64_bin-jmods.zip
+          unzip jmods.zip
 
       - name: Run JPackage
         env:
