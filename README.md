@@ -17,7 +17,7 @@ Download from [releases](https://github.com/CoocooFroggy/FutureRestore-GUI/relea
 - Windows: Double-click the Windows MSI to install the App. Launch it from the Start Menu or the Desktop shortcut.  
 - Linux:  
   - On Debian based Linux systems, such as Ubuntu and Mint, double-click the .deb file to install it. Launch it from your application library.  
-  - On other Linux systems, download the Linux-Universal build, and run the `Run FutureRestore GUI.sh` script in terminal to launch the GUI.
+  - On other Linux systems, download the Linux-Universal build, and run the `run.sh` script in terminal to launch the GUI.
 
 #### Package managers
 

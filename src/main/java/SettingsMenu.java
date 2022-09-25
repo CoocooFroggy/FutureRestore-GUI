@@ -128,15 +128,9 @@ public class SettingsMenu {
 
         // Theme prefs radio buttons
         switch (MainMenu.properties.getProperty("theme_preference")) {
-            case "auto":
-                settingsMenuInstance.autoRadioButton.setSelected(true);
-                break;
-            case "light":
-                settingsMenuInstance.lightRadioButton.setSelected(true);
-                break;
-            case "dark":
-                settingsMenuInstance.darkRadioButton.setSelected(true);
-                break;
+            case "auto" -> settingsMenuInstance.autoRadioButton.setSelected(true);
+            case "light" -> settingsMenuInstance.lightRadioButton.setSelected(true);
+            case "dark" -> settingsMenuInstance.darkRadioButton.setSelected(true);
         }
     }
 
@@ -401,5 +395,4 @@ public class SettingsMenu {
     public JComponent $$$getRootComponent$$$() {
         return settingsMenuView;
     }
-
 }

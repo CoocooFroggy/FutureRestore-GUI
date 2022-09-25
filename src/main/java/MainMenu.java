@@ -6,10 +6,16 @@ import com.jthemedetecor.OsThemeDetector;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.rauschig.jarchivelib.Archiver;
-import org.rauschig.jarchivelib.ArchiverFactory;
+import org.apache.commons.io.IOUtils;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -22,6 +28,9 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -68,6 +77,7 @@ public class MainMenu {
     private JCheckBox serialOutputCheckBox;
     private JLabel serialLabel;
     private JCheckBox noRestoreCheckBox;
+    private JCheckBox noRsepCheckBox;
 
     private String futureRestoreFilePath;
     private String blobName;
@@ -87,6 +97,7 @@ public class MainMenu {
     private boolean optionCustomLatestBuildIdState = false;
     private boolean optionCustomLatestBetaState = false;
     private boolean optionNoRestoreState = false;
+    private boolean optionNoRsepState = false;
     private boolean optionPwndfuState = false;
     private boolean optionNoIbssState = false;
     private boolean optionSerialOutputState = false;
@@ -192,7 +203,7 @@ public class MainMenu {
                 File futureRestoreExecutable = null;
                 try {
                     futureRestoreExecutable = extractFutureRestore(downloadedFr, finalFrPath, osName);
-                } catch (IOException exception) {
+                } catch (IOException | ArchiveException exception) {
                     System.out.println("Unable to decompress " + downloadedFr);
                     messageToLog("Unable to decompress " + downloadedFr);
                     exception.printStackTrace();
@@ -290,6 +301,7 @@ public class MainMenu {
             optionCustomLatestBuildIdState = customLatestBuildIdCheckBox.isSelected();
             optionCustomLatestBetaState = customLatestBetaCheckBox.isSelected();
             optionNoRestoreState = noRestoreCheckBox.isSelected();
+            optionNoRsepState = noRsepCheckBox.isSelected();
             optionPwndfuState = pwndfuCheckBox.isSelected();
             optionNoIbssState = noIbssCheckBox.isSelected();
             optionSerialOutputState = serialOutputCheckBox.isSelected();
@@ -348,6 +360,7 @@ public class MainMenu {
         updateUCheckBox.addActionListener(optionsListener);
         waitWCheckBox.addActionListener(optionsListener);
         noRestoreCheckBox.addActionListener(optionsListener);
+        noRsepCheckBox.addActionListener(optionsListener);
         customLatestCheckBox.addActionListener(optionsListener);
         customLatestBuildIdCheckBox.addActionListener(optionsListener);
         customLatestBetaCheckBox.addActionListener(optionsListener);
@@ -439,6 +452,8 @@ public class MainMenu {
                 allArgs.add("--wait");
             if (optionNoRestoreState)
                 allArgs.add("--no-restore");
+            if (optionNoRsepState)
+                allArgs.add("--no-rsep");
             if (optionCustomLatestState) {
                 allArgs.add("--custom-latest");
                 // Remove trailing and leading whitespace with .trim()
@@ -466,35 +481,28 @@ public class MainMenu {
             }
 
             switch (sepState) {
-                case "latest": {
-                    allArgs.add("--latest-sep");
-                    break;
-                }
-                case "manual": {
+                case "latest" -> allArgs.add("--latest-sep");
+                case "manual" -> {
                     allArgs.add("--sep");
                     allArgs.add(sepFilePath);
                     allArgs.add("--sep-manifest");
                     allArgs.add(buildManifestPath);
-                    break;
                 }
+
 //                // No SEP is just no arg
 //                case "none":
 //                    break;
             }
 
             switch (bbState) {
-                case "latest":
-                    allArgs.add("--latest-baseband");
-                    break;
-                case "manual":
+                case "latest" -> allArgs.add("--latest-baseband");
+                case "manual" -> {
                     allArgs.add("--baseband");
                     allArgs.add(basebandFilePath);
                     allArgs.add("--baseband-manifest");
                     allArgs.add(buildManifestPath);
-                    break;
-                case "none":
-                    allArgs.add("--no-baseband");
-                    break;
+                }
+                case "none" -> allArgs.add("--no-baseband");
             }
 
             allArgs.add(targetIpswPath);
@@ -514,71 +522,61 @@ public class MainMenu {
 
         basebandComboBox.addActionListener(e -> {
             switch (basebandComboBox.getSelectedItem().toString()) {
-                case "Latest Baseband": {
+                case "Latest Baseband" -> {
                     bbState = "latest";
                     basebandTextField.setText("✓ (No file)");
                     if (sepState.equals("latest") || sepState.equals("none"))
                         selectBuildManifestButton.setEnabled(false);
-                    break;
                 }
-                case "Manual Baseband": {
-                    Platform.runLater(() -> {
-                        FRUtils.setEnabled(mainMenuView, false, true);
-                        // If they chose a file
-                        if (chooseBbfw()) {
-                            bbState = "manual";
-                            selectBuildManifestButton.setEnabled(true);
-                        } else { // Otherwise, they cancelled, set it back to latest
-                            bbState = "latest";
-                            basebandComboBox.setSelectedItem("Latest Baseband");
-                            if (sepState.equals("latest") || sepState.equals("none"))
-                                selectBuildManifestButton.setEnabled(false);
-                        }
-                        FRUtils.setEnabled(mainMenuView, true, true);
-                    });
-                    break;
-                }
-                case "No Baseband": {
+                case "Manual Baseband" -> Platform.runLater(() -> {
+                    FRUtils.setEnabled(mainMenuView, false, true);
+                    // If they chose a file
+                    if (chooseBbfw()) {
+                        bbState = "manual";
+                        selectBuildManifestButton.setEnabled(true);
+                    } else { // Otherwise, they cancelled, set it back to latest
+                        bbState = "latest";
+                        basebandComboBox.setSelectedItem("Latest Baseband");
+                        if (sepState.equals("latest") || sepState.equals("none"))
+                            selectBuildManifestButton.setEnabled(false);
+                    }
+                    FRUtils.setEnabled(mainMenuView, true, true);
+                });
+                case "No Baseband" -> {
                     bbState = "none";
                     basebandTextField.setText("✓ (No file)");
                     if (sepState.equals("latest") || sepState.equals("none"))
                         selectBuildManifestButton.setEnabled(false);
-                    break;
                 }
             }
         });
         sepComboBox.addActionListener(e -> {
             switch (sepComboBox.getSelectedItem().toString()) {
-                case "Latest SEP": {
+                case "Latest SEP" -> {
                     sepState = "latest";
                     sepTextField.setText("✓ (No file)");
                     if (bbState.equals("latest") || bbState.equals("none"))
                         selectBuildManifestButton.setEnabled(false);
-                    break;
                 }
-                case "Manual SEP": {
-                    Platform.runLater(() -> {
-                        FRUtils.setEnabled(mainMenuView, false, true);
-                        // If they chose a file
-                        if (chooseSep()) {
-                            sepState = "manual";
-                            selectBuildManifestButton.setEnabled(true);
-                        } else { // Otherwise, they cancelled, set it back to latest
-                            sepState = "latest";
-                            sepComboBox.setSelectedItem("Latest SEP");
-                            if (bbState.equals("latest") || bbState.equals("none"))
-                                selectBuildManifestButton.setEnabled(false);
-                        }
-                        FRUtils.setEnabled(mainMenuView, true, true);
-                    });
-                    break;
-                }
-                case "No SEP": {
+                case "Manual SEP" -> Platform.runLater(() -> {
+                    FRUtils.setEnabled(mainMenuView, false, true);
+                    // If they chose a file
+                    if (chooseSep()) {
+                        sepState = "manual";
+                        selectBuildManifestButton.setEnabled(true);
+                    } else { // Otherwise, they cancelled, set it back to latest
+                        sepState = "latest";
+                        sepComboBox.setSelectedItem("Latest SEP");
+                        if (bbState.equals("latest") || bbState.equals("none"))
+                            selectBuildManifestButton.setEnabled(false);
+                    }
+                    FRUtils.setEnabled(mainMenuView, true, true);
+                });
+                case "No SEP" -> {
                     sepState = "none";
                     sepTextField.setText("✓ (No file)");
                     if (bbState.equals("latest") || bbState.equals("none"))
                         selectBuildManifestButton.setEnabled(false);
-                    break;
                 }
             }
         });
@@ -654,7 +652,7 @@ public class MainMenu {
 
         boolean isDarkThemeUsed = false;
         switch (properties.getProperty("theme_preference")) {
-            case "auto": {
+            case "auto" -> {
                 final OsThemeDetector detector = OsThemeDetector.getDetector();
                 isDarkThemeUsed = detector.isDark();
                 // Must set L&F before we create instance of MainMenu
@@ -665,20 +663,12 @@ public class MainMenu {
 //                    if (!System.getProperty("os.name").toLowerCase().contains("mac"))
                     FlatIntelliJLaf.setup();
                 }
-                break;
             }
-            case "light": {
-//                // Only set if not Mac
-//                if (!System.getProperty("os.name").toLowerCase().contains("mac"))
-                FlatIntelliJLaf.setup();
-                break;
-            }
-            case "dark": {
+            case "light" -> FlatIntelliJLaf.setup();
+            case "dark" -> {
                 isDarkThemeUsed = true;
                 FlatDarculaLaf.setup();
-                break;
             }
-
         }
 
         final boolean finalIsDarkThemeUsed = isDarkThemeUsed;
@@ -889,7 +879,7 @@ public class MainMenu {
             // Check FutureRestore version
             Runtime runtime = Runtime.getRuntime();
             try {
-                runtime.exec(futureRestoreFilePath);
+                runtime.exec(new String[]{futureRestoreFilePath});
             } catch (IOException ioException) {
                 System.out.println("Unable to check FutureRestore version.");
                 JOptionPane.showMessageDialog(mainMenuView, "Unable to run FutureRestore. Ensure you selected the correct FutureRestore executable.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1003,8 +993,10 @@ public class MainMenu {
         }
 
         // Pop-up saying "no binaries for your OS available"
-        noFrForOSPopup("No FutureRestore beta asset found for your operating system.\n" +
-                "Try a release version instead, or manually download a beta for your OS.\n", "https://github.com/futurerestore/futurerestore/actions");
+        noFrForOSPopup("""
+                No FutureRestore beta asset found for your operating system.
+                Try a release version instead, or manually download a beta for your OS.
+                """, "https://github.com/futurerestore/futurerestore/actions");
         return linkNameMap;
     }
 
@@ -1104,7 +1096,7 @@ public class MainMenu {
         return downloadedFr;
     }
 
-    File extractFutureRestore(File fileToExtract, String frguiDirPath, String operatingSystem) throws IOException {
+    File extractFutureRestore(File fileToExtract, String frguiDirPath, String operatingSystem) throws IOException, ArchiveException {
         SwingUtilities.invokeLater(() -> {
             currentTaskTextField.setText("Decompressing FutureRestore...");
             messageToLog("Decompressing FutureRestore...");
@@ -1114,17 +1106,57 @@ public class MainMenu {
 
         String downloadedFileExtension = FilenameUtils.getExtension(fileToExtract.getName());
         switch (downloadedFileExtension) {
-            case "zip": {
-                Archiver archiver = ArchiverFactory.createArchiver("zip");
-                archiver.extract(fileToExtract, destinationDir);
-                break;
+            case "zip" -> {
+                try (ZipFile zipFile = new ZipFile(fileToExtract)) {
+                    Path destFolderPath = Paths.get(destinationDir.getPath());
+                    Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+                    while (entries.hasMoreElements()) {
+                        ZipArchiveEntry entry = entries.nextElement();
+                        Path entryPath = destFolderPath.resolve(entry.getName());
+                        if (entry.isDirectory()) {
+                            Files.createDirectories(entryPath);
+                        } else {
+                            Files.createDirectories(entryPath.getParent());
+                            try (InputStream in = zipFile.getInputStream(entry)) {
+                                try (OutputStream out = new FileOutputStream(entryPath.toFile())) {
+                                    IOUtils.copy(in, out);
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            case "xz": {
-                Archiver archiver = ArchiverFactory.createArchiver("tar", "xz");
-                archiver.extract(fileToExtract, destinationDir);
-                break;
+            case "xz" -> {
+                FileInputStream fileInputStream = new FileInputStream(fileToExtract);
+                XZCompressorInputStream xzIn = new XZCompressorInputStream(fileInputStream);
+                String fileNameWithoutXz = fileToExtract.getName().substring(0, fileToExtract.getName().lastIndexOf('.'));
+                FileUtils.copyInputStreamToFile(xzIn, new File(destinationDir + "/" + fileNameWithoutXz));
+                xzIn.close();
             }
-            default: {
+            case "tar" -> {
+                // https://stackoverflow.com/a/7556307/13668740
+                final InputStream is = new FileInputStream(fileToExtract);
+                final TarArchiveInputStream debInputStream = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream("tar", is);
+                TarArchiveEntry entry;
+                while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
+                    final File outputFile = new File(destinationDir, entry.getName());
+                    if (entry.isDirectory()) {
+                        if (!outputFile.exists()) {
+                            if (!outputFile.mkdirs()) {
+                                System.out.println("Failed to create directory " + outputFile.getAbsolutePath());
+                                messageToLog("Failed to create directory " + outputFile.getAbsolutePath());
+                                return null;
+                            }
+                        }
+                    } else {
+                        final OutputStream outputFileStream = new FileOutputStream(outputFile);
+                        IOUtils.copy(debInputStream, outputFileStream);
+                        outputFileStream.close();
+                    }
+                }
+                debInputStream.close();
+            }
+            default -> {
                 System.out.println("Cannot decompress, unknown file format :(");
                 messageToLog("Cannot decompress, unknown file format :(");
                 return null;
@@ -1140,7 +1172,16 @@ public class MainMenu {
         File futureRestoreBinary = null;
         for (File file : files) {
             String unzippedExtension = FilenameUtils.getExtension(file.getName());
-            if (unzippedExtension.equals("xz") || unzippedExtension.equals("zip")) {
+            if (unzippedExtension.equals("zip") || unzippedExtension.equals("xz") || unzippedExtension.equals("tar")) {
+                // Check if this file exists already (failed previous attempts)
+                File fileToDel = new File(Paths.get(frguiDirPath, file.getName()).toUri());
+                if (fileToDel.exists()) {
+                    if (!fileToDel.delete()) {
+                        System.out.println("Couldn't delete old file at " + fileToDel.getAbsolutePath());
+                        messageToLog("Couldn't delete old file at " + fileToDel.getAbsolutePath());
+                        return null;
+                    }
+                }
                 // Move the archive from /FRGUI/extracted to /FRGUI
                 FileUtils.moveFileToDirectory(file, new File(frguiDirPath), false);
                 // Declare this file
@@ -1193,7 +1234,7 @@ public class MainMenu {
                 // Make FutureRestore executable
                 Process process;
                 try {
-                    process = Runtime.getRuntime().exec("chmod +x " + file);
+                    process = Runtime.getRuntime().exec(new String[]{"chmod", "+x", file.getAbsolutePath()});
                     process.waitFor();
                 } catch (IOException | InterruptedException e) {
                     System.out.println("Unable to make FutureRestore executable.");
@@ -1279,7 +1320,6 @@ public class MainMenu {
         } catch (IOException e) {
             System.out.println("Unable to save preferences.");
             e.printStackTrace();
-            return;
         }
     }
 
@@ -1314,26 +1354,26 @@ public class MainMenu {
             StringSelection stringSelection = new StringSelection(finalCommand);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             switch (response) {
-                case 0: {
+                case 0 -> {
                     // Copy command only
                     clipboard.setContents(stringSelection, null);
                     messageToLog("Copied \"" + finalCommand + "\" to clipboard.");
                     // Return false, don't continue running
                     return false;
                 }
-                case 1: {
+                case 1 -> {
                     // Copy command and run
                     clipboard.setContents(stringSelection, null);
                     messageToLog("Copied \"" + finalCommand + "\" to clipboard.");
                     // Return true, continue running
                     return true;
                 }
-                case 2: {
+                case 2 -> {
                     // Run only
                     // Return true, continue running
                     return true;
                 }
-                case JOptionPane.CLOSED_OPTION: {
+                case JOptionPane.CLOSED_OPTION -> {
                     // If they close the popup just don't do anything
                     return false;
                 }
@@ -1357,7 +1397,7 @@ public class MainMenu {
                     String content = getRequestUrl("https://api.github.com/repos/CoocooFroggy/FutureRestore-GUI/releases/latest");
                     newestRelease = gson.fromJson(content, Map.class);
                 }
-              
+
                 String newestTag = (String) newestRelease.get("tag_name");
                 System.out.println("Newest FRGUI version: " + newestTag);
 
@@ -1765,7 +1805,7 @@ public class MainMenu {
         panel4.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.VERTICAL;
@@ -1803,7 +1843,7 @@ public class MainMenu {
         panel5.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.VERTICAL;
@@ -1843,7 +1883,7 @@ public class MainMenu {
         customLatestBetaCheckBox.setToolTipText("Get custom URL from list of beta firmwares.");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         gbc.anchor = GridBagConstraints.WEST;
         panel3.add(customLatestBetaCheckBox, gbc);
         final JLabel label12 = new JLabel();
@@ -1853,7 +1893,7 @@ public class MainMenu {
         label12.setText("(--custom-latest-beta)");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         panel3.add(label12, gbc);
@@ -1875,6 +1915,26 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         panel3.add(label13, gbc);
+        noRsepCheckBox = new JCheckBox();
+        noRsepCheckBox.setEnabled(true);
+        noRsepCheckBox.setText("No RSEP");
+        noRsepCheckBox.setToolTipText("Choose not to send Restore Mode SEP");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel3.add(noRsepCheckBox, gbc);
+        final JLabel label14 = new JLabel();
+        label14.setEnabled(true);
+        Font label14Font = this.$$$getFont$$$("Menlo", -1, 10, label14.getFont());
+        if (label14Font != null) label14.setFont(label14Font);
+        label14.setText("(--no-rsep)");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 10, 0, 0);
+        panel3.add(label14, gbc);
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -1885,16 +1945,16 @@ public class MainMenu {
         gbc.fill = GridBagConstraints.VERTICAL;
         gbc.insets = new Insets(0, 0, 10, 0);
         allArgumentsPanel.add(panel6, gbc);
-        final JLabel label14 = new JLabel();
-        Font label14Font = this.$$$getFont$$$(null, -1, -1, label14.getFont());
-        if (label14Font != null) label14.setFont(label14Font);
-        label14.setText("Pwned Args");
+        final JLabel label15 = new JLabel();
+        Font label15Font = this.$$$getFont$$$(null, -1, -1, label15.getFont());
+        if (label15Font != null) label15.setFont(label15Font);
+        label15.setText("Pwned Args");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 0, 10, 0);
-        panel6.add(label14, gbc);
+        panel6.add(label15, gbc);
         pwndfuCheckBox = new JCheckBox();
         pwndfuCheckBox.setText("Pwned Restore");
         pwndfuCheckBox.setToolTipText("Restoring devices with Odysseus method. Device needs to be in pwned DFU mode already.");
@@ -1903,16 +1963,16 @@ public class MainMenu {
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         panel6.add(pwndfuCheckBox, gbc);
-        final JLabel label15 = new JLabel();
-        Font label15Font = this.$$$getFont$$$("Menlo", -1, 10, label15.getFont());
-        if (label15Font != null) label15.setFont(label15Font);
-        label15.setText("(--use-pwndfu)");
+        final JLabel label16 = new JLabel();
+        Font label16Font = this.$$$getFont$$$("Menlo", -1, 10, label16.getFont());
+        if (label16Font != null) label16.setFont(label16Font);
+        label16.setText("(--use-pwndfu)");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
-        panel6.add(label15, gbc);
+        panel6.add(label16, gbc);
         noIbssCheckBox = new JCheckBox();
         noIbssCheckBox.setEnabled(false);
         noIbssCheckBox.setSelected(false);
@@ -1993,16 +2053,16 @@ public class MainMenu {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         panel6.add(serialLabel, gbc);
-        final JLabel label16 = new JLabel();
-        Font label16Font = this.$$$getFont$$$(null, Font.BOLD, -1, label16.getFont());
-        if (label16Font != null) label16.setFont(label16Font);
-        label16.setText("Baseband and SEP");
+        final JLabel label17 = new JLabel();
+        Font label17Font = this.$$$getFont$$$(null, Font.BOLD, -1, label17.getFont());
+        if (label17Font != null) label17.setFont(label17Font);
+        label17.setText("Baseband and SEP");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(10, 10, 10, 10);
-        panel2.add(label16, gbc);
+        panel2.add(label17, gbc);
         basebandComboBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Latest Baseband");
@@ -2041,16 +2101,16 @@ public class MainMenu {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 10, 10, 10);
         panel8.add(panel9, gbc);
-        final JLabel label17 = new JLabel();
-        Font label17Font = this.$$$getFont$$$(null, Font.BOLD, -1, label17.getFont());
-        if (label17Font != null) label17.setFont(label17Font);
-        label17.setText("Controls");
+        final JLabel label18 = new JLabel();
+        Font label18Font = this.$$$getFont$$$(null, Font.BOLD, -1, label18.getFont());
+        if (label18Font != null) label18.setFont(label18Font);
+        label18.setText("Controls");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(0, 0, 0, 10);
-        panel9.add(label17, gbc);
+        panel9.add(label18, gbc);
         exitRecoveryButton = new JButton();
         exitRecoveryButton.setText("Exit Recovery");
         exitRecoveryButton.setVerticalAlignment(0);
@@ -2079,16 +2139,16 @@ public class MainMenu {
         gbc.weightx = 0.1;
         gbc.fill = GridBagConstraints.BOTH;
         panel9.add(stopFutureRestoreUnsafeButton, gbc);
-        final JLabel label18 = new JLabel();
-        Font label18Font = this.$$$getFont$$$(null, Font.BOLD, -1, label18.getFont());
-        if (label18Font != null) label18.setFont(label18Font);
-        label18.setText("Current Task");
+        final JLabel label19 = new JLabel();
+        Font label19Font = this.$$$getFont$$$(null, Font.BOLD, -1, label19.getFont());
+        if (label19Font != null) label19.setFont(label19Font);
+        label19.setText("Current Task");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(0, 0, 0, 10);
-        panel9.add(label18, gbc);
+        panel9.add(label19, gbc);
         final JScrollPane scrollPane1 = new JScrollPane();
         scrollPane1.setVerticalScrollBarPolicy(21);
         gbc = new GridBagConstraints();

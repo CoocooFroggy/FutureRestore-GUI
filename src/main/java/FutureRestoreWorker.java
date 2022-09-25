@@ -1,12 +1,13 @@
 import com.google.gson.Gson;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 
 import javax.swing.*;
 import java.io.*;
@@ -128,12 +129,12 @@ public class FutureRestoreWorker {
                     // Otherwise, error was parsed
                     else {
                         switch (futureRestorePossibleMatch) {
-                            case "code=": {
+                            case "code=" -> {
                                 String code = line.replaceFirst("code=", "");
                                 // Parse error codes
                                 switch (code) {
                                     // Unable to enter recovery mode
-                                    case "9043985": {
+                                    case "9043985" -> {
                                         if (!hasRecoveryRestarted) {
                                             hasRecoveryRestarted = true;
                                             // Ensure current process is killed
@@ -143,49 +144,47 @@ public class FutureRestoreWorker {
                                             runFutureRestore(futureRestoreFilePath, allArgs, mainMenu);
                                             return;
                                         }
-                                        break;
                                     }
+
                                     // iBEC Error
-                                    case "64684049": {
+                                    case "64684049" -> {
                                         Object[] choices = {"Open link", "Ok"};
 
-                                        int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an iBEC error. This is a common error and easily fixable.\n" +
-                                                "A solution for this error is available here:\n" +
-                                                "https://github.com/futurerestore/futurerestore#restoring-on-windows-10", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+                                        int response = JOptionPane.showOptionDialog(mainMenuView, """
+                                                Looks like you got an iBEC error. This is a common error and easily fixable.
+                                                A solution for this error is available here:
+                                                https://github.com/futurerestore/futurerestore#restoring-on-windows-10""", "iBEC Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
                                         if (response == JOptionPane.YES_OPTION) {
                                             boolean openWebpageResult = FRUtils.openWebpage("https://github.com/futurerestore/futurerestore#restoring-on-windows-10", null);
                                             if (!openWebpageResult)
                                                 appendToLog(logTextArea, writer, "Unable to open URL in your web browser. URL copied to clipboard, please open it manually.");
                                         }
-
-                                        break;
                                     }
+
                                     // AP Nonce mismatch
-                                    case "44498961": {
+                                    case "44498961" -> {
                                         Object[] choices = {"Open link", "Ok"};
 
-                                        int response = JOptionPane.showOptionDialog(mainMenuView, "Looks like you got an APTicket—APNonce mismatch error. This is a common error.\n" +
-                                                        "Ensure you've set the correct generator on your device that corresponds with your blob's APNonce and try again.\n" +
-                                                        "If you need more help, follow the steps to set generator on \"ios.cfw.guide\".\n" +
-                                                        "https://ios.cfw.guide/futurerestore#getting-started",
+                                        int response = JOptionPane.showOptionDialog(mainMenuView, """
+                                                        Looks like you got an APTicket—APNonce mismatch error. This is a common error.
+                                                        Ensure you've set the correct generator on your device that corresponds with your blob's APNonce and try again.
+                                                        If you need more help, follow the steps to set generator on "ios.cfw.guide".
+                                                        https://ios.cfw.guide/futurerestore#getting-started""",
                                                 "APTicket does not match APNonce", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, choices, choices[0]);
                                         if (response == JOptionPane.YES_OPTION) {
                                             boolean openWebpageResult = FRUtils.openWebpage("https://ios.cfw.guide/futurerestore#getting-started", null);
                                             if (!openWebpageResult)
                                                 appendToLog(logTextArea, writer, "Unable to open URL in your web browser. URL copied to clipboard, please open it manually.");
                                         }
-                                        break;
                                     }
                                 }
-                                break;
                             }
-                            case "what=": {
+                            case "what=" -> {
                                 String error = line.replaceFirst("what=", "");
                                 currentTaskTextField.setText(error);
-                                break;
                             }
-                            case "unknown option -- ": {
-                                Pattern pattern = Pattern.compile("(?<=unknown option -- )[^\\s]+");
+                            case "unknown option -- " -> {
+                                Pattern pattern = Pattern.compile("(?<=unknown option -- )\\S+");
                                 Matcher matcher = pattern.matcher(line);
                                 if (matcher.find()) {
                                     JOptionPane.showMessageDialog(mainMenuView,
@@ -195,9 +194,8 @@ public class FutureRestoreWorker {
                                 }
                                 String finalLine = line;
                                 SwingUtilities.invokeLater(() -> currentTaskTextField.setText(finalLine));
-                                break;
                             }
-                            case "unrecognized option `": {
+                            case "unrecognized option `" -> {
                                 Pattern pattern = Pattern.compile("(?<=unrecognized option `).*(?=')");
                                 Matcher matcher = pattern.matcher(line);
                                 if (matcher.find()) {
@@ -208,9 +206,8 @@ public class FutureRestoreWorker {
                                 }
                                 String finalLine = line;
                                 SwingUtilities.invokeLater(() -> currentTaskTextField.setText(finalLine));
-                                break;
                             }
-                            case "timeout waiting for command": {
+                            case "timeout waiting for command" -> {
                                 fdrTimeouts++;
                                 if (fdrTimeouts > 50) {
                                     logTextArea.append("Stopping FutureRestore—FDR looped over 50 times.\n");
@@ -319,16 +316,24 @@ public class FutureRestoreWorker {
         rootJson.put("guiVersion", Main.futureRestoreGUIVersion);
         String rootJsonString = gson.toJson(rootJson);
 
-        HttpClient httpClient = HttpClients.createDefault();
+        CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost("http://coocoofroggy.eastus.cloudapp.azure.com:6969/frlogs/upload");
         StringEntity requestEntity = new StringEntity(rootJsonString, ContentType.APPLICATION_JSON);
         httpPost.setEntity(requestEntity);
         httpPost.addHeader("Authorization", "CoocooFroggy rocks");
 
-        HttpResponse response = httpClient.execute(httpPost);
+        CloseableHttpResponse response = httpClient.execute(httpPost);
         HttpEntity entity = response.getEntity();
-        String responseString = EntityUtils.toString(entity, "UTF-8");
+        String responseString;
+        try {
+            responseString = EntityUtils.toString(entity, "UTF-8");
+        } catch (ParseException e) {
+            System.err.println("Unable to upload log.");
+            e.printStackTrace();
+            return;
+        }
         System.out.println(responseString);
-
+        response.close();
+        httpClient.close();
     }
 }

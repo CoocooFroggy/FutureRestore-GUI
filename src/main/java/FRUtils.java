@@ -72,7 +72,7 @@ public class FRUtils {
         } else if (osName.contains("linux")) {
             // Debs only work on debian
             try {
-                Runtime.getRuntime().exec("dpkg --version").waitFor();
+                Runtime.getRuntime().exec(new String[]{"dpkg", "--version"}).waitFor();
                 frguiDownloadIdentifier = "Debian";
             } catch (IOException ignored) {
                 // Not debian
@@ -195,7 +195,7 @@ public class FRUtils {
         JFrame mainMenuFrame = mainMenuInstance.getMainMenuFrame();
 
         switch (frguiDownloadIdentifier) {
-            case "Mac": {
+            case "Mac" -> {
                 // Mount downloaded DMG
                 ProcessBuilder attachDmgProcessBuilder = new ProcessBuilder("/usr/bin/hdiutil", "attach", "-nobrowse", downloadedFrgui.getAbsolutePath());
                 Process attachDmgProcess = attachDmgProcessBuilder.start();
@@ -242,10 +242,8 @@ public class FRUtils {
                     mainMenuInstance.messageToLog("Unable to eject the update DMG, please do it manually.");
                     JOptionPane.showMessageDialog(mainMenuFrame, "Unable to eject the update DMG, please do it manually.", "Warning", JOptionPane.WARNING_MESSAGE);
                 }
-
-                break;
             }
-            case "Windows": {
+            case "Windows" -> {
                 // Run downloaded MSI, prompt for Admin. Also run the exe to launch the app afterwards
                 ProcessBuilder updateFrguiScriptProcessBuilder = new ProcessBuilder("C:\\Windows\\System32\\cmd.exe", "/c start /wait C:\\Windows\\System32\\msiexec.exe /passive /package \"" + downloadedFrgui.getAbsolutePath() + "\" && \"C:\\Program Files\\FutureRestore GUI\\FutureRestore GUI.exe\"");
                 // These redirect output to nothing, otherwise the process will die when JVM is killed by msiexec
@@ -258,10 +256,8 @@ public class FRUtils {
                     failUpdate("Unable to run MSI updater.", mainMenuInstance, true);
                     return false;
                 }
-
-                break;
             }
-            case "Debian": {
+            case "Debian" -> {
                 // dpkg update the app (uninstalls old and installs new automatically)
                 ProcessBuilder installDebProcessBuilder = new ProcessBuilder("/usr/bin/pkexec", "dpkg", "-i", downloadedFrgui.getAbsolutePath());
                 if (installDebProcessBuilder.start().waitFor() != 0) {
@@ -274,9 +270,8 @@ public class FRUtils {
                         .redirectOutput(new File("/dev/null"))
                         .redirectError(new File("/dev/null"))
                         .start();
-                break;
             }
-            default: {
+            default -> {
                 failUpdate("Something's gone horribly wrong, this is never supposed to appear. Please update FutureRestore GUI manually.", mainMenuInstance, true);
                 return false;
             }
@@ -333,7 +328,7 @@ public class FRUtils {
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) (url.openConnection());
 
-        // For github actions downloads (for FR beta switch), we need to be logged in
+        // For GitHub actions downloads (for FR beta switch), we need to be logged in
         githubAuthorizeWithAccount(con);
 
         long completeFileSize = con.getContentLength();

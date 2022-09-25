@@ -22,10 +22,10 @@ jobs:
           echo $version > version.txt
           echo '::set-output name=version::(echo $version)'
 
-      - name: Set up JDK 17
+      - name: Set up JDK 18
         uses: actions/setup-java@v2
         with:
-          java-version: 17
+          java-version: 18
           distribution: 'temurin'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -53,10 +53,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Set up JDK 17
+      - name: Set up JDK 18
         uses: actions/setup-java@v2
         with:
-          java-version: 17
+          java-version: 18
           distribution: 'temurin'
 
       - name: Download final jar
@@ -75,11 +75,16 @@ jobs:
           version=$(tail version.txt)
           echo "::set-output name=version::$version"
 
+      - name: Download JavaFX
+        run: |
+          curl -o jmods.zip https://download2.gluonhq.com/openjfx/18.0.2/openjfx-18.0.2_linux-x64_bin-jmods.zip
+          unzip jmods.zip
+
       - name: Run JPackage deb
         env:
           RUN_NUMBER: ${{ github.run_number }}
           VERSION: ${{ steps.output-version.outputs.version }}
-        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type deb --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --module-path ./.github/workflows/ubuntu/javafx-jmods-11.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION 2>&1 | tee /tmp/jpackoutput.txt
+        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type deb --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --module-path ./javafx-jmods-18.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION 2>&1 | tee /tmp/jpackoutput.txt
       - name: Grep DEB name
         id: grep_deb_name
         run: |
@@ -90,12 +95,12 @@ jobs:
         env:
           RUN_NUMBER: ${{ github.run_number }}
           VERSION: ${{ steps.output-version.outputs.version }}
-        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --module-path ./.github/workflows/ubuntu/javafx-jmods-11.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
+        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --module-path ./javafx-jmods-18.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
 
       - name: Zip app-image and script
         run: |
-          cp ./.github/workflows/ubuntu/"Run FutureRestore GUI.sh" ./
-          zip -r FutureRestore-GUI-Linux-Universal.zip "FutureRestore GUI" "Run FutureRestore GUI.sh"
+          cp ./.github/workflows/ubuntu/"run.sh" ./
+          zip -r FutureRestore-GUI-Linux-Universal.zip "FutureRestore GUI" "run.sh"
 
       - name: Upload deb
         uses: actions/upload-artifact@v2
@@ -117,10 +122,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Set up JDK 17
+      - name: Set up JDK 18
         uses: actions/setup-java@v2
         with:
-          java-version: 17
+          java-version: 18
           distribution: 'temurin'
 
       - name: Install create-dmg
@@ -142,18 +147,20 @@ jobs:
           version=$(tail version.txt)
           echo "::set-output name=version::$version"
 
+      - name: Download JavaFX
+        run: |
+          curl -o jmods.zip https://download2.gluonhq.com/openjfx/18.0.2/openjfx-18.0.2_osx-x64_bin-jmods.zip
+          unzip jmods.zip
+
       - name: Run JPackage and remove signature
         env:
           RUN_NUMBER: ${{ github.run_number}}
           VERSION: ${{ steps.output-version.outputs.version }}
         run: |
-          jpackage --input ./input --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/mac/FutureRestoreGUIIcons.icns --copyright "© CoocooFroggy 2021" --verbose --mac-package-identifier com.coocoofroggy.futurerestoregui --name "FutureRestore GUI" --module-path ./.github/workflows/mac/javafx-jmods-11.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
+          jpackage --input ./input --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/mac/FutureRestoreGUIIcons.icns --copyright "© CoocooFroggy 2021" --verbose --mac-package-identifier com.coocoofroggy.futurerestoregui --name "FutureRestore GUI" --module-path ./javafx-jmods-18.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
           codesign --remove-signature FutureRestore\ GUI.app
           mkdir dmg-input
           mv "FutureRestore GUI.app" dmg-input
-
-#      - name: Debug with ssh
-#        uses: lhotari/action-upterm@v1
 
       - name: Create DMG from .app
         run: |
@@ -177,10 +184,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Set up JDK 17
+      - name: Set up JDK 18
         uses: actions/setup-java@v2
         with:
-          java-version: 17
+          java-version: 18
           distribution: 'temurin'
 
       - name: Download final jar
@@ -200,11 +207,16 @@ jobs:
           echo ::set-output name=version::%version%
         shell: cmd
 
+      - name: Download JavaFX
+        run: |
+          curl -o jmods.zip https://download2.gluonhq.com/openjfx/18.0.2/openjfx-18.0.2_windows-x64_bin-jmods.zip
+          unzip jmods.zip
+
       - name: Run JPackage
         env:
           RUN_NUMBER: ${{ github.run_number }}
           VERSION: ${{ steps.output-version.outputs.version }}
-        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type msi --icon ./.github/workflows/windows/FRWindows.ico --copyright "© CoocooFroggy 2021" --vendor "CoocooFroggy" --verbose --name "FutureRestore GUI" --win-shortcut --win-menu --win-console --module-path ./.github/workflows/windows/javafx-jmods-11.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version %VERSION%
+        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type msi --icon ./.github/workflows/windows/FRWindows.ico --copyright "© CoocooFroggy 2021" --vendor "CoocooFroggy" --verbose --name "FutureRestore GUI" --win-shortcut --win-menu --win-console --module-path ./javafx-jmods-18.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version %VERSION%
         shell: cmd
 
       - name: Find MSI name
