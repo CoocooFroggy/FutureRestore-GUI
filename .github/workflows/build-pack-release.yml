@@ -204,7 +204,7 @@ jobs:
           RUN_NUMBER: ${{ github.run_number}}
           VERSION: ${{ steps.output-version.outputs.version }}
         run: |
-          jpackage --input ./input --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/mac/FutureRestoreGUIIcons.icns --copyright "© CoocooFroggy 2021" --verbose --mac-package-identifier com.coocoofroggy.futurerestoregui --name "FutureRestore GUI" --module-path ./.github/workflows/mac/javafx-jmods-11.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
+          jpackage --input ./input --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/mac/FutureRestoreGUIIcons.icns --copyright "© CoocooFroggy 2021" --verbose --mac-package-identifier com.coocoofroggy.futurerestoregui --name "FutureRestore GUI" --module-path ./javafx-jmods-18.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
           codesign --remove-signature FutureRestore\ GUI.app
           mkdir dmg-input
           mv "FutureRestore GUI.app" dmg-input
