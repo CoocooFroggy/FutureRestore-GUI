@@ -84,7 +84,7 @@ jobs:
         env:
           RUN_NUMBER: ${{ github.run_number }}
           VERSION: ${{ steps.output-version.outputs.version }}
-        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type deb --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --module-path ./javafx-jmods-19 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION 2>&1 | tee /tmp/jpackoutput.txt
+        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type deb --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2022" --verbose --name "FutureRestore GUI" --module-path ./javafx-jmods-19 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION 2>&1 | tee /tmp/jpackoutput.txt
       - name: Grep DEB name
         id: grep_deb_name
         run: |
@@ -95,7 +95,7 @@ jobs:
         env:
           RUN_NUMBER: ${{ github.run_number }}
           VERSION: ${{ steps.output-version.outputs.version }}
-        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --module-path ./javafx-jmods-19 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
+        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2022" --verbose --name "FutureRestore GUI" --module-path ./javafx-jmods-19 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
 
       - name: Zip app-image and script
         run: |
@@ -157,7 +157,7 @@ jobs:
           RUN_NUMBER: ${{ github.run_number}}
           VERSION: ${{ steps.output-version.outputs.version }}
         run: |
-          jpackage --input ./input --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/mac/FutureRestoreGUIIcons.icns --copyright "© CoocooFroggy 2021" --verbose --mac-package-identifier com.coocoofroggy.futurerestoregui --name "FutureRestore GUI" --module-path ./javafx-jmods-19 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
+          jpackage --input ./input --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/mac/FutureRestoreGUIIcons.icns --copyright "© CoocooFroggy 2022" --verbose --mac-package-identifier com.coocoofroggy.futurerestoregui --name "FutureRestore GUI" --module-path ./javafx-jmods-19 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
           codesign --remove-signature FutureRestore\ GUI.app
           mkdir dmg-input
           mv "FutureRestore GUI.app" dmg-input
@@ -216,7 +216,7 @@ jobs:
         env:
           RUN_NUMBER: ${{ github.run_number }}
           VERSION: ${{ steps.output-version.outputs.version }}
-        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type msi --icon ./.github/workflows/windows/FRWindows.ico --copyright "© CoocooFroggy 2021" --vendor "CoocooFroggy" --verbose --name "FutureRestore GUI" --win-shortcut --win-menu --win-console --module-path ./javafx-jmods-19 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version %VERSION%
+        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type msi --icon ./.github/workflows/windows/FRWindows.ico --copyright "© CoocooFroggy 2022" --vendor "CoocooFroggy" --verbose --name "FutureRestore GUI" --win-shortcut --win-menu --win-console --module-path ./javafx-jmods-19 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version %VERSION%
         shell: cmd
 
       - name: Find MSI name
