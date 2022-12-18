@@ -13,7 +13,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       
       - name: Parse version
         id: parse-version
@@ -22,10 +22,10 @@ jobs:
           echo $version > version.txt
           echo '::set-output name=version::(echo $version)'
 
-      - name: Set up JDK 18
-        uses: actions/setup-java@v2
+      - name: Set up JDK 19
+        uses: actions/setup-java@v3
         with:
-          java-version: 18
+          java-version: 19
           distribution: 'temurin'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -34,13 +34,13 @@ jobs:
         run: ./gradlew shadowJar
       # Upload this built jar
       - name: Upload final jar
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: fat-jar
           path: ./build/libs/FutureRestore GUI-1.0-all.jar
 
       - name: Upload version
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: version
           path: version.txt
@@ -51,22 +51,22 @@ jobs:
     steps:
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Set up JDK 18
-        uses: actions/setup-java@v2
+      - name: Set up JDK 19
+        uses: actions/setup-java@v3
         with:
-          java-version: 18
+          java-version: 19
           distribution: 'temurin'
 
       - name: Download final jar
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: fat-jar
           path: ./input
 
       - name: Download version
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: version
       - name: Output version
@@ -77,14 +77,14 @@ jobs:
 
       - name: Download JavaFX
         run: |
-          curl -o jmods.zip https://download2.gluonhq.com/openjfx/18.0.2/openjfx-18.0.2_linux-x64_bin-jmods.zip
+          curl -o jmods.zip https://download2.gluonhq.com/openjfx/19/openjfx-19_linux-x64_bin-jmods.zip
           unzip jmods.zip
 
       - name: Run JPackage deb
         env:
           RUN_NUMBER: ${{ github.run_number }}
           VERSION: ${{ steps.output-version.outputs.version }}
-        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type deb --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --module-path ./javafx-jmods-18.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION 2>&1 | tee /tmp/jpackoutput.txt
+        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type deb --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --module-path ./javafx-jmods-19 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION 2>&1 | tee /tmp/jpackoutput.txt
       - name: Grep DEB name
         id: grep_deb_name
         run: |
@@ -95,7 +95,7 @@ jobs:
         env:
           RUN_NUMBER: ${{ github.run_number }}
           VERSION: ${{ steps.output-version.outputs.version }}
-        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --module-path ./javafx-jmods-18.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
+        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/ubuntu/Icon-1024.png --copyright "© CoocooFroggy 2021" --verbose --name "FutureRestore GUI" --module-path ./javafx-jmods-19 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
 
       - name: Zip app-image and script
         run: |
@@ -103,13 +103,13 @@ jobs:
           zip -r FutureRestore-GUI-Linux-Universal.zip "FutureRestore GUI" "run.sh"
 
       - name: Upload deb
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: FutureRestore-GUI-Debian-${{ steps.output-version.outputs.version }}.deb
           path: ${{ steps.grep_deb_name.outputs.deb_filename }}
           
       - name: Upload app image
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: FutureRestore-GUI-Linux-Universal-${{ steps.output-version.outputs.version }}.zip
           path: FutureRestore-GUI-Linux-Universal.zip
@@ -120,25 +120,25 @@ jobs:
     steps:
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Set up JDK 18
-        uses: actions/setup-java@v2
+      - name: Set up JDK 19
+        uses: actions/setup-java@v3
         with:
-          java-version: 18
+          java-version: 19
           distribution: 'temurin'
 
       - name: Install create-dmg
         run: brew install create-dmg
 
       - name: Download final jar
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: fat-jar
           path: ./input
 
       - name: Download version
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: version
       - name: Output version
@@ -149,7 +149,7 @@ jobs:
 
       - name: Download JavaFX
         run: |
-          curl -o jmods.zip https://download2.gluonhq.com/openjfx/18.0.2/openjfx-18.0.2_osx-x64_bin-jmods.zip
+          curl -o jmods.zip https://download2.gluonhq.com/openjfx/19/openjfx-19_osx-x64_bin-jmods.zip
           unzip jmods.zip
 
       - name: Run JPackage and remove signature
@@ -157,7 +157,7 @@ jobs:
           RUN_NUMBER: ${{ github.run_number}}
           VERSION: ${{ steps.output-version.outputs.version }}
         run: |
-          jpackage --input ./input --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/mac/FutureRestoreGUIIcons.icns --copyright "© CoocooFroggy 2021" --verbose --mac-package-identifier com.coocoofroggy.futurerestoregui --name "FutureRestore GUI" --module-path ./javafx-jmods-18.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
+          jpackage --input ./input --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type app-image --icon ./.github/workflows/mac/FutureRestoreGUIIcons.icns --copyright "© CoocooFroggy 2021" --verbose --mac-package-identifier com.coocoofroggy.futurerestoregui --name "FutureRestore GUI" --module-path ./javafx-jmods-19 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version $VERSION
           codesign --remove-signature FutureRestore\ GUI.app
           mkdir dmg-input
           mv "FutureRestore GUI.app" dmg-input
@@ -171,7 +171,7 @@ jobs:
 #        run: zip -r FutureRestore-GUI-Mac.zip "FutureRestore GUI.app"
         
       - name: Upload Mac release
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: FutureRestore-GUI-Mac-${{ steps.output-version.outputs.version }}.dmg
           path: FutureRestore GUI Installer.dmg
@@ -182,22 +182,22 @@ jobs:
     steps:
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Set up JDK 18
-        uses: actions/setup-java@v2
+      - name: Set up JDK 19
+        uses: actions/setup-java@v3
         with:
-          java-version: 18
+          java-version: 19
           distribution: 'temurin'
 
       - name: Download final jar
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: fat-jar
           path: ./input
 
       - name: Download version
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: version
       - name: Output version
@@ -209,14 +209,14 @@ jobs:
 
       - name: Download JavaFX
         run: |
-          curl -o jmods.zip https://download2.gluonhq.com/openjfx/18.0.2/openjfx-18.0.2_windows-x64_bin-jmods.zip
+          curl -o jmods.zip https://download2.gluonhq.com/openjfx/19/openjfx-19_windows-x64_bin-jmods.zip
           unzip jmods.zip
 
       - name: Run JPackage
         env:
           RUN_NUMBER: ${{ github.run_number }}
           VERSION: ${{ steps.output-version.outputs.version }}
-        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type msi --icon ./.github/workflows/windows/FRWindows.ico --copyright "© CoocooFroggy 2021" --vendor "CoocooFroggy" --verbose --name "FutureRestore GUI" --win-shortcut --win-menu --win-console --module-path ./javafx-jmods-18.0.2 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version %VERSION%
+        run: jpackage --input ./input --name "FutureRestore GUI" --main-jar "FutureRestore GUI-1.0-all.jar" --main-class Main --type msi --icon ./.github/workflows/windows/FRWindows.ico --copyright "© CoocooFroggy 2021" --vendor "CoocooFroggy" --verbose --name "FutureRestore GUI" --win-shortcut --win-menu --win-console --module-path ./javafx-jmods-19 --add-modules javafx.swing,java.logging,java.sql,java.base,jdk.crypto.ec,java.naming --app-version %VERSION%
         shell: cmd
 
       - name: Find MSI name
@@ -228,7 +228,7 @@ jobs:
         shell: cmd
         
       - name: Upload Windows release
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: FutureRestore-GUI-Windows-${{ steps.output-version.outputs.version }}.msi
           path: ${{ steps.grep_msi_name.outputs.msi_filename }}

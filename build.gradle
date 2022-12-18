@@ -5,7 +5,7 @@ plugins {
 }
 
 javafx {
-    version = "18"
+    version = "19"
     modules = [ 'javafx.swing' ]
 }
 
@@ -20,8 +20,8 @@ jar {
 group 'com.coocoofroggy'
 version '1.0'
 
-project.sourceCompatibility = '18'
-project.targetCompatibility = '18'
+project.sourceCompatibility = '19'
+project.targetCompatibility = '19'
 
 repositories {
     mavenCentral()
