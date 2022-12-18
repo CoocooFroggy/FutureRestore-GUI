@@ -1,5 +1,5 @@
 # FutureRestore GUI
-![Github CI](https://img.shields.io/github/workflow/status/CoocooFroggy/FutureRestore-GUI/Java%20CI%20with%20Gradle.svg)
+![Github CI](https://img.shields.io/github/actions/workflow/status/CoocooFroggy/FutureRestore-GUI/build.yml?branch=master)
 ![Github releases](https://img.shields.io/github/v/release/CoocooFroggy/FutureRestore-GUI?include_prereleases.svg)
 ![Github issues](https://img.shields.io/github/issues/CoocooFroggy/FutureRestore-GUI.svg)
 ![GitHub all releases](https://img.shields.io/github/downloads/CoocooFroggy/FutureRestore-GUI/total)
