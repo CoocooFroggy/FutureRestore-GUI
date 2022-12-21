@@ -215,7 +215,7 @@ jobs:
       - name: Set up .NET 3.5.1
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 3.5.1
+          dotnet-version: 3.1.32
 
       - name: Set up Wix
         run: |
