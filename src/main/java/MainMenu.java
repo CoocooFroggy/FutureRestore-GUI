@@ -1768,6 +1768,7 @@ public class MainMenu {
         panel3.add(label7, gbc);
         updateUCheckBox = new JCheckBox();
         updateUCheckBox.setText("Preserve Data");
+        updateUCheckBox.setText("Attempt to restore without data loss.");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -1786,6 +1787,7 @@ public class MainMenu {
         panel3.add(label8, gbc);
         waitWCheckBox = new JCheckBox();
         waitWCheckBox.setText("AP Nonce Collision");
+        waitWCheckBox.setToolTipText("Keep rebooting until ApNonce matches APTicket (unreliable)");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 3;
@@ -1977,6 +1979,7 @@ public class MainMenu {
         noIbssCheckBox.setEnabled(false);
         noIbssCheckBox.setSelected(false);
         noIbssCheckBox.setText("Don't Send iBSS");
+        noIbssCheckBox.setText("Restoring devices with Odysseus method. For checkm8/iPwnder32 specifically, bootrom needs to be patched already with unless iPwnder.");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -2006,6 +2009,7 @@ public class MainMenu {
         setNonceCheckBox.setEnabled(false);
         setNonceCheckBox.setSelected(false);
         setNonceCheckBox.setText("Set Device Nonce");
+        noIbssCheckBox.setText("Set custom nonce from your blob then exit recovery(requires use-pwndfu)");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -2037,6 +2041,7 @@ public class MainMenu {
         serialOutputCheckBox.setEnabled(false);
         serialOutputCheckBox.setSelected(false);
         serialOutputCheckBox.setText("Serial Output");
+        serialOutputCheckBox.setToolTipText("Enable serial during boot(requires serial cable and use-pwndfu)");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 3;
